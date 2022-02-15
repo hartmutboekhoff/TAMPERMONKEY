@@ -6,22 +6,24 @@
 // ==/UserScript==
 
 
-function KeyHandler(key1) {
-	const Modifiers = ['','Ctrl', 'Alt', 'Shift', 'Ctrl+Alt', 'Ctrl+Shift', 'Alt+Shift', 'Ctrl+Alt+Shift'];
-	const f = function(e){console.debug((key1||'')+e.code+' unhandled');}
-	
-	Modifiers.forEach(m=>this[m]=f);
-}
-function KeyHandlerMap(key1) {
-	this._map = {};
-	this.get = function(k) {
-		var h = this._map[k];
-		if( h == undefined )
-			this._map[k] = h = new KeyHandler(key1);
-		return h;
-	}
-}
+
+
 const KeyHandlers = new (function() {
+  function KeyHandler(key1) {
+  	const Modifiers = ['','Ctrl', 'Alt', 'Shift', 'Ctrl+Alt', 'Ctrl+Shift', 'Alt+Shift', 'Ctrl+Alt+Shift'];
+  	const f = function(e){console.debug((key1||'')+e.code+' unhandled');}
+  	
+  	Modifiers.forEach(m=>this[m]=f);
+  }
+  function KeyHandlerMap(key1) {
+  	this._map = {};
+  	this.get = function(k) {
+  		var h = this._map[k];
+  		if( h == undefined )
+  			this._map[k] = h = new KeyHandler(key1);
+  		return h;
+  	}
+  }  
 	function getKeyCode(code) {
 		let keys = code.split('+');
 		if( keys.length == 1 )
@@ -100,33 +102,13 @@ const KeyHandlers = new (function() {
 	}
 })();
 
-
+function addStyles(newStyles) {
+  const s = document.createElement('style');
+  s.innerHTML = newStyles;
+  document.getElementsByTagName('head')[0].appendChild(s);
+}
 
 const MaxAttempts = 10;
-
-const NewStyles = 
- 'div.tabControlHeader span  {'
-+'  background-color: #4cf;'
-+'  padding: 0.2em 1em;'
-+'  margin-right: 0.5em;'
-+'  font-size: 1.5em'
-+'}'
-+'div.tabControlHeader span.selected  {'
-+'  background-color: #1e8;'
-+'  color: #000;'
-+'  font-weight: bold'
-+'}'
-+'div.tabControlHeader {'
-+'  background-color: #fff;'
-+'  border-bottom: 3px solid #4cf;'
-+'}'
-+'input#DateTimeControlREGISTRATIONTIMEcalendarTB, input#TextBoxSubject {'
-+'  font-size: 1.2em;'
-+'  font-weight: bold'
-+'}'
-;
-
-
 
 function waitForValue(f, maxAttempts) {
   if( Number.isInteger(maxAttempts) || maxAttempts == 0 ) 
@@ -159,10 +141,97 @@ function getValue(selector, attribute) {
   return attribute != undefined? elem[attribute] : elem;
 }
 function getValueIfNotEmptyString(selector,attribute) {
-console.log('getting value from ', selector, attribute);
   const val = getValue(selector, attribute);
   return val == '' ? undefined : val;
 }
+
+
+
+function abortReading() {
+  UtteranceQueue.length = 0;
+  window.speechSynthesis.cancel();
+}
+function skipToNextReading() {
+  if( UtteranceQueue.length > 0 ) window.speechSynthesis.cancel();
+}
+function pauseResumeReading() {
+  if(window.speechSynthesis.paused )
+    window.speechSynthesis.resume();
+  else if( window.speechSynthesis.speaking )
+    window.speechSynthesis.pause();
+  else if( typeof readAloud == 'function' )
+    readAloud(true);
+}
+
+const UtteranceQueue = [];
+function queueUtterances(...texts) {
+  function readNext() {
+    const u = UtteranceQueue.shift();
+    if( u != undefined ) {
+      u.onend = readNext;
+      window.speechSynthesis.speak(u);
+     }
+  }
+
+  UtteranceQueue.push(...texts.map(t=>{
+    const u = new SpeechSynthesisUtterance(t);
+    u.lang = 'de-DE';
+console.log(u.lang,u);
+    
+    return u;
+  }));
+  readNext();
+}
+
+function showUserView() {
+  const oid = location.search.match(/\bOBJECTID=(\d*)/);
+  const odefid = location.search.match(/\bOBJECTDEFID=(\d*)/);
+  const url = 'https://helpline.funkemedien.de/helpLinePortal/en-US/App/Cases/Detail/' + oid[1] + '/' + odefid[1];
+  console.log(url);
+  window.open(url);
+}
+
+window.addEventListener("load", ()=>{
+  document.addEventListener('keydown', e=>KeyHandlers.dispatch(e));
+
+  KeyHandlers.add('Escape', abortReading);
+  KeyHandlers.add('Tab', skipToNextReading);
+  KeyHandlers.add('Ctrl+Space', pauseResumeReading);
+
+  KeyHandlers.add('Ctrl+NumpadDecimal',showUserView);
+  
+});
+
+console.log('hbo running','no Syntax Errors', 'global');
+
+
+
+
+
+
+
+const NewStyles = 
+ 'div.tabControlHeader span  {'
++'  background-color: #4cf;'
++'  padding: 0.2em 1em;'
++'  margin-right: 0.5em;'
++'  font-size: 1.5em'
++'}'
++'div.tabControlHeader span.selected  {'
++'  background-color: #1e8;'
++'  color: #000;'
++'  font-weight: bold'
++'}'
++'div.tabControlHeader {'
++'  background-color: #fff;'
++'  border-bottom: 3px solid #4cf;'
++'}'
++'input#DateTimeControlREGISTRATIONTIMEcalendarTB, input#TextBoxSubject {'
++'  font-size: 1.2em;'
++'  font-weight: bold'
++'}'
+;
+
 
 function getAuthor() {
   const authorRegEx = /(.*?), (.*), ([^ ]*)/;
@@ -187,6 +256,22 @@ async function getDescription() {
   return await waitForValue(()=>getValueIfNotEmptyString('div.helpLineComplexTextLabel','innerText'),MaxAttempts);
 }
 
+
+function gotoTab(selector) {
+  const tab = document.querySelectorAll(selector)[0];
+  if( tab != undefined ) tab.click();
+}
+function gotoTabN(n) {
+  const tabBar = document.querySelectorAll('div.tabControlHeaderContainer div.tabControlHeader')[0];
+
+  if( tabBar.children[n] != undefined ) 
+    tabBar.children[n].click();
+}
+function scrollTabControlBar(e) {
+  let pos = this.parentElement.scrollLeft + e.deltaY;
+  pos = pos<0 ? 0 : pos>this.parentElementScrollLeftMax ? this.parentElementScrollLeftMax : pos;
+  this.parentElement.scrollLeft = pos;
+}
 
 function readAloud(withHint) {
   const selected = [...document.querySelectorAll('div.tabControlHeader>span')].filter(e=>e.className=='selected');
@@ -268,103 +353,31 @@ console.log('"' + eMail+'"');
   });
 }
 
-function abortReading() {
-  UtteranceQueue.length = 0;
-  window.speechSynthesis.cancel();
-}
-function skipToNextReading() {
-  if( UtteranceQueue.length > 0 ) window.speechSynthesis.cancel();
-}
-function pauseResumeReading() {
-  if(window.speechSynthesis.paused )
-    window.speechSynthesis.resume();
-  else if( window.speechSynthesis.speaking )
-    window.speechSynthesis.pause();
-  else
-    readAloud(true);
-}
-
-
-function gotoTab(selector) {
-  const tab = document.querySelectorAll(selector)[0];
-  if( tab != undefined ) tab.click();
-}
-function gotoTabN(n) {
-  const tabBar = document.querySelectorAll('div.tabControlHeaderContainer div.tabControlHeader')[0];
-
-  if( tabBar.children[n] != undefined ) 
-    tabBar.children[n].click();
-}
-
-
-function scrollTabControlBar(e) {
-  let pos = this.parentElement.scrollLeft + e.deltaY;
-  pos = pos<0 ? 0 : pos>this.parentElementScrollLeftMax ? this.parentElementScrollLeftMax : pos;
-  this.parentElement.scrollLeft = pos;
-}
 
 window.addEventListener("load", ()=>{
-  const s = document.createElement('style');
-  s.innerHTML = NewStyles;
-  document.getElementsByTagName('head')[0]
-    .appendChild(s);
+  addStyles(NewStyles);
 
   gotoTab('#TabPageDescriptionItem_Header');
   
   document.querySelectorAll('div.tabControlHeader')[0].addEventListener('wheel',scrollTabControlBar);
 
-	document.addEventListener('keydown', e=>KeyHandlers.dispatch(e));
-
-  KeyHandlers.add('Escape', abortReading);
-  KeyHandlers.add('Tab', skipToNextReading);
-  KeyHandlers.add('Ctrl+Space', pauseResumeReading);
   KeyHandlers.add('Shift+Space', readStatusAloud);
   KeyHandlers.add('Ctrl+Shift+Space', readContactInfoAloud);
 
-  KeyHandlers.add('Ctrl+Numpad0',(e)=>gotoTabN(0));
-  KeyHandlers.add('Ctrl+Numpad1',(e)=>gotoTabN(1));
-  KeyHandlers.add('Ctrl+Numpad2',(e)=>gotoTabN(2));
-  KeyHandlers.add('Ctrl+Numpad3',(e)=>gotoTabN(3));
-  KeyHandlers.add('Ctrl+Numpad4',(e)=>gotoTabN(4));
-  KeyHandlers.add('Ctrl+Numpad5',(e)=>gotoTabN(5));
-  KeyHandlers.add('Ctrl+Numpad6',(e)=>gotoTabN(6));
-  KeyHandlers.add('Ctrl+Numpad7',(e)=>gotoTabN(7));
-  KeyHandlers.add('Ctrl+Numpad8',(e)=>gotoTabN(8));
-  KeyHandlers.add('Ctrl+Numpad9',(e)=>gotoTabN(9));
-  
-  KeyHandlers.add('Ctrl+NumpadDecimal',showUserView);
+console.log('adding numpad handlers');
+  KeyHandlers.add('Ctrl+Numpad0',(e)=>(gotoTabN(0),e.preventDefault()));
+  KeyHandlers.add('Ctrl+Numpad1',(e)=>(gotoTabN(1),e.preventDefault()));
+  KeyHandlers.add('Ctrl+Numpad2',(e)=>(gotoTabN(2),e.preventDefault()));
+  KeyHandlers.add('Ctrl+Numpad3',(e)=>(gotoTabN(3),e.preventDefault()));
+  KeyHandlers.add('Ctrl+Numpad4',(e)=>(gotoTabN(4),e.preventDefault()));
+  KeyHandlers.add('Ctrl+Numpad5',(e)=>(gotoTabN(5),e.preventDefault()));
+  KeyHandlers.add('Ctrl+Numpad6',(e)=>(gotoTabN(6),e.preventDefault()));
+  KeyHandlers.add('Ctrl+Numpad7',(e)=>(gotoTabN(7),e.preventDefault()));
+  KeyHandlers.add('Ctrl+Numpad8',(e)=>(gotoTabN(8),e.preventDefault()));
+  KeyHandlers.add('Ctrl+Numpad9',(e)=>(gotoTabN(9),e.preventDefault()));
   
   readDescriptionAloud();
   
 });
 
-const UtteranceQueue = [];
-function queueUtterances(...texts) {
-  function readNext() {
-    const u = UtteranceQueue.shift();
-    if( u != undefined ) {
-      u.onend = readNext;
-      window.speechSynthesis.speak(u);
-     }
-  }
-
-  UtteranceQueue.push(...texts.map(t=>{
-    const u = new SpeechSynthesisUtterance(t);
-    u.lang = 'de-DE';
-console.log(u.lang,u);
-    
-    return u;
-  }));
-  readNext();
-}
-
-function showUserView() {
-  const oid = location.search.match(/\bOBJECTID=(\d*)/);
-  const odefid = location.search.match(/\bOBJECTDEFID=(\d*)/);
-  const url = 'https://helpline.funkemedien.de/helpLinePortal/en-US/App/Cases/Detail/' + oid[1] + '/' + odefid[1];
-  console.log(url);
-  window.open(url);
-}
-
-
-console.log('hbo running','no Syntax Errors');
+console.log('hbo running','no Syntax Errors', 'Service-Request');
