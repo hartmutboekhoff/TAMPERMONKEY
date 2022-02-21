@@ -149,10 +149,23 @@ function getValueIfNotEmptyString(selector,attribute) {
 
 function abortReading() {
   UtteranceQueue.length = 0;
+  UtteranceHistoryQueue.length = 0;
   window.speechSynthesis.cancel();
 }
-function skipToNextReading() {
-  if( UtteranceQueue.length > 0 ) window.speechSynthesis.cancel();
+function speakNextUtterance() {
+  if( UtteranceQueue.length > 0 ) 
+    window.speechSynthesis.cancel();
+}
+function speakPreviousUtterance() {
+  if( UtteranceHistoryQueue.length > 1 && 
+      ( window.speechSynthesis.speaking || window.speechSynthesis.paused ) ) {
+    const repeat = UtteranceHistoryQueue.splice(-2, 2);
+    UtteranceQueue.splice(0, 0, ...repeat)
+    window.speechSynthesis.cancel();
+  }
+  
+  if( UtteranceQueue.length > 0 ) 
+    window.speechSynthesis.cancel();
 }
 function pauseResumeReading() {
   if(window.speechSynthesis.paused )
@@ -164,19 +177,20 @@ function pauseResumeReading() {
 }
 
 const UtteranceQueue = [];
+const UtteranceHistoryQueue = [];
 function queueUtterances(...texts) {
   function readNext() {
     const u = UtteranceQueue.shift();
+    UtteranceHistoryQueue.push(u);
     if( u != undefined ) {
       u.onend = readNext;
       window.speechSynthesis.speak(u);
      }
   }
 
-  UtteranceQueue.push(...texts.map(t=>{
+  UtteranceQueue.push(...texts.filter(t=>t!='').map(t=>{
     const u = new SpeechSynthesisUtterance(t);
     u.lang = 'de-DE';
-console.log(u.lang,u);
     
     return u;
   }));
@@ -187,7 +201,6 @@ function showUserView() {
   const oid = location.search.match(/\bOBJECTID=(\d*)/);
   const odefid = location.search.match(/\bOBJECTDEFID=(\d*)/);
   const url = 'https://helpline.funkemedien.de/helpLinePortal/en-US/App/Cases/Detail/' + oid[1] + '/' + odefid[1];
-  console.log(url);
   window.open(url);
 }
 
@@ -195,7 +208,8 @@ window.addEventListener("load", ()=>{
   document.addEventListener('keydown', e=>KeyHandlers.dispatch(e));
 
   KeyHandlers.add('Escape', abortReading);
-  KeyHandlers.add('Tab', skipToNextReading);
+  KeyHandlers.add('Tab', speakNextUtterance);
+  KeyHandlers.add('Shift+Tab', speakPreviousUtterance);
   KeyHandlers.add('Ctrl+Space', pauseResumeReading);
 
   KeyHandlers.add('Ctrl+NumpadDecimal',showUserView);
@@ -229,6 +243,18 @@ const NewStyles =
 +'input#DateTimeControlREGISTRATIONTIMEcalendarTB, input#TextBoxSubject {'
 +'  font-size: 1.2em;'
 +'  font-weight: bold'
++'}'
++'#upCheckBoxSUPUBLISHED>span {'
++'  background-color: red;' 
++'  padding: 2px 10px;' 
++'}'
++'#upCheckBoxSUPUBLISHED label {'
++'  color: white;' 
++'  font-weight: bold;' 
++'}'
++'#LabelSUPublished {'
++'  color: white;' 
++'  font-weight: bold;' 
 +'}'
 ;
 
@@ -295,26 +321,42 @@ function readAloud(withHint) {
   }
 }
 async function readOverviewAloud() {
+  function getRawText(sitr) {
+    const rows = sitr.querySelectorAll("td+td tr");
+    for( let r of rows ) {
+      if( r.children[0].innerText == 'Rohtext' )
+        return r.children[1].innerText || '';
+    }
+    return '';
+  }
+  function getFormattedText(sitr) {
+  return [...sitr.children[1].children]
+               .slice(1)
+               .map(e=>e.innerText)
+               .filter(t=>t.match(/[a-zA-Z0-9ßäöüÄÖÜ]/)!=undefined)
+               .join(', ');
+  }
+  
   let text = await waitForValue(()=>getValueIfNotEmptyString('#CaseOverview span.ovDescription','innerText'),10);
   const subitems = [...document.querySelectorAll('#CaseOverview div.ovSUItem>table>tbody>tr')]
                      .map(sitr=>{
-                       if( sitr.children[1] == undefined || sitr.children[1].children[1] == undefined ) return '';
+                       const msg = getRawText(sitr) + getFormattedText(sitr);
+                       if( msg == '' ) return '';
                          
                        let txt = sitr.children[0].innerText + '. Kommentar: ';
                        const innerTbody = sitr.children[1].children[0].children[0];
                        txt += innerTbody.children[0].children[1].innerText + ' ';
                        txt += innerTbody.children[1].children[1].innerText.slice(0,-3) + ', ';
-                       txt += sitr.children[1].children[1].innerText;
-                       return txt;
+                       return txt + msg;
                      });
   queueUtterances(text, ...subitems.reverse(),'Keine weiteren Kommentare.');
 }
 function readDescriptionAloud() {
   Promise.allSettled([getTitle(),getDate(),getAuthor(),getDescription()])
     .then(r=>{
-      queueUtterances( r[0].value 
-                       + ', erstellt am: ' + r[1].value + 
-                       + ', von: ' + r[2].value.author,
+      queueUtterances( r[0].value,
+                       ', erstellt am: ' + r[1].value,
+                       ', von: ' + r[2].value.author,
                        r[3].value );
     });
 }

@@ -148,10 +148,23 @@ function getValueIfNotEmptyString(selector,attribute) {
 
 function abortReading() {
   UtteranceQueue.length = 0;
+  UtteranceHistoryQueue.length = 0;
   window.speechSynthesis.cancel();
 }
-function skipToNextReading() {
-  if( UtteranceQueue.length > 0 ) window.speechSynthesis.cancel();
+function speakNextUtterance() {
+  if( UtteranceQueue.length > 0 ) 
+    window.speechSynthesis.cancel();
+}
+function speakPreviousUtterance() {
+  if( UtteranceHistoryQueue.length > 1 && 
+      ( window.speechSynthesis.speaking || window.speechSynthesis.paused ) ) {
+    const repeat = UtteranceHistoryQueue.splice(-2, 2);
+    UtteranceQueue.splice(0, 0, ...repeat)
+    window.speechSynthesis.cancel();
+  }
+  
+  if( UtteranceQueue.length > 0 ) 
+    window.speechSynthesis.cancel();
 }
 function pauseResumeReading() {
   if(window.speechSynthesis.paused )
@@ -163,19 +176,20 @@ function pauseResumeReading() {
 }
 
 const UtteranceQueue = [];
+const UtteranceHistoryQueue = [];
 function queueUtterances(...texts) {
   function readNext() {
     const u = UtteranceQueue.shift();
+    UtteranceHistoryQueue.push(u);
     if( u != undefined ) {
       u.onend = readNext;
       window.speechSynthesis.speak(u);
      }
   }
 
-  UtteranceQueue.push(...texts.map(t=>{
+  UtteranceQueue.push(...texts.filter(t=>t!='').map(t=>{
     const u = new SpeechSynthesisUtterance(t);
     u.lang = 'de-DE';
-console.log(u.lang,u);
     
     return u;
   }));
@@ -186,17 +200,16 @@ function showUserView() {
   const oid = location.search.match(/\bOBJECTID=(\d*)/);
   const odefid = location.search.match(/\bOBJECTDEFID=(\d*)/);
   const url = 'https://helpline.funkemedien.de/helpLinePortal/en-US/App/Cases/Detail/' + oid[1] + '/' + odefid[1];
-  console.log(url);
   window.open(url);
 }
 
 window.addEventListener("load", ()=>{
   document.addEventListener('keydown', e=>KeyHandlers.dispatch(e));
-console.log('aaaaaaaaaaaa');
+
   KeyHandlers.add('Escape', abortReading);
-  KeyHandlers.add('Tab', skipToNextReading);
+  KeyHandlers.add('Tab', speakNextUtterance);
+  KeyHandlers.add('Shift+Tab', speakPreviousUtterance);
   KeyHandlers.add('Ctrl+Space', pauseResumeReading);
-console.log('aaaaaaaaaaaa');
 
   KeyHandlers.add('Ctrl+NumpadDecimal',showUserView);
   
@@ -219,7 +232,7 @@ const NewStyles =
 async function getAuthor() {
   return await waitForValue(()=>getValueIfNotEmptyString('#vm\\.Sys\\.Requester','innerText'),10);
 }
-async function getDate() {
+async function getDateFromId() {
   const DateRegEx = /(\d{4})(\d{2})(\d{2})/;
   try{
     const val = await waitForValue(()=>getValueIfNotEmptyString('#vm\\.Sys\\.Referencenumber','innerText'),10);
@@ -233,19 +246,58 @@ async function getTitle() {
   return await waitForValue(()=>getValueIfNotEmptyString('#vm\\.Sys\\.Subject','value'),10);
 }
 async function getDescription() {
-  return await waitForValue(()=>getValueIfNotEmptyString('#vm\\.Sys\\.Description','value'),10);
+  return  waitForValue(()=>getValueIfNotEmptyString('#vm\\.Sys\\.Description','value'),10);
+}
+async function getComments() {
+  return waitForValue(()=>{
+    return [...document.querySelectorAll('div.activitylog-row div.activitylog-activity')]
+      .map((e,ix)=>({
+        date: e.querySelector('a.activitylog-activity-header-date'),
+        editor: e.querySelector('a.activitylog-activity-header-editor'),
+        what: e.querySelector('a.activitylog-activity-header-comment-single'),
+        text: e.querySelector('span.activitylog-activity-comment-text'),
+        ix: ix+1,
+      }))
+      .filter(e=>e.text && e.text.innerText != '')
+      .reverse()
+      
+      .map(e=>
+        e.ix+'. Kommentar: '
+               + ( e.date? formatDate(e.date.innerText) : '' )
+               + ( e.editor?', von: '+e.editor.innerText : '' )
+               + ( e.what && e.what.innerText.indexOf('hat einen Kommentar hinzugefügt.') < 0? ', '+(e.what.innerText || "") : '' )
+               + ', ' + e.text.innerText
+               
+      ) },10);
+}
+
+function formatDate(dStr) {
+  try {
+    const d = new Date(dStr);
+    const t = ('0'+d.getDate()).slice(-2)+'.'
+           +('0'+(d.getMonth()+1)).slice(-2)+'.'
+           +(d.getYear()+1900)+' '
+           +d.getHours() +':'
+           +d.getMinutes();
+    console.log(t);
+    return t;
+  }
+  catch(e) {
+    console.log(e);
+    return '';
+  }
 }
 
 function readAloud() {
-  Promise.allSettled([getTitle(), getDate(), getAuthor(), getDescription()])
+  Promise.allSettled([getTitle(), getDateFromId(), getAuthor(), getDescription(), getComments()])
     .then(r=>{
-      const text = 'Aufgabe: ' + r[0].value + '.\n' 
-                   + 'Erstellt am: ' + r[1].value + '\n'
-                   + 'Von: ' + r[2].value + '\n\n'
-                   + r[3].value;
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.lang = 'de-DE';
-      window.speechSynthesis.speak(utter);
+      queueUtterances('Aufgabe: ' + r[0].value, 
+                      'Erstellt am: ' + r[1].value,
+                      'Von: ' + r[2].value,
+                      r[3].value);
+
+      if( Array.isArray(r[4].value) )
+        queueUtterances(...r[4].value.reverse(), 'Keine weiteren Kommentare');
     });
 }
 
