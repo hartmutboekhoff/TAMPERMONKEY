@@ -296,7 +296,7 @@ function readAloud() {
                       'Von: ' + r[2].value,
                       r[3].value);
 
-      if( Array.isArray(r[4].value) )
+      if( Array.isArray(r[4].value) && r[4].value.length > 0 )
         queueUtterances(...r[4].value.reverse(), 'Keine weiteren Kommentare');
     });
 }
