@@ -145,6 +145,71 @@ function getValueIfNotEmptyString(selector,attribute) {
   return val == '' ? undefined : val;
 }
 
+function optimizeDateText(d) {
+  function toDateObj(d) {
+    try {
+      const r = new Date(d);
+      if( !isNaN(r) ) return r;
+    }
+    catch(e) {
+    }
+    
+    const dstr = d.toString();
+    let m = dstr.match(/(\d{2})\.(\d{2})\.(\d{4})\s*(\d{2}):(\d{2}):(\d{2})/);
+    if( m != undefined ) 
+      return new Date(m[3],m[2]-1,m[1],m[4],m[5],m[6]);
+    
+    m = dstr.match(/(\d{2})\.(\d{2})\.(\d{4})\s*(\d{2}):(\d{2})/);    
+    if( m != undefined ) 
+      return new Date(m[3],m[2]-1,m[1],m[4],m[5]);
+    
+    m = dstr.match(/(\d{2})\.(\d{2})\.(\d{4})/);    
+    if( m != undefined ) 
+      return new Date(m[3],m[2]-1,m[1]);
+    
+    return undefined;
+  }
+  function datePart(d) {
+    return new Date(d.toDateString());
+  }
+  function addDays(d,n) {
+    const nd = new Date(d);
+    nd.setDate(nd.getDate() + n);
+    return nd;
+  }
+  function dateString(d) {
+    return d.getDate() + 
+           ['. Januar ','. Februar ','. März ','. April ','. Mai ','. Juni ','. Juli ','. August ','. September ','. Oktober ','. November ','. Dezember '][d.getMonth()] +
+           (d.getYear()+1900);
+  }
+  function timeString(d) {
+    return d.toTimeString().slice(0,5);
+  }
+
+  try {
+    const dt = toDateObj(d);
+    const dp = datePart(dt);
+    const today = datePart(new Date());
+
+    if( addDays(today, -7) >= dp ) {
+      console.log(dateString(dt) , timeString(dt));
+      return dateString(dt) + ' ' + timeString(dt);
+    }
+      
+    if( today.getTime() == dp.getTime() )
+      dstr = 'Heute ';
+    else if( addDays(today,-1).getTime() == dp.getTime() )
+      dstr = 'Gestern ';
+    else //if( addDays(today, -7) < dp )
+      dstr = ['Sonntag ','Montag ','Dienstag ','Mittwoch ','Donnerstag ','Freitag ','Samstag '][dp.getDay()];
+
+    return dstr + ' ' + timeString(dt);
+  }
+  catch(e) {
+    return d;
+  }
+}
+
 
 
 function abortReading() {
@@ -200,7 +265,7 @@ function queueUtterances(...texts) {
 function showUserView() {
   const oid = location.search.match(/\bOBJECTID=(\d*)/);
   const odefid = location.search.match(/\bOBJECTDEFID=(\d*)/);
-  const url = 'https://helpline.funkemedien.de/helpLinePortal/en-US/App/Cases/Detail/' + oid[1] + '/' + odefid[1];
+  const url = 'https://helpline.funkemedien.de/helpLinePortal/de-DE/App/Cases/Detail/' + oid[1] + '/' + odefid[1];
   window.open(url);
 }
 
@@ -274,8 +339,9 @@ function getAuthor() {
   else
     return { author: author, name: author };
 }
+
 function getDate() {
-  return document.getElementById('DateTimeControlREGISTRATIONTIMEcalendarTB').value.slice(0,16);
+  return document.getElementById('DateTimeControlREGISTRATIONTIMEcalendarTB').value.slice(0,16);  
 }
 function getTitle() {
   return document.getElementById('TextBoxSubject').value;
@@ -357,7 +423,7 @@ function readDescriptionAloud() {
   Promise.allSettled([getTitle(),getDate(),getAuthor(),getDescription()])
     .then(r=>{
       queueUtterances( r[0].value,
-                       ', erstellt am: ' + r[1].value,
+                       ', erstellt: ' + optimizeDateText(r[1].value),
                        ', von: ' + r[2].value.author,
                        r[3].value );
     });
@@ -370,7 +436,7 @@ function readStatusAloud() {
   if( editor != '<Bitte wählen>')
     text += ', Bearbeiter: ' + editor;
 
-  text += ', Erstellt am: ' + getDate()
+  text += ', Erstellt: ' + optimizeDateText(getDate())
           + ', Von: ' + getAuthor().author;
   
       const utter = new SpeechSynthesisUtterance(text);
