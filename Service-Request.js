@@ -178,9 +178,11 @@ function optimizeDateText(d) {
     return nd;
   }
   function dateString(d) {
+    const now = new Date();
+    const monthOnly = d.getYear() == now.getYear() || ( d.getYear()+1 == now.getYear() && d.getMonth() > now.getMonth() );
     return d.getDate() + 
            ['. Januar ','. Februar ','. März ','. April ','. Mai ','. Juni ','. Juli ','. August ','. September ','. Oktober ','. November ','. Dezember '][d.getMonth()] +
-           (d.getYear()+1900);
+           (monthOnly? '' : (d.getYear()+1900));
   }
   function timeString(d) {
     return d.toTimeString().slice(0,5);
@@ -191,9 +193,9 @@ function optimizeDateText(d) {
     const dp = datePart(dt);
     const today = datePart(new Date());
 
-    if( addDays(today, -7) >= dp ) {
+    if( addDays(today, -7) >= dp ) { // älter als 1 Woche
       console.log(dateString(dt) , timeString(dt));
-      return dateString(dt) + ' ' + timeString(dt);
+      return dateString(dt);// + ' ' + timeString(dt);
     }
       
     if( today.getTime() == dp.getTime() )
@@ -206,6 +208,7 @@ function optimizeDateText(d) {
     return dstr + ' ' + timeString(dt);
   }
   catch(e) {
+    console.log(e);
     return d;
   }
 }
@@ -414,7 +417,7 @@ async function readOverviewAloud() {
                        let txt = sitr.children[0].innerText + '. Kommentar: ';
                        const innerTbody = sitr.children[1].children[0].children[0];
                        txt += innerTbody.children[0].children[1].innerText + ' ';
-                       txt += innerTbody.children[1].children[1].innerText.slice(0,-3) + ', ';
+                       txt += optimizeDateText(innerTbody.children[1].children[1].innerText.slice(0,-3)) + ', ';
                        return txt + msg;
                      });
   queueUtterances(text, ...subitems.reverse(),'Keine weiteren Kommentare.');
