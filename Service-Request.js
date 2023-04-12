@@ -108,31 +108,27 @@ function addStyles(newStyles) {
   document.getElementsByTagName('head')[0].appendChild(s);
 }
 
-const MaxAttempts = 10;
+const MaxAttempts = 100;
 
-function waitForValue(f, maxAttempts) {
-  if( Number.isInteger(maxAttempts) || maxAttempts == 0 ) 
-    maxAttempts = maxAttempts || -1;
+function waitFor(what, maxAttempts=100) {
+  const fn  = typeof what == 'function'? what : ()=>document.querySelector(what);
  
   return new Promise((resolve,reject)=>{
     const timer = window.setInterval(()=>{
       try {
-        const val = f();
-        if( val == undefined && --maxAttempts != 0 )
-          return;
-
+        const val = fn();
+        if( val == undefined && --maxAttempts > 0 ) return;
         window.clearInterval(timer);
-
         if( val != undefined )
           resolve(val);
         else
           reject('MaxAttempts exceeded');
       }
       catch(e) {
-        if( --maxAttempts == 0 )
+        if( --maxAttempts <= 0 )
           reject(e);
       }
-    }, 500);
+    }, 50);
   });
 }
 function getValue(selector, attribute) {
@@ -350,7 +346,7 @@ function getTitle() {
   return document.getElementById('TextBoxSubject').value;
 }
 async function getDescription() {
-  return await waitForValue(()=>getValueIfNotEmptyString('div.helpLineComplexTextLabel','innerText'),MaxAttempts);
+  return await waitFor(()=>getValueIfNotEmptyString('div.helpLineComplexTextLabel','innerText'),MaxAttempts);
 }
 
 
@@ -408,7 +404,7 @@ async function readOverviewAloud() {
                .join(', ');
   }
   
-  let text = await waitForValue(()=>getValueIfNotEmptyString('#CaseOverview span.ovDescription','innerText'),10);
+  let text = await waitFor(()=>getValueIfNotEmptyString('#CaseOverview span.ovDescription','innerText'),MaxAttempts);
   const subitems = [...document.querySelectorAll('#CaseOverview div.ovSUItem>table>tbody>tr')]
                      .map(sitr=>{
                        const msg = getRawText(sitr) + getFormattedText(sitr);
@@ -452,7 +448,7 @@ function readContactInfoAloud() {
   gotoTabN(0);
   Promise.allSettled([
     getAuthor(),
-    waitForValue(()=>getValue('#TextBoxPhoneNumber','value'),MaxAttempts)
+    waitFor(()=>getValue('#TextBoxPhoneNumber','value'),MaxAttempts)
   ]).then(results=>{
     const eMail = results[0].value.eMail
                     .replaceAll(/\b/g, ' ')
@@ -466,6 +462,29 @@ console.log('"' + eMail+'"');
   });
 }
 
+
+async function startEmail(publishSuMessage) {
+  if( publishSuMessage )
+    document.getElementById('CheckBoxSUPUBLISHED').click();
+
+  const log = (...v)=>(console.log(...v),v[v.length-1]);
+  let suMessage;
+  
+  waitFor(()=>getValue('#ComplexTextSUDescriptionEditor,#ComplexTextDiagnosisTextEditor','value'))
+    .then(v=>suMessage=v)
+    //.then(v=>log('ComboBoxCMSendMaillb',v))
+    .then(()=>gotoTab('#TabPageEmailItem_Header'))
+    .then(()=>waitFor('#ComboBoxCMSendMailimg'))
+    .then(e=>e.click())
+    .then(()=>waitFor('div#ComboBoxCMSendMaillb div[data-value="100873"]'))
+    //.then(v=>log('ComboBoxCMSendMaillb',v))
+    .then(e=>e.click())
+    .then(()=>waitFor('#ComplexTextMailBodyHtmlEditor_ExtenderContentEditable'))
+    //.then(v=>log('ComplexTextMailBodyHtmlEditor_ExtenderContentEditable',v))
+    .then(e=>e.innerHTML += '\n\n' + suMessage)
+    //.then(v=>log('html',v))
+    .catch(e=>console.error(e));
+}
 
 window.addEventListener("load", ()=>{
   addStyles(NewStyles);
@@ -488,6 +507,9 @@ console.log('adding numpad handlers');
   KeyHandlers.add('Ctrl+Numpad7',(e)=>(gotoTabN(7),e.preventDefault()));
   KeyHandlers.add('Ctrl+Numpad8',(e)=>(gotoTabN(8),e.preventDefault()));
   KeyHandlers.add('Ctrl+Numpad9',(e)=>(gotoTabN(9),e.preventDefault()));
+  
+  KeyHandlers.add('Ctrl+IntlBackslash',e=>startEmail());
+  KeyHandlers.add('Ctrl+Shift+IntlBackslash',e=>startEmail(true));
   
   readDescriptionAloud();
   
