@@ -1,0 +1,28 @@
+.tabControlHeaderContainer .tabControlHeader {
+	font-size: 2em;
+	background-color: #fd8;
+}
+.tabControlHeaderContainer span {
+	background: linear-gradient(#eb0, #fc4);
+	padding: 0 .5em;
+	margin: 0 1px;
+	border: 2px solid #b80;
+	border-radius: 10px 10px 0 0;
+	border-bottom: none;
+}
+
+.tabControlHeaderContainer span.selected {
+	background: linear-gradient(#4b4, #4f4);
+	border-color: #08f;
+	border-width: 3px;
+	border-bottom: none;
+}
+
+.tabControlHeaderContainer #TabPageSolutionItem_Header, 
+.tabControlHeaderContainer #TabPageActivitiesItem_Header {
+	border-color: black;
+	border-width: 3px;
+	border-bottom: none;
+	font-weight: bold;
+  
+}
