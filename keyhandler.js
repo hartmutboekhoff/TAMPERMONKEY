@@ -141,7 +141,13 @@
  	    this.#contextStack.splice(0, depth);
   	  return this.#contextStack.length;
   	}
-   	dispatch(ev) {
+  	dispatch(ev) {
+  	  console.group('greasemonkey key-handler');
+  	  const r = this.#dispatch(ev);
+  	  console.groupEnd();
+  	  return r;
+  	}
+   	#dispatch(ev) {
    	  function execute(h) {
    	    if( !h.options?.excludeFormFields 
    	        || !['INPUT', 'SELECT', 'TEXTAREA', 'BUTTON', 'OPTION', 'OPTGROUP'].includes(ev.target.tagName) ) {
@@ -215,7 +221,7 @@
   		} // while
   		
   		handle(this.#map, ev.code, modifiers);
-  		
+
   		return false;
   	}  
   }
@@ -229,26 +235,10 @@
   });
 })();
 
-function NP(f) {
-  return ev=>{
-    const r = f(ev);
-    ev.stopPropagation();
-    return r;
-  }
-}
-function ND(f) {
-  return ev=>{
-    const r = f(ev);
-    ev.preventDefault();
-    return r;
-  }
-}
-function NPND(f) {
-  return ev=>{
-    const r = f(ev);
-    ev.stopPropagation();
-    ev.preventDefault();
-    return r;
-  }
-}
-const NDNP = NPND;
+const NP = {stopPropagation:true};
+const ND = {preventDefault:true};
+const NDNP = {preventDefault:true,stopPropagation:true};
+const NPND = NDNP;
+const HFF = {excludeFormFields:false};
+
+console.log('keyhendler included');
