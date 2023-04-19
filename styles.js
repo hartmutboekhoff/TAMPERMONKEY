@@ -1,4 +1,3 @@
-console.group('greasemonkey');
 console.log('starting', 'Version '+GM_info.script.version);
 
 function addStyle(css) {

@@ -1,0 +1,101 @@
+.tabControlHeaderContainer .tabControlHeader {
+	font-size: 2em;
+	background-color: #fd8;
+}
+.tabControlHeaderContainer span {
+	background: linear-gradient(#eb0, #fc4);
+	padding: 0 .5em;
+	margin: 0 1px;
+	border: 2px solid #b80;
+	border-radius: 10px 10px 0 0;
+	border-bottom: none;
+}
+
+.tabControlHeaderContainer span.selected {
+	background: linear-gradient(#4b4, #4f4) !important;
+	border-color: #08f;
+	border-width: 3px;
+	border-bottom: none;
+}
+
+.tabControlHeaderContainer #TabPageSolutionItem_Header, 
+.tabControlHeaderContainer #TabPageActivitiesItem_Header {
+	background: linear-gradient(#fd0, #fe2);
+	border-color: #67f;
+	border-width: 3px;
+	border-bottom: none;
+	font-weight: bold;
+	box-shadow: 0px -3px 4px blue;
+}
+
+.labelSubject {
+  font-weight: bold;
+}
+
+
+.match-marker:before {
+  position:relative;
+  border: 1px solid blue;
+  background-color: yellow;
+  width: 30px;
+  height: 30px;
+  font-size: 20px;
+  z-index: 888;
+  content: "M0";
+  display:table-cell;
+}
+
+/* Tasks  Escenic-Accounts loeschen */
+.esc-delete-account {
+  background: linear-gradient(#ffe0ef, #fde 20%, #fde 70%, #e8a) !important;
+  color: black;
+}
+.esc-delete-account MAT-CELL {
+  color:black !important;
+  font-weight: bold !important;
+}
+
+/* Tabs */
+
+div.mat-tab-label-content,
+div#SubmenuProcess li {
+  background: linear-gradient(#fd9, #ec8 20%, #ec8 80%, #ca7) !important;
+  padding: 0 2em !important;
+  border-radius: 10px 10px 0 0;
+  border: 3px solid #a73 !important;
+  color: black !important;
+}
+div.mat-tab-label-content {
+  margin: 7px 2px 0 2px !important;
+}
+
+.mat-tab-label-active div.mat-tab-label-content,
+div#SubmenuProcess li.active {
+  background: linear-gradient(#4e4, #3d3 20%, #3d3 80%, #2b2) !important;
+  ---background: linear-gradient(#fe4, #ed3 20%, #ed3 80%, #cb2) !important;
+} 
+div#SubmenuProcess li a {
+  color: black !important;
+}
+div#SubmenuProcess li.active a {
+  background-color: transparent !important;
+}
+
+/* Task Dialog */
+input#vm\.Sys\.Subject {
+  font-size: 2em !important;
+  height: 2em !important;
+}
+
+div.ng-scope input,
+div.ng-scope textarea,
+div.ng-scope select {
+  border: 2px solid #6af;
+  border-radius: 2px;
+  background-color: #f8f8ff !important;
+}
+div.ng-scope input[disabled],
+div.ng-scope textarea[disabled],
+div.ng-scope select[disabled] {
+  border: 2px solid #6af;
+}
