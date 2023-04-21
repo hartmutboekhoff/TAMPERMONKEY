@@ -1,14 +1,34 @@
 <html>
   <head>
     <title>testdokument</title>
-    <script src="./dynamicStyle.js"></script>
-    <script>
+    <style>
+      p:has(em) {
+        font-size: 3em;
+      }
       
+    </style>
+    
+    <script src="./dynamicStyle.js"></script>
+    <script src="./readOut.js"></script>
+    <script>
+      const a ="1/24/2023 11:44:01 AM";
+      const b='12/25/2022 03:37 PM';
+      const c = 'text '+a+' weiter '+b+'gaga';
+      
+      	
+      const rx=/(\d{1,2})\/(\d{1,2})\/(\d{4}) (\d{1,2}):(\d{2})(?::(\d{2}))? (AM|PM)/g;
+      console.log('a',a.match(rx));
+      console.log('B',b.match(rx));
+      console.log(c);
+      console.log(c.replace(rx,(...args)=>{
+        return args[2]+'.'+args[1]+'.'+args[3]+' '+(args[7]=='PM'?+args[4]+12:args[4])+':'+args[5];
+      }));
+
     </script>
     <script>
       window.registerForReadOut('article');
-      window.registerForReadOut('p');
-      window.registerForReadOut('em');
+      window.registerForReadOut('p',{exclude:'em'});
+      window.registerForReadOut('em',{pitch:10, rate:.5, volume:10});
       window.registerForReadOut('input');
       
 
@@ -30,7 +50,7 @@
     <div id="thediv">
       div L1
       <div>div L2</div>
-      div L1 - hinten
+      div L1 - hinten 	1/24/2023 11:44:01 AM und so
       
     </div>
     <form>

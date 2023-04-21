@@ -99,3 +99,12 @@ div.ng-scope textarea[disabled],
 div.ng-scope select[disabled] {
   border: 2px solid #6af;
 }
+
+div.activitylog > div.activitylog-row {
+  background-color: #fff8b0;
+  box-shadow: 2px 2px 8px #ca6;
+  border: 1px solid #ca6;
+  padding: .5em 1em;
+  color: black !important;
+  
+}

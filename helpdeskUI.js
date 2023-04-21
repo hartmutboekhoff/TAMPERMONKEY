@@ -11,8 +11,8 @@
 // @include         https://helpline.funkemedien.de/WebDesk/WebForms/*
 // @include         https://helpline.funkemedien.de/WebDesk/*
 // @include         https://helpline.funkemedien.de/ServicewareProcesses/tasks
-// @include         https://helpline.funkemedien.de/WebDesk/Task/TaskDialog*
-
+// @include         https://helpline.funkemedien.de/WebDesk/Task/TaskDialog
+// @include         https://helpline.funkemedien.de/WebDesk/Task/TaskDialog?*
 
 // @downloadURL     http://localhost:3000/greasemonkey/helpdeskUI.js
 // @updateURL       http://localhost:3000/greasemonkey/helpdeskUI.js
@@ -29,13 +29,16 @@
 console.log('greasemonkey is working');
 window.addEventListener('load',()=>{
   console.group('greasemonkey')
+  
+  // ================================================
   console.log('initializing shortcut-keys');
   
   
   
+  // ================================================
   console.log('initializing read-out elements');
   window.registerForReadOut('.labelSubject');
-  window.registerForReadOut('#ComplexTextDescription');
+  window.registerForReadOut('#ComplexTextDescription',{exclude:'div.helpLineComplexTextLabel>table'});
   window.registerForReadOut('.tabControlHeader span');
   window.registerForReadOut('div.jqx-grid-cell.jqx-item');
   window.registerForReadOut('div#contenttableHLGrid>div');
@@ -43,8 +46,12 @@ window.addEventListener('load',()=>{
   window.registerForReadOut('mat-cell.mat-cell.mat-cell-data');
   window.registerForReadOut('textarea#vm\\.Sys\\.Description');
   window.registerForReadOut('input#vm\\.Sys\\.Subject');
+  window.registerForReadOut('div.activitylog > div.activitylog-row',{exclude:'.activitylog-activity-changes,.activitylog-activity-propertyChanges,.activitylog-activity-header,label,span.comment-title'});
+  window.registerForReadOut('div.activitylog > div.activitylog-row > div',{exclude:'.activitylog-activity-changes,.activitylog-activity-propertyChanges,label'});
+  window.registerForReadOut('#GroupBoxActivityDescription',{exclude:'#GroupBoxActivityDescription>span'});
+  window.registerForReadOut('#SUControlEDITOR>div>div',{exclude:'#PanelContentSUControlEDITOR2 span:nth-child(-n+1)'});
 
-
+  // ================================================
   console.log('initializing mutation-reactions');
   window.onMutation({
     selector: 'MAT-ROW.mat-row',
@@ -58,6 +65,7 @@ window.addEventListener('load',()=>{
 
 
   
+  // ================================================
   console.log('onLoad() finished successfully');
   console.groupEnd();
 });

@@ -21,7 +21,7 @@
       this.#prefixkey = (prefixkey||'') == ''? '' : prefixkey + ', ';
 
       const u = e=>{
-        //console.debug(this.#prefixkey + e.code + ' is unhandled');
+        console.debug(this.#prefixkey + e.code + ' is unhandled');
       }
       u.unhandled = 'unhandled';
     	KeyModifiers.forEach(m=>this[m]=u);

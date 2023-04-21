@@ -6,7 +6,61 @@
       
     return filter(obj);
   }
+  /*
+  flattenArray(arr, start, limit) {
+    if( start == 0 )
+      return arr.flat(limit);
+   
+    const res = []; 
+    for( let a of arr )
+      res.push(Array.isArray(a)? flattenArray(a, start-1, limit) : a);
+    return res;
+  }  
+  */
 
+  class NormalizedExtract {
+    constructor(extract) {
+      if( extract == undefined ) return;
+      
+      if( typeof extract == 'string' )
+        this.text = extract;
+      else if( typeof extract != 'object' ) 
+        return;
+      else if( Array.isArray(extract) ) 
+        this.nodes = extract;
+      else if( Array.isArray(extract.nodes) )
+        this.nodes = extract.nodes;
+      else if( typeof extract.text == 'string' )
+        this.text = extract.text;
+
+      if( extract.pitch != undefined ) this.pitch = extract.pitch;
+      if( extract.rate != undefined ) this.rate = extract.rate;
+      if( extract.volume != undefined ) this.volume = extract.volume;
+      if( extract.language != undefined ) this.language = extract.language;
+    }
+    get isEmpty() {
+      return this.text == undefined && this.nodes == undefined;
+    }
+    get isNested() {
+      return this.nodes != undefined;
+    }
+    addPrefix(text) {
+      if( !isNested() ) this.#convertToNested()
+      this.nodes.unshift(new NormalizedExtract(text));
+    }
+    addSuffix(text) {
+      if( !isNested() ) this.#convertToNested()
+      this.nodes.push(new NormalizedExtract(text));
+    }
+    #convertToNested() {
+      if( this.nodes ) throw 'Invalid operation';
+      this.nodes = [new NormalizedExtract(this.text)];
+      delete this.text;
+    }
+  }
+  
+  
+  
   class UtteranceCollector {
     static #defaultOptions = {
       pitch: .8,
@@ -15,16 +69,22 @@
       language: 'de-DE',
     }
     #collected = new Set();
+    #exclude;
+    #customCollectors;
     
     constructor(node, options) {
       this.options = Object.assign({}, UtteranceCollector.#defaultOptions, options);
+      if( Array.isArray(this.options.exclude) )
+        this.#exclude = this.options.exclude.join(',');
+      else if( typeof this.options.exclude == 'string' )
+        this.#exclude = this.options.exclude;
+
       this.utterances = this.#collect(node);
     }
     #collect(n) {
       let extracted = this.#collectNode(n);
       if( !Array.isArray(extracted) ) extracted = [extracted];
-      const normalized = extracted.map(ex=>this.#normalize(ex))
-                                  .filter(n=>filterRecursiveObject(n,o=>o!=undefined&&((o.nodes!=undefined&&o.nodes.length>0)||(o.text!=undefined&&o.text!='')),'nodes'));
+      const normalized = extracted.filter(n=>filterRecursiveObject(n,o=>o!=undefined&&((o.nodes!=undefined&&o.nodes.length>0)||(o.text!=undefined&&o.text!='')),'nodes'));
       const utterances = normalized.map(n=>this.#buildUtterances(n, this.options))
                                    .flat(Infinity);
       return utterances;
@@ -32,11 +92,40 @@
     #collectNode(node) {
       if( this.#collected.has(node) ) return undefined;
       this.#collected.add(node);
-      return this.#extractNode(node);
+      
+      if( this.#isExcluded(node) ) return undefined;
+      
+      let cc;
+      let res;
+      if( this.#customCollectors != undefined && typeof n.matches == 'function' )
+        cc = this.customCollectors.find(c=>n.matches(c.selector));
+      
+      if( typeof cc?.extract == 'function' )
+        res = cc.extract(n);
+      else if( cc?.text != undefined )
+        res = cc.text;
+      else
+        res = this.#extractNode(node);
+
+      if( res == undefined ) return undefined;
+      
+      res = this.#normalize(res);
+      if( cc?.replacePattern != undefined && cc.replaceText != undefined )
+        this.#replaceRecursive(res, cc.replacePattern, cc.replaceText);
+     
+      return res;
     }
-    collectChildNodes(node) {
+    #collectChildNodes(node) {
       return [...node.childNodes].map(cn=>this.#collectNode(cn));
     }
+    #extractNode(n) {
+      const f = this[n.nodeName];
+      return typeof f == 'function'? f.apply(this,[n]) : this.default(n);
+    }
+    #isExcluded(node) {
+      return this.#exclude == undefined? false : !!node.matches?.(this.#exclude);
+    }
+
 
     #buildUtterances(tn,options) {
       if( tn.text != undefined ) {
@@ -57,10 +146,11 @@
         return tn.nodes.map(n=>this.#buildUtterances(n,opts2));
       }
     }
+
     #normalize(extract) {
       if( extract == undefined ) return undefined;
       
-    const norm = {};
+      const norm = {};
       
       if( typeof extract == 'string' )
         norm.text = extract;
@@ -73,26 +163,24 @@
       else if( typeof extract.text == 'string' )
         norm.text = extract.text;
 
-      if( !!norm.nodes )
-        norm.nodes = norm.nodes.map(n=>this.#normalize(n));
-
       if( extract.pitch != undefined ) norm.pitch = extract.pitch;
       if( extract.rate != undefined ) norm.rate = extract.rate;
       if( extract.volume != undefined ) norm.volume = extract.volume;
       if( extract.language != undefined ) norm.language = extract.language;
-
+      
+      if( extract.replaceText != undefined ) this.#replaceRecursive(norm);
+      
       return norm;
     }
-    #extractNode(n) {
-      const f = this[n.nodeName];
-      return typeof f == 'function'? f.apply(this,[n]) : this.default(n);
+    #replaceRecursive(normalized,replace) {
+      
+      
     }
 
     default(node) {
       if( node.childNodes != undefined && node.childNodes.length > 0 )
-        return this.collectChildNodes(node);
-      return (node.innerText??node.nodeValue)?.replace(/\s+/g,' ').trim();
-      //return node.childNodes.length > 0? this.collectChildNodes(node) : node.innerText;
+        return this.#collectChildNodes(node);
+      return (node.innerText ?? node.nodeValue)?.replace(/\s+/g,' ').trim();
     }
     ['#text'](node) {
       return node.nodeValue?.replace(/\s+/g,' ').trim();
@@ -174,7 +262,10 @@
         
       const u = new UtteranceCollector(e,options);
       k ??= e.id ?? e.className ?? e.nodeName;
-      this.#pushUtterances(u.utterances, k, e);
+      if( u.utterances.length == 0 )
+        this.#pushText('Kein Text.',k, e);
+      else
+        this.#pushUtterances(u.utterances, k, e);
     }
     read(v,options) {
       if( this.#current && this.#current.element == v ) 
@@ -213,11 +304,16 @@
     #selectors = [];
     #keyHandlers = {
       Escape: function(ev) {
-        this.cancel();
+        if( this.isReading() ) {
+          this.cancel();
+          ev.stopPropagation();
+          ev.preventDefault();
+        }
       },
       Tab: function(ev) {
         if( this.isReading ) {
           this.skip();
+          ev.stopPropagation();
           ev.preventDefault();
         }
       },
@@ -300,5 +396,5 @@
   }
 
   window.ReadOut = document.ReadOut = new ReadOutUI();
-  window.registerForReadOut = function(selector){window.ReadOut.registerReadOut(selector)};
+  window.registerForReadOut = function(selector,options){window.ReadOut.registerReadOut(selector,options)};
 })();
