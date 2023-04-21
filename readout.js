@@ -1,11 +1,17 @@
 (function() {
 
-  function filterRecursiveObject(obj,filter,recursiveProperty) {
-    if( obj != undefined && Array.isArray(obj[recursiveProperty]) )
-      obj[recursiveProperty] = obj[recursiveProperty].filter(o=>filterRecursiveObject(o,filter,recursiveProperty));
-      
-    return filter(obj);
+  function cleanupWhitespaces(s) {
+    return s != undefined? s.replace(/\s+/g,' ').trim() : '';
   }
+  function mergeUtteranceOptions(a, b, c) {
+    return {
+      pitch: a?.pitch ?? b?.pitch ?? c?.pitch,
+      rate: a?.rate ?? b?.rate ?? c?.rate,
+      volume: a?.volume ?? b?.volume ?? c?.volume,
+      language: a?.language ?? b?.language ?? c?.language,
+    };
+  } 
+
   /*
   flattenArray(arr, start, limit) {
     if( start == 0 )
@@ -19,11 +25,13 @@
   */
 
   class NormalizedExtract {
+    #text; #nodes;
+    
     constructor(extract) {
       if( extract == undefined ) return;
       
       if( typeof extract == 'string' )
-        this.text = extract;
+        this.#text = extract;
       else if( typeof extract != 'object' ) 
         return;
       else if( Array.isArray(extract) ) 
@@ -31,35 +39,90 @@
       else if( Array.isArray(extract.nodes) )
         this.nodes = extract.nodes;
       else if( typeof extract.text == 'string' )
-        this.text = extract.text;
+        this.#text = extract.text;
 
-      if( extract.pitch != undefined ) this.pitch = extract.pitch;
-      if( extract.rate != undefined ) this.rate = extract.rate;
-      if( extract.volume != undefined ) this.volume = extract.volume;
-      if( extract.language != undefined ) this.language = extract.language;
+      this.pitch = extract.pitch;
+      this.rate = extract.rate;
+      this.volume = extract.volume;
+      this.language = extract.language;
     }
     get isEmpty() {
-      return this.text == undefined && this.nodes == undefined;
+      return (this.#text == undefined || this.#text == '') 
+             && (this.#nodes == undefined || this.#nodes.length == 0);
     }
     get isNested() {
-      return this.nodes != undefined;
+      return this.#nodes != undefined;
     }
+    get isText() {
+      return this.#text != undefined;
+    }
+    get text() {
+      return this.#text;
+    }
+    set text(t) {
+      if( this.#nodes != undefined ) throw 'Cannot set text for nested node';
+      this.#text = t;
+    }
+    get nodes() {
+      return this.#nodes;
+    }
+    set nodes(n) {
+      if( this.#text != undefined ) throw 'Cannot add nested items to text-node';
+      this.#nodes = [...n].map(i=>i==undefined
+                                 ? undefined
+                                 : i.constructor.name == 'NormalizedExtract'
+                                 ? i
+                                 : new NormalizedExtract(i) 
+                             ).filter(i=>i!=undefined && !i.isEmptyy);
+    }
+    
     addPrefix(text) {
-      if( !isNested() ) this.#convertToNested()
-      this.nodes.unshift(new NormalizedExtract(text));
+      if( !this.isNested ) this.#convertToNested();
+      this.nodes.unshift(new NormalizedExtract(text.toString()));
     }
     addSuffix(text) {
-      if( !isNested() ) this.#convertToNested()
-      this.nodes.push(new NormalizedExtract(text));
+      if( !this.isNested ) this.#convertToNested();
+      this.nodes.push(new NormalizedExtract(text.toString()));
     }
     #convertToNested() {
-      if( this.nodes ) throw 'Invalid operation';
-      this.nodes = [new NormalizedExtract(this.text)];
-      delete this.text;
+      //if( this.#nodes ) throw 'Invalid operation';
+      this.#nodes = [new NormalizedExtract(this.#text)];
+      this.#text = undefined;
+    }
+    replace(pattern,replacement) {
+      if( pattern == undefined ) return;
+      
+      if( this.#text != undefined )
+        this.#text = this.#text.replace(pattern,replacement??'');
+      else if( this.#nodes != undefined )
+        this.#nodes.forEach(n=>n.replace(pattern,replacement??''));
+    }
+
+    getUtterances(options) {
+      options = mergeUtteranceOptions(this,options);
+
+      if( this.#text != undefined )  {
+        const u = new SpeechSynthesisUtterance(this.#text);
+        u.pitch = options.pitch;
+        u.rate = options.rate;
+        u.volume = options.volume;
+        u.lang = options.language;
+        return [u];
+      }
+      else if( this.#nodes != undefined )
+        return this.#nodes.map(n=>n.getUtterances(options)).flat();
+    }
+    applyCustomOptions(custom) {
+      if( custom.pitch != undefined ) this.pitch = custom.pitch;
+      if( custom.rate != undefined ) this.rate = custom.rate;
+      if( custom.volume != undefined ) this.volume = custom.volume;
+      if( custom.language != undefined ) this.language = custom.language;
+      
+      if( (custom.prefix??'') != '' ) this.addPrefix(custom.prefix);
+      if( (custom.suffix??'') != '' ) this.addSuffix(custom.suffix);
+
     }
   }
-  
-  
   
   class UtteranceCollector {
     static #defaultOptions = {
@@ -70,24 +133,49 @@
     }
     #collected = new Set();
     #exclude;
-    #customCollectors;
+    #customCollectors = [];
+    #extractedData;
     
     constructor(node, options) {
-      this.options = Object.assign({}, UtteranceCollector.#defaultOptions, options);
-      if( Array.isArray(this.options.exclude) )
-        this.#exclude = this.options.exclude.join(',');
-      else if( typeof this.options.exclude == 'string' )
-        this.#exclude = this.options.exclude;
-
-      this.utterances = this.#collect(node);
+      this.#initOptions(options);
+      this.#extractedData = this.#collectNode(node);
+      if( (this.prefix??'') != '' ) this.#extractedData.addPrefix(this.prefix);
+      if( (this.suffix??'') != '' ) this.#extractedData.addSuffix(this.suffix);
     }
-    #collect(n) {
-      let extracted = this.#collectNode(n);
-      if( !Array.isArray(extracted) ) extracted = [extracted];
-      const normalized = extracted.filter(n=>filterRecursiveObject(n,o=>o!=undefined&&((o.nodes!=undefined&&o.nodes.length>0)||(o.text!=undefined&&o.text!='')),'nodes'));
-      const utterances = normalized.map(n=>this.#buildUtterances(n, this.options))
-                                   .flat(Infinity);
-      return utterances;
+    get utterances() {
+      return this.#extractedData.getUtterances(mergeUtteranceOptions(this.options,UtteranceCollector.#defaultOptions)).filter(u=>!!u);
+    }
+    
+    convertDates() {
+      this.#extractedData.replace(
+        /(\d{1,2})\/(\d{1,2})\/(\d{4}) (\d{1,2}):(\d{2})(?::(\d{2}))? (AM|PM)/g,
+        (...args)=>' '+args[2]+'.'+args[1]+'.'+args[3]+' '+(args[7]=='PM'?+args[4]+12:args[4])+':'+args[5]+' '
+      );
+
+      
+    }
+
+    #initOptions(options) {
+      this.optoins = mergeUtteranceOptions(options, UtteranceCollector.#defaultOptions)
+
+      if( options == undefined ) return;
+
+      this.prefix = options.prefix;
+      this.suffix = options.suffix;
+
+      if( Array.isArray(options.exclude) )
+        this.#exclude = options.exclude.join(',');
+      else if( typeof options.exclude == 'string' )
+        this.#exclude = options.exclude;
+      
+      if( options.childElements != undefined )
+        for( let selector in options.childElements ) 
+          this.#customCollectors.push(Object.assign({},options.childElements[selector], {selector}));
+    }
+    #getCustomCollector(node) {
+      return typeof node.matches == 'function' 
+                ? this.#customCollectors?.find(c=>node.matches(c.selector))
+                : undefined;
     }
     #collectNode(node) {
       if( this.#collected.has(node) ) return undefined;
@@ -95,95 +183,45 @@
       
       if( this.#isExcluded(node) ) return undefined;
       
-      let cc;
-      let res;
-      if( this.#customCollectors != undefined && typeof n.matches == 'function' )
-        cc = this.customCollectors.find(c=>n.matches(c.selector));
+      const custom = this.#getCustomCollector(node);
+      const extract = this.#extractNode(node, custom);
       
-      if( typeof cc?.extract == 'function' )
-        res = cc.extract(n);
-      else if( cc?.text != undefined )
-        res = cc.text;
-      else
-        res = this.#extractNode(node);
+      if( extract == undefined ) return undefined;
 
-      if( res == undefined ) return undefined;
+      const norm = new NormalizedExtract(extract);
+      if( custom ) {
+        if( custom.replace )
+          norm.replace(custom.replace.pattern, custom.replace.replacement);
+        norm.applyCustomOptions(custom);
+      }
+      return norm;
+    }
+    #extractNode(node,custom) {
+      if( typeof custom?.extract == 'function' )
+        return custom.extract(node);
       
-      res = this.#normalize(res);
-      if( cc?.replacePattern != undefined && cc.replaceText != undefined )
-        this.#replaceRecursive(res, cc.replacePattern, cc.replaceText);
-     
-      return res;
+      if( custom?.text != undefined )
+        return custom.text.toString();
+      
+      const f = this[node.nodeName];
+      return typeof f == 'function'
+                ? f.apply(this,[node]) 
+                : this.default(node);
     }
     #collectChildNodes(node) {
       return [...node.childNodes].map(cn=>this.#collectNode(cn));
-    }
-    #extractNode(n) {
-      const f = this[n.nodeName];
-      return typeof f == 'function'? f.apply(this,[n]) : this.default(n);
     }
     #isExcluded(node) {
       return this.#exclude == undefined? false : !!node.matches?.(this.#exclude);
     }
 
-
-    #buildUtterances(tn,options) {
-      if( tn.text != undefined ) {
-        const u = new SpeechSynthesisUtterance(tn.text)
-        u.pitch =   tn.pitch ??    options.pitch;
-        u.volume =  tn.volume ??   options.volume;
-        u.rate =    tn.rate ??     options.rate;
-        u.lang = tn.language ?? options.language;
-        return u
-      }
-      else {
-        const opts2 = {
-          pitch:    tn.pitch ??    options.pitch,
-          volume:   tn.volume ??   options.volume,
-          rate:     tn.rate ??     options.rate,
-          language: tn.language ?? options.language,
-        };
-        return tn.nodes.map(n=>this.#buildUtterances(n,opts2));
-      }
-    }
-
-    #normalize(extract) {
-      if( extract == undefined ) return undefined;
-      
-      const norm = {};
-      
-      if( typeof extract == 'string' )
-        norm.text = extract;
-      else if( typeof extract != 'object' ) 
-        return undefined;
-      else if( Array.isArray(extract) ) 
-        norm.nodes = extract;
-      else if( Array.isArray(extract.nodes) )
-        norm.nodes = extract.nodes;
-      else if( typeof extract.text == 'string' )
-        norm.text = extract.text;
-
-      if( extract.pitch != undefined ) norm.pitch = extract.pitch;
-      if( extract.rate != undefined ) norm.rate = extract.rate;
-      if( extract.volume != undefined ) norm.volume = extract.volume;
-      if( extract.language != undefined ) norm.language = extract.language;
-      
-      if( extract.replaceText != undefined ) this.#replaceRecursive(norm);
-      
-      return norm;
-    }
-    #replaceRecursive(normalized,replace) {
-      
-      
-    }
-
     default(node) {
       if( node.childNodes != undefined && node.childNodes.length > 0 )
         return this.#collectChildNodes(node);
-      return (node.innerText ?? node.nodeValue)?.replace(/\s+/g,' ').trim();
+      return cleanupWhitespaces(node.innerText ?? node.nodeValue);
     }
     ['#text'](node) {
-      return node.nodeValue?.replace(/\s+/g,' ').trim();
+      return cleanupWhitespaces(node.nodeValue);
     }
     ['#comment'](node) {
       return undefined;
@@ -204,6 +242,14 @@
     }
     SELECT(node) {
       return [...node.options].find(o=>o.value == node.value)?.innerText;
+    }
+    IMG(node) {
+      let text = node.title;
+      if( text != node.alt ) text += ', '+node.alt;
+      text = cleanupWhitespaces(text);
+      if( text == '' )
+        text = node.src.match(/([^\\\/]*)\.[^\\\/\.]*$/)?.[1] ?? '';
+      return 'Bild: '+text;
     }
     
     static get options() {
@@ -261,6 +307,7 @@
         retrun;
         
       const u = new UtteranceCollector(e,options);
+      u.convertDates();
       k ??= e.id ?? e.className ?? e.nodeName;
       if( u.utterances.length == 0 )
         this.#pushText('Kein Text.',k, e);
@@ -304,7 +351,7 @@
     #selectors = [];
     #keyHandlers = {
       Escape: function(ev) {
-        if( this.isReading() ) {
+        if( this.isReading ) {
           this.cancel();
           ev.stopPropagation();
           ev.preventDefault();

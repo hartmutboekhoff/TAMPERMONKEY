@@ -11,25 +11,25 @@
     <script src="./dynamicStyle.js"></script>
     <script src="./readOut.js"></script>
     <script>
-      const a ="1/24/2023 11:44:01 AM";
-      const b='12/25/2022 03:37 PM';
-      const c = 'text '+a+' weiter '+b+'gaga';
-      
-      	
-      const rx=/(\d{1,2})\/(\d{1,2})\/(\d{4}) (\d{1,2}):(\d{2})(?::(\d{2}))? (AM|PM)/g;
-      console.log('a',a.match(rx));
-      console.log('B',b.match(rx));
-      console.log(c);
-      console.log(c.replace(rx,(...args)=>{
-        return args[2]+'.'+args[1]+'.'+args[3]+' '+(args[7]=='PM'?+args[4]+12:args[4])+':'+args[5];
-      }));
+
+
+
 
     </script>
     <script>
       window.registerForReadOut('article');
-      window.registerForReadOut('p',{exclude:'em'});
+      window.registerForReadOut('p',{
+        exclude:'em',
+        childElements: {
+          'span': {text:123456,pitch:20},
+          'bold.laut': {rate:10},
+          'bold': {volume:10,rate:.1,},
+        },
+      });
       window.registerForReadOut('em',{pitch:10, rate:.5, volume:10});
       window.registerForReadOut('input');
+      window.registerForReadOut('img');
+
       
 
     </script>
@@ -41,12 +41,30 @@
 </script>    
   </head>
   <body>
-    <p>Dies ist ein Text, mit Punkt. Und Komma, auf das wiederum ein Doppelpunkt: folgt! Hoppla! Waren das etwa zwei <em>Ausrufezeichen</em>? Und Tschüß</p>
-      <p>in paragraph <em>hervorgehoben</em> und weiter</p>
-      nicht in paragraph
-      <img src="https://img.morgenpost.de/img/incoming/crop238138277/8442228172-w940-cv23_11-q85/5FAD1A00B436899E.jpg" title="bildtitle" alt="bildbeschreibung" />
+    <p>Dies ist ein <bold>Text</bold>, mit Punkt. Und Komma, auf das wiederum ein Doppelpunkt: folgt! Hoppla! Waren das etwa zwei <em>Ausrufezeichen</em>? Und Tschüß
+      
+    </p>
+    <p>lorem ipsum<span>dies ist ein span</span></p>
+    <p><span>drei chinesen mit dem kontrabaß</span></p>
+    <p>in paragraph <em>hervorgehoben</em> und weiter</p>
+  <p>doch in <bold class="laut">paragraph</bold></p>
+      
+      
+      <img src="https://img.morgenpost.de/img/incoming/crop238138277/8442228172-w940-cv23_11-q85/5FAD1A00B436899E.jpg"  />
+      
       <a href="www.google.com">Link zu Google</a>
       <a href="www.morgenpost.de" alt="morgenpost"><img src="https://img.morgenpost.de/img/incoming/crop238138277/8442228172-w940-cv23_11-q85/5FAD1A00B436899E.jpg" title="bildtitle" alt="bildbeschreibung" /></a>
+
+
+<p>
+        const a ="1/24/2023 11:44:01 AM";
+      const b='12/25/2022 03:37 PM';
+
+  
+  
+</p>
+
+
     <div id="thediv">
       div L1
       <div>div L2</div>
@@ -227,5 +245,6 @@
           </div>
         </div>
 
+<div><em>=" 2.01.2023 13:11 "</em></div>
   </body>
 </html>

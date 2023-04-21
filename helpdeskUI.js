@@ -46,10 +46,23 @@ window.addEventListener('load',()=>{
   window.registerForReadOut('mat-cell.mat-cell.mat-cell-data');
   window.registerForReadOut('textarea#vm\\.Sys\\.Description');
   window.registerForReadOut('input#vm\\.Sys\\.Subject');
-  window.registerForReadOut('div.activitylog > div.activitylog-row',{exclude:'.activitylog-activity-changes,.activitylog-activity-propertyChanges,.activitylog-activity-header,label,span.comment-title'});
-  window.registerForReadOut('div.activitylog > div.activitylog-row > div',{exclude:'.activitylog-activity-changes,.activitylog-activity-propertyChanges,label'});
-  window.registerForReadOut('#GroupBoxActivityDescription',{exclude:'#GroupBoxActivityDescription>span'});
-  window.registerForReadOut('#SUControlEDITOR>div>div',{exclude:'#PanelContentSUControlEDITOR2 span:nth-child(-n+1)'});
+  
+  window.registerForReadOut('div.activitylog > div.activitylog-row',
+                            {exclude:'.activitylog-activity-changes,.activitylog-activity-propertyChanges,.activitylog-activity-header,label,span.comment-title'}
+                           );
+  window.registerForReadOut('div.activitylog > div.activitylog-row > div',
+                            {exclude:'.activitylog-activity-changes,.activitylog-activity-propertyChanges,label'}
+                           );
+  window.registerForReadOut('#GroupBoxActivityDescription',
+                            {exclude:'#GroupBoxActivityDescription>span'
+                             custom: {selector:'*',
+                                      prefix:'3 3 3 ', ',
+                            }});
+  window.registerForReadOut('#SUControlEDITOR>div>div',
+                            {exclude:'#PanelContentSUControlEDITOR2 span:nth-child(-n+1)',
+                              prefix:'4 4 4 4 ',
+                            }
+                           );
 
   // ================================================
   console.log('initializing mutation-reactions');
