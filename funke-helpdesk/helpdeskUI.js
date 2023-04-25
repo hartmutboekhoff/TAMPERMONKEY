@@ -54,13 +54,14 @@ window.addEventListener('load',()=>{
                             {exclude:'.activitylog-activity-changes,.activitylog-activity-propertyChanges,label'}
                            );
   window.registerForReadOut('#GroupBoxActivityDescription',
-                            {exclude:'#GroupBoxActivityDescription>span'
+                            {exclude:'#GroupBoxActivityDescription>span',
                              custom: {selector:'*',
-                                      prefix:'3 3 3 ', ',
-                            }});
+                                      prefix:'3 3 3 ',
+                             }
+                            });
   window.registerForReadOut('#SUControlEDITOR>div>div',
                             {exclude:'#PanelContentSUControlEDITOR2 span:nth-child(-n+1)',
-                              prefix:'4 4 4 4 ',
+                             prefix:'4 4 4 4 ',
                             }
                            );
 

@@ -148,7 +148,7 @@
     
     convertDates() {
       this.#extractedData.replace(
-        /(\d{1,2})\/(\d{1,2})\/(\d{4}) (\d{1,2}):(\d{2})(?::(\d{2}))? (AM|PM)/g,
+        /(\d{1,2})\/(\d{1,2})\/(\d{4}),? (\d{1,2}):(\d{2})(?::(\d{2}))? (AM|PM)/g,
         (...args)=>' '+args[2]+'.'+args[1]+'.'+args[3]+' '+(args[7]=='PM'?+args[4]+12:args[4])+':'+args[5]+' '
       );
 
@@ -355,7 +355,9 @@
           this.cancel();
           ev.stopPropagation();
           ev.preventDefault();
+          alert(567);
         }
+        
       },
       Tab: function(ev) {
         if( this.isReading ) {
@@ -371,11 +373,11 @@
         const h = this.#keyHandlers[ev.key];
         if( typeof h == 'function' )
           h.apply(this,[ev]);
-        //else
-        //  console.log('Key unhandled: ', ev.code);
+        else if( this.isReading )
+          this.cancel();
       });
       window.addEventListener('mousemove',ev=>{
-        this.#onMousemove(ev)
+        this.#onMousemove(ev);
       });
     }
     
