@@ -14,15 +14,15 @@
 // @include         https://helpline.funkemedien.de/WebDesk/Task/TaskDialog
 // @include         https://helpline.funkemedien.de/WebDesk/Task/TaskDialog?*
 
-// @downloadURL     http://localhost:3000/greasemonkey/helpdeskUI.js
-// @updateURL       http://localhost:3000/greasemonkey/helpdeskUI.js
-// @resource  css   http://localhost:3000/greasemonkey/helpdeskUI.css
+// @downloadURL     http://localhost:3000/funke-helpdesk/helpdeskUI.js
+// @updateURL       http://localhost:3000/funke-helpdesk/helpdeskUI.js
+// @resource  css   http://localhost:3000/funke-helpdesk/helpdeskUI.css
 
-// @require         http://localhost:3000/greasemonkey/head.js
-// @require         http://localhost:3000/greasemonkey/styles.js
-// @require         http://localhost:3000/greasemonkey/KeyHandler.js
-// @require         http://localhost:3000/greasemonkey/readout.js
-// @require         http://localhost:3000/greasemonkey/mutationHandler.js
+// @require         http://localhost:3000/funke-helpdesk/head.js
+// @require         http://localhost:3000/funke-helpdesk/styles.js
+// @require         http://localhost:3000/funke-helpdesk/KeyHandler.js
+// @require         http://localhost:3000/funke-helpdesk/readout.js
+// @require         http://localhost:3000/funke-helpdesk/mutationHandler.js
 
 // ==/UserScript==
 

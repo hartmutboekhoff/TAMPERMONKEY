@@ -1,0 +1,22 @@
+div#stats-overlay {
+  background-color: white;
+  width: 100vh;
+  height: 100vh;
+  overflow: scroll;
+  z-index: 10000000;
+  position:absolute;
+  top: 0px;
+  left: 0px;
+  
+}
+
+div#stats-overlay table {
+}
+
+div#stats-overlay table tr:first-child {
+  position:fixed;
+}
+div#stats-overlay table th {
+  font-weight: bold;
+  background-color: #ccc;
+}
