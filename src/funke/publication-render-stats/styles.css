@@ -1,6 +1,6 @@
 div#stats-overlay {
   background-color: white;
-  width: 100vh;
+  width: 100vw;
   height: 100vh;
   overflow: scroll;
   z-index: 10000000;
@@ -11,10 +11,11 @@ div#stats-overlay {
 }
 
 div#stats-overlay table {
+  width:100%;
 }
 
-div#stats-overlay table tr:first-child {
-  position:fixed;
+div#stats-overlay table tr:nth-child(2) {
+  background-color: cyan;
 }
 div#stats-overlay table th {
   font-weight: bold;

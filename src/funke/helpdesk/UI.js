@@ -1,32 +1,3 @@
-// ==UserScript==
-// @name     Helpdesk UI
-// @version  8
-// @description     Helpdesk UI
-// @grant GM_getResourceURL
-// @grant GM_getResourceText
-// @grant GM_info
-// @grant addStyle
-// @grant unsafeWindow
-// @include         https://helpline.funkemedien.de/ServicewareProcesses/processes
-// @include         https://helpline.funkemedien.de/WebDesk/WebForms/*
-// @include         https://helpline.funkemedien.de/WebDesk/*
-// @include         https://helpline.funkemedien.de/ServicewareProcesses/tasks
-// @include         https://helpline.funkemedien.de/WebDesk/Task/TaskDialog
-// @include         https://helpline.funkemedien.de/WebDesk/Task/TaskDialog?*
-
-// @downloadURL     http://localhost:3000/funke-helpdesk/helpdeskUI.js
-// @updateURL       http://localhost:3000/funke-helpdesk/helpdeskUI.js
-// @resource  css   http://localhost:3000/funke-helpdesk/helpdeskUI.css
-
-// @require         http://localhost:3000/funke-helpdesk/head.js
-// @require         http://localhost:3000/funke-helpdesk/styles.js
-// @require         http://localhost:3000/funke-helpdesk/KeyHandler.js
-// @require         http://localhost:3000/funke-helpdesk/readout.js
-// @require         http://localhost:3000/funke-helpdesk/mutationHandler.js
-
-// ==/UserScript==
-
-console.log('greasemonkey is working');
 window.addEventListener('load',()=>{
   console.group('greasemonkey')
   
@@ -83,6 +54,3 @@ window.addEventListener('load',()=>{
   console.log('onLoad() finished successfully');
   console.groupEnd();
 });
-
-console.log('initialized', 'Version '+GM_info.script.version);
-console.groupEnd();

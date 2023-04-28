@@ -1,6 +1,5 @@
 console.log('HBo Tampermonkey', 'stats.js', 'Version '+GM_info.script.version);
 
-console.log('HBo')
 (function(){
   function toJson(s,dflt) {
     try {
@@ -18,13 +17,12 @@ console.log('HBo')
   }
   function tr(data,columns) {
     return '<tr>'
-           + columns.map(c=>td(data[c])).join('\n')
+           + columns.map(c=>td(data?.[c])).join('\n')
            + '</tr>';
   }
   function td(value) {
     return '<td>'+(value??'-')+'</td>';
   }
-
 
   class StatsCollector {
     constructor() {
@@ -40,12 +38,13 @@ console.log('HBo')
          .reduce((acc,d)=>(acc[d.type.toLowerCase()+'s'][d.index]=d.data,acc),this);
       
 
-      this.statistics = this.widgets.map(w=>(w.statistics.reduce((acc,s)=>(acc.summe+=s.time,Object.assign(acc,{[s.name]:s.time})),{id:w.id,type:w.name,summe:0})))
+      this.statistics = this.widgets.filter(w=>!!w)
+                                    .map(w=>(w.statistics.reduce((acc,s)=>(acc.summe+=s.time,Object.assign(acc,{[s.name]:s.time})),{id:w.id,type:w.name,summe:0})))
                                     .sort((a,b)=>b.summe-a.summe);
     }
   }
   
-  
+/*  
   function parseDebugInfo(info) {
     function parseItem(item) {
       const parts = item.split(':');
@@ -60,18 +59,31 @@ console.log('HBo')
     const parsed = info.split(',').map(parseItem);
     return parsed.reduce((acc,i)=>typeof i == 'object'? Object.assign(acc,i):acc,parsed);
   }
-
-  function displayStatistics(data, columns) {
+*/
+  function displayData(data, columns) {
     const statsDiv = document.createElement('div');
     statsDiv.id = 'stats-overlay';
     statsDiv.innerHTML = table(data,columns);
     document.body.appendChild(statsDiv);
   }
 
+  let LoadEventCounter = 0;
   window.addEventListener('load',()=>{
-    const stats = new StatsCollector();
-    window.DebugData = stats;
-    displayStatistics(stats,['id','type','resolving','pre-render','rendering','post-render','summe']);
+    console.group('load-event '+ ++LoadEventCounter);
+    if( LoadEventCounter > 1 )
+      console.trace('wtf!')
+
+    
+    const debugData = new StatsCollector();
+    window.DebugData = debugData;
+    console.log('HBo',debugData);
+    
+    const sum = debugData.statistics.reduce((acc,d)=>(['resolving','pre-render','rendering','post-render','summe'].forEach(c=>acc[c]=(acc[c]??0)+(d[c]??0)),acc),{type:'Summe'});
+    
+    console.log('HBo',sum);
+    displayData([sum, ...debugData.statistics], ['id','type','resolving','pre-render','rendering','post-render','summe']);
+
+    console.groupEnd();
   }); // onLoad()
 })();
 
