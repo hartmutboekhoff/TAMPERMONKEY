@@ -1,23 +1,48 @@
 div#stats-overlay {
   background-color: white;
-  width: 100vw;
-  height: 100vh;
+  width: 90vw;
+  height: 90vh;
   overflow: scroll;
   z-index: 10000000;
   position:absolute;
   top: 0px;
   left: 0px;
-  
+  margin: 5vh 5vw;
+  box-shadow: 5px 5px 100px 20px #448;
+  font-size: 1.5em;
 }
 
 div#stats-overlay table {
   width:100%;
 }
 
+div#stats-overlay table tr:nth-child(2n + 3) {
+  background-color: #ddd;
+}
+
 div#stats-overlay table tr:nth-child(2) {
   background-color: cyan;
+  font-size: 1:8em;
+  font-weight: bold;
+}
+
+div#stats-overlay table td {
+  padding: .2em 1em;
+}
+div#stats-overlay table td:nth-child(n+3) {
+  text-align: right;
+  padding-right: 2em;
+  background: linear-gradient( 90deg, #a66, #d66 calc(var(--val) / var(--max) * 90%), transparent calc(var(--val) / var(--max) * 90%) );
+}
+
+div#stats-overlay table caption {
+  padding: .5em;
+  font-size: 1.5em;
+  background-color: #8d8;
 }
 div#stats-overlay table th {
   font-weight: bold;
-  background-color: #ccc;
+  background-color: #ddd;
+  text-align: center;
 }
+

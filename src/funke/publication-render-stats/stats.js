@@ -9,23 +9,41 @@ console.log('HBo Tampermonkey', 'stats.js', 'Version '+GM_info.script.version);
       return dflt;
     }
   }
-  function table(data,columns) {
+  function table(data,columns,title) {
     return '<table>'
-           + columns.map(c=>'<th>'+c+'</th>').join('\n')
-           + data.map(row=>tr(row,columns)).join('\n')
+           + '<caption>'+title+'</caption>\n'
+           + headerRow(columns) + '\n'
+           + tr(data.sum, columns, 'summary') + '\n'
+           + data.map(row=>tr(row, columns, '', data.max)).join('\n')
            + '</table>';
   }
-  function tr(data,columns) {
-    return '<tr>'
-           + columns.map(c=>td(data?.[c])).join('\n')
+  function tr(data,columns, className='', max={}) {
+    if( (className??'') != '' ) className = ' class="'+className+'"';
+    return '<tr'+className+'>'
+           + columns.map(c=>td(data?.[c],{val:data?.[c]||0,max:max[c]})).join('\n')
            + '</tr>';
   }
-  function td(value) {
-    return '<td>'+(value??'-')+'</td>';
+  function td(value, vars) {
+    let style = '';
+    if( vars ) {
+      style = ' style="';
+     
+      for( let v in vars )
+        style += '--'+v+':'+vars[v]+';';
+      style += '"';
+    }
+    return '<td'+style+'>'+(value??'-')+'</td>';
+  }
+  function headerRow(columns) {
+    return '<tr class="head">'
+           + columns.map(c=>'<th>'+c+'</th>').join('\n')
+           + '</tr>';
   }
 
   class StatsCollector {
     constructor() {
+      this.site = window.location.hostname;
+      this.page = window.location.pathname.match(/\/[^\/]*(?:.html|\/)?$/);
       this.widgets = [];
       this.groups = [];
       this.#collect();
@@ -38,9 +56,36 @@ console.log('HBo Tampermonkey', 'stats.js', 'Version '+GM_info.script.version);
          .reduce((acc,d)=>(acc[d.type.toLowerCase()+'s'][d.index]=d.data,acc),this);
       
 
+      const metrics = new Set(['summe']);
       this.statistics = this.widgets.filter(w=>!!w)
-                                    .map(w=>(w.statistics.reduce((acc,s)=>(acc.summe+=s.time,Object.assign(acc,{[s.name]:s.time})),{id:w.id,type:w.name,summe:0})))
+                                    .map(w=>{
+                                        return w.statistics.reduce((acc,s)=>{
+                                            acc.summe += acc[s.name] = s.time;
+                                            metrics.add(s.name);
+                                            return acc;
+                                          },
+                                          {id:w.id,type:w.name,summe:0}
+                                        ); // reduce
+                                    })
                                     .sort((a,b)=>b.summe-a.summe);
+
+      const sum = [...metrics].reduce((acc,m)=>(acc[m]=0,acc),{});
+      const max = Object.assign({},sum);
+      sum.type = 'Summe';
+      max.type = 'Maximum';
+      
+      this.statistics.sum = this.statistics.reduce((acc,w)=>{
+          [...metrics].forEach(m=>acc[m] += w[m]??0);
+          return acc;
+        },
+        sum
+      );
+      this.statistics.max = this.statistics.reduce((acc,w)=>{
+          [...metrics].forEach(m=>acc[m]=acc[m]<w[m]? w[m] : acc[m]);
+          return acc;
+        },
+        max
+      );
     }
   }
   
@@ -60,31 +105,42 @@ console.log('HBo Tampermonkey', 'stats.js', 'Version '+GM_info.script.version);
     return parsed.reduce((acc,i)=>typeof i == 'object'? Object.assign(acc,i):acc,parsed);
   }
 */
-  function displayData(data, columns) {
+  function displayData(data, columns, title) {
     const statsDiv = document.createElement('div');
     statsDiv.id = 'stats-overlay';
-    statsDiv.innerHTML = table(data,columns);
+    statsDiv.innerHTML = table(data,columns, title);
     document.body.appendChild(statsDiv);
   }
 
-  let LoadEventCounter = 0;
-  window.addEventListener('load',()=>{
-    console.group('load-event '+ ++LoadEventCounter);
-    if( LoadEventCounter > 1 )
-      console.trace('wtf!')
+  let localCounter = 1;
+  window.__HBo_InitializationCounter ??= 1;
+  window.__HBo_LoadEventCounter ??= 1;
+  if( localCounter > 1 || window.__HBo_LoadEventCounter > 1 || window.__HBo_InitializationCounter > 1 ) {
+    console.trace('HBo wtf!', {init:window.__HBo_InitializationCounter, load:window.__HBo_LoadEventCounter, local: localCounter});
+  }
+  else {
+    window.addEventListener('load',()=>{
+      console.group('HBo load-event '+ window.__HBo_InitializationCounter + '/' + window.__HBo_LoadEventCounter + '/' + localCounter);
+      if( document.getElementById('stats-overlay') ) 
+        return console.trace('HBo dup!');
+      else if( localCounter++ > 1 || window.__HBo_LoadEventCounter++ > 1 ) 
+        return console.trace('HBo nope!');
+      else
+        console.trace('HBo ok');
+      
+      const debugData = new StatsCollector();
+      window.DebugData = debugData;
+      console.log('HBo',debugData);
+      
+      document.body.innerHTML = '';
+      
+      displayData(debugData.statistics, ['id','type','resolving','pre-render','rendering','post-render','summe'], debugData.site+'<br/>'+debugData.page);
 
-    
-    const debugData = new StatsCollector();
-    window.DebugData = debugData;
-    console.log('HBo',debugData);
-    
-    const sum = debugData.statistics.reduce((acc,d)=>(['resolving','pre-render','rendering','post-render','summe'].forEach(c=>acc[c]=(acc[c]??0)+(d[c]??0)),acc),{type:'Summe'});
-    
-    console.log('HBo',sum);
-    displayData([sum, ...debugData.statistics], ['id','type','resolving','pre-render','rendering','post-render','summe']);
+      console.groupEnd();
+    }); // onLoad()    
+  }
+  ++window.__HBo_InitializationCounter;
 
-    console.groupEnd();
-  }); // onLoad()
 })();
 
 console.log('HBo Tampermonkey', 'stats.js', 'Syntax Ok');
