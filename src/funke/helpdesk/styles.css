@@ -20,8 +20,8 @@
 
 .tabControlHeaderContainer #TabPageSolutionItem_Header, 
 .tabControlHeaderContainer #TabPageActivitiesItem_Header {
-	background: linear-gradient(#fd0, #fe2);
-	border-color: #67f;
+	background: linear-gradient(#0df, #2ef);
+	border-color: #67F;
 	border-width: 3px;
 	border-bottom: none;
 	font-weight: bold;

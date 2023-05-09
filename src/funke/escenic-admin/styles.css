@@ -1,0 +1,26 @@
+body {
+  --button-overlay: linear-gradient(rgba(68,68,68,.3), rgba(255,255,255,.5), transparent 20%, transparent 80%, rgba(68,68,68,.3)), 
+                    linear-gradient(90deg, rgba(68,68,68,.3), rgba(255,255,255,.5), transparent 5%, transparent 95%, rgba(68,68,68,.3));
+}
+
+.centerPanel form td a.global-button[href^=javascript] {
+  padding: .5em 2em;
+  margin: .5em;
+  background-image: var(--button-overlay) !important;
+  white-space: nowrap;
+  width: 200px;
+  color: black;
+  
+}
+
+td:first-child a.global-button[href^=javascript] {
+  background-color: #dd0;
+}
+.centerPanel form:nth-child(1) table:nth-child(3) tr:nth-child(1) > td:nth-child(2) > a.global-button {
+  background-color: #88f;
+}
+td:nth-child(3) a.global-button[href^=javascript] {
+  
+}
+
+

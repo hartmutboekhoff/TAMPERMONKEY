@@ -9,7 +9,7 @@ window.addEventListener('load',()=>{
   // ================================================
   console.log('initializing read-out elements');
   window.registerForReadOut('.labelSubject');
-  window.registerForReadOut('#ComplexTextDescription',{exclude:'div.helpLineComplexTextLabel>table'});
+  window.registerForReadOut('#ComplexTextDescription',{exclude:'textarea,div.helpLineComplexTextLabel>table'});
   window.registerForReadOut('.tabControlHeader span');
   window.registerForReadOut('div.jqx-grid-cell.jqx-item');
   window.registerForReadOut('div#contenttableHLGrid>div');
@@ -25,14 +25,13 @@ window.addEventListener('load',()=>{
                             {exclude:'.activitylog-activity-changes,.activitylog-activity-propertyChanges,label'}
                            );
   window.registerForReadOut('#GroupBoxActivityDescription',
-                            {exclude:'#GroupBoxActivityDescription>span',
-                             custom: {selector:'*',
-                                      prefix:'3 3 3 ',
+                            {exclude:'#GroupBoxActivityDescription>span,#GroupBoxSUAttachment',
+                             childElements: {
+                               '_div': {prefix:'3 3 3 '},
                              }
                             });
   window.registerForReadOut('#SUControlEDITOR>div>div',
                             {exclude:'#PanelContentSUControlEDITOR2 span:nth-child(-n+1)',
-                             prefix:'4 4 4 4 ',
                             }
                            );
 

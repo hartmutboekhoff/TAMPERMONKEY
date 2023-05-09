@@ -16,6 +16,14 @@ div#stats-overlay table {
   width:100%;
 }
 
+div#stats-overlay table tr.hidden {
+  color: #a66;
+  font-style: italic;
+}
+div#stats-overlay #show-hidden:checked ~ table tr.hidden {
+  display:table-row !important;
+  visibility: visible;
+}
 div#stats-overlay table tr:nth-child(2n + 3) {
   background-color: #ddd;
 }
@@ -25,6 +33,11 @@ div#stats-overlay table tr:nth-child(2) {
   font-size: 1:8em;
   font-weight: bold;
 }
+div#stats-overlay table tr:hover,
+div#stats-overlay table tr.highlight:hover {
+  background-color: #aae;
+  
+}
 
 div#stats-overlay table td {
   padding: .2em 1em;
@@ -32,6 +45,9 @@ div#stats-overlay table td {
 div#stats-overlay table td:nth-child(n+3) {
   text-align: right;
   padding-right: 2em;
+  background: linear-gradient( 90deg, #66a, #66d calc(var(--val) / var(--max) * 90%), transparent calc(var(--val) / var(--max) * 90%) );
+}
+div#stats-overlay table td:last-child {
   background: linear-gradient( 90deg, #a66, #d66 calc(var(--val) / var(--max) * 90%), transparent calc(var(--val) / var(--max) * 90%) );
 }
 
@@ -42,7 +58,30 @@ div#stats-overlay table caption {
 }
 div#stats-overlay table th {
   font-weight: bold;
-  background-color: #ddd;
+  background-color: #aaa;
   text-align: center;
+  line-height: 1.5em;
 }
+
+div#stats-overlay table tr.highlight {
+  background-color: yellow;
+}
+
+
+#show-hidden {
+  display:none;
+}
+#show-hidden + #show-hidden-label {
+  position:fixed;
+  ---top:0;
+  ---left:0;
+  background-color: #bbb;
+  border: 4px solid #ddd;
+  padding: .4em;
+}
+#show-hidden:checked + #show-hidden-label {
+  background-color: #4b4;
+  border-color: #8d8;
+}
+
 

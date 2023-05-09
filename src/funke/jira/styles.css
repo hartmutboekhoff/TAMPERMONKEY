@@ -1,0 +1,52 @@
+body {
+  --button-overlay: linear-gradient(rgba(68,68,68,.3), rgba(255,255,255,.5), transparent 20%, transparent 80%, rgba(68,68,68,.3)), 
+                    linear-gradient(90deg, rgba(68,68,68,.3), rgba(255,255,255,.5), transparent 10%, transparent 90%, rgba(68,68,68,.3));
+}
+
+tr#cellbulk\.delete\.operation\.name {
+  background-color: #fba;
+}
+
+input#next,
+input#confirm,
+input#acknowledge_submit {
+  background-color: #4e4;
+  background-image: var(--button-overlay);
+  padding: .5em 1em;
+  height: 200%
+}
+
+textarea#advanced-search {
+  border: 4px solid #fa0;
+  font-size: 1.5em;
+  line-height: 1.5em;
+}
+
+
+button#AJS_DROPDOWN__71 {
+  background-color: #0dd;
+  background-image: var(--button-overlay);
+}
+
+
+header a.aui-button,
+header a.aui-button:link,
+header a.aui-button:visited {
+  background-image: var(--button-overlay);
+  color: black;
+}
+#edit-issue {
+  background-color: #fa4;
+}
+#comment-issue {
+  background-color: #8af;
+}
+
+#footer-comment-button {
+  background-image: var(--button-overlay);
+  color: black;
+  background-color: #8af;
+  padding: .5em 1em;
+  line-height: 2em;
+  height: 3em;
+}

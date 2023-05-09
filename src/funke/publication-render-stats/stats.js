@@ -18,8 +18,10 @@ console.log('HBo Tampermonkey', 'stats.js', 'Version '+GM_info.script.version);
            + '</table>';
   }
   function tr(data,columns, className='', max={}) {
-    if( (className??'') != '' ) className = ' class="'+className+'"';
-    return '<tr'+className+'>'
+    className += data.visible? ' visible' : ' hidden';
+    return '<tr class="'+className+'"'
+           + (!data.id? '' : ' data-widget-id="'+data.id+'"')
+           + '>'
            + columns.map(c=>td(data?.[c],{val:data?.[c]||0,max:max[c]})).join('\n')
            + '</tr>';
   }
@@ -32,7 +34,10 @@ console.log('HBo Tampermonkey', 'stats.js', 'Version '+GM_info.script.version);
         style += '--'+v+':'+vars[v]+';';
       style += '"';
     }
-    return '<td'+style+'>'+(value??'-')+'</td>';
+    return '<td'+style
+           + ' data-value="' + value + '">'
+           + (value??'-')
+           + '</td>';
   }
   function headerRow(columns) {
     return '<tr class="head">'
@@ -64,7 +69,7 @@ console.log('HBo Tampermonkey', 'stats.js', 'Version '+GM_info.script.version);
                                             metrics.add(s.name);
                                             return acc;
                                           },
-                                          {id:w.id,type:w.name,summe:0}
+                                          {id:w.id,type:w.name,summe:0,visible:w.visible}
                                         ); // reduce
                                     })
                                     .sort((a,b)=>b.summe-a.summe);
@@ -80,6 +85,7 @@ console.log('HBo Tampermonkey', 'stats.js', 'Version '+GM_info.script.version);
         },
         sum
       );
+      sum.visible = true;
       this.statistics.max = this.statistics.reduce((acc,w)=>{
           [...metrics].forEach(m=>acc[m]=acc[m]<w[m]? w[m] : acc[m]);
           return acc;
@@ -108,10 +114,28 @@ console.log('HBo Tampermonkey', 'stats.js', 'Version '+GM_info.script.version);
   function displayData(data, columns, title) {
     const statsDiv = document.createElement('div');
     statsDiv.id = 'stats-overlay';
-    statsDiv.innerHTML = table(data,columns, title);
+    statsDiv.innerHTML = 
+      '<input type="checkbox" id="show-hidden"/><label id="show-hidden-label" for="show-hidden">unsichtbare Widgets anzeigen</label>'
+      + table(data,columns, title);
     document.body.appendChild(statsDiv);
+    statsDiv.addEventListener('click',rowClick);
   }
 
+
+  function rowClick(ev) {
+    const row = ev.target.closest('TR');
+    if( row != undefined )
+      highlightRows(row.firstChild.innerText,row.classList.contains('highlight'));
+  }
+  function highlightRows(widgetId, off) {
+    [...document.querySelectorAll('#stats-overlay tr')].forEach(r=>{
+      if( off || r.firstChild.innerText != widgetId )
+        r.classList.remove('highlight');
+      else
+        r.classList.add('highlight');
+
+    })
+  }
   let localCounter = 1;
   window.__HBo_InitializationCounter ??= 1;
   window.__HBo_LoadEventCounter ??= 1;
@@ -134,7 +158,7 @@ console.log('HBo Tampermonkey', 'stats.js', 'Version '+GM_info.script.version);
       
       document.body.innerHTML = '';
       
-      displayData(debugData.statistics, ['id','type','resolving','pre-render','rendering','post-render','summe'], debugData.site+'<br/>'+debugData.page);
+      displayData(debugData.statistics, ['id','type', 'resolving','pre-render','rendering','post-render','summe'], debugData.site+'<br/>'+debugData.page);
 
       console.groupEnd();
     }); // onLoad()    
