@@ -10,9 +10,10 @@
 
 // @include         https://sjira.funkemedien.de/*
 
-// @downloadURL     http://localhost:3000/funke/jira/main.js
-// @updateURL       http://localhost:3000/funke/jira/main.js
-// @resource  css   http://localhost:3000/funke/jira/styles.css
+// @downloadURL          http://localhost:3000/funke/jira/main.js
+// @updateURL            http://localhost:3000/funke/jira/main.js
+// @resource  css-common http://localhost:3000/common/styles.css
+// @resource  css        http://localhost:3000/funke/jira/styles.css
 
 // @require         http://localhost:3000/common/head.js
 // @require         http://localhost:3000/common/styles.js

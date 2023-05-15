@@ -1,21 +1,39 @@
 body {
-  --button-overlay: linear-gradient(rgba(68,68,68,.3), rgba(255,255,255,.5), transparent 20%, transparent 80%, rgba(68,68,68,.3)), 
-                    linear-gradient(90deg, rgba(68,68,68,.3), rgba(255,255,255,.5), transparent 10%, transparent 90%, rgba(68,68,68,.3));
+  --block-separator-bottom: linear-gradient(0deg, rgba(120,120,120, .5), transparent 30px);
+
+  --block-separator: linear-gradient(rgba(120,120,120, .5), 
+                                     rgba(255,255,255, .5), 
+                                     transparent 20px, 
+                                     transparent calc(100% - 20px), 
+                                     rgba(120,120,120, .5));
 }
 
 tr#cellbulk\.delete\.operation\.name {
   background-color: #fba;
 }
 
+button#issue-comment-add-submit,
 input#next,
 input#confirm,
+input#comment-edit-submit,
 input#acknowledge_submit {
-  background-color: #4e4;
-  background-image: var(--button-overlay);
+  @.ok-button;
+  padding: .5em 1em;
+  height: 200%
+}
+button#issue-comment-add-submit[disabled] {
+  @.disabled-button;
+}
+
+button[type=cancel],
+a#issue-comment-add-cancel,
+a#comment-edit-cancel {
+  @.cancel-button;
   padding: .5em 1em;
   height: 200%
 }
 
+input#summary,
 textarea#advanced-search {
   border: 4px solid #fa0;
   font-size: 1.5em;
@@ -24,8 +42,7 @@ textarea#advanced-search {
 
 
 button#AJS_DROPDOWN__71 {
-  background-color: #0dd;
-  background-image: var(--button-overlay);
+  @.neutral2-button;
 }
 
 
@@ -33,20 +50,100 @@ header a.aui-button,
 header a.aui-button:link,
 header a.aui-button:visited {
   background-image: var(--button-overlay);
-  color: black;
 }
 #edit-issue {
-  background-color: #fa4;
+  @.attention-button;
 }
 #comment-issue {
-  background-color: #8af;
+  @.neutral-button;
 }
 
 #footer-comment-button {
-  background-image: var(--button-overlay);
+  @.neutral-button;
   color: black;
-  background-color: #8af;
   padding: .5em 1em;
   line-height: 2em;
   height: 3em;
+}
+
+#description-form div.show-button-bar button.aui-button-primary[type=submit],
+#issue-create-submit {
+  @.ok-button;
+}
+
+#issue_actions_container .issue-data-block {
+  border: 3px solid blue;
+  margin-bottom: 1em;
+  background-color: #f8f8ff;
+  border-radius: 5px;
+}
+#issue_actions_container .issue-data-block .action-head {
+  background-color: #cce;
+}
+
+.action-body a.user-hover[rel=hboekhoff] {
+  font-weight: bold;
+  background-color: #ff3;
+  border-bottom: 2px solid blue;
+  border-left: 1em solid blue;
+  padding: 0 .5em;
+}
+
+
+#description-val {
+  border: 3px solid #fb0;
+  padding-top: 1em;
+  padding-bottom: 1em;
+  border-radius: 5px;
+}
+
+h2#summary-val {
+  font-weight: bold;
+  font-size: 2em;
+}
+
+#datesmodule {
+  border: 2px solid black;
+  box-shadow: 2px 2px 4px #666;
+  padding-bottom: 1em;
+  padding-left: .5em;
+}
+#datesmodule dl {
+  display: flex;
+}
+
+button.collapsed-actions {
+  background-color: #ec9;
+  border-radius: 5px;
+  border: 2px solid #a85;
+  padding: 1em;
+}
+
+#ghx-column-headers {
+  margin-top: .6em;
+}
+#ghx-column-headers > li.ghx-column {
+  border: 5px solid #da0;
+  border-bottom: none;
+  border-radius: 15px 15px 0 0;
+  padding: 0 2em;
+}
+#ghx-column-headers > li.ghx-column h6 {
+  font-weight: bold;
+  font-size: 2em;
+}
+
+.ghx-swimlane-header {
+  background-color: rgba(255,200,0,.3);
+  background-image: linear-gradient(rgba(60,60,60,.5), rgba(255,255,255,.3), transparent 20%, transparent 50%, rgba(60,60,60,.3));
+  color: black;
+  font-weight: bold;
+  font-size: 1.5em;
+}
+.ghx-swimlane-header span.ghx-description:before {
+  content: "(";
+  padding-left: 4em;
+}
+.ghx-swimlane-header span.ghx-description:after {
+  content: " Tickets)";
 }
