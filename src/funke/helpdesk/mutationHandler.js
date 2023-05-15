@@ -66,6 +66,8 @@
   
   
   window.onMutation = function(reaction) {
-    MutationHandler.instance.addReaction(reaction);
+    const reactions = Array.isArray(reaction)? reaction : [reaction];
+      
+    reactions.forEach(r=>MutationHandler.instance.addReaction(r));
   }
 })();

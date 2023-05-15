@@ -37,14 +37,23 @@ window.addEventListener('load',()=>{
 
   // ================================================
   console.log('initializing mutation-reactions');
-  window.onMutation({
-    selector: 'MAT-ROW.mat-row',
-    filter: e=>{
-        return !!e.innerText.match(/escenic/i)?.[0]
-               && !!e.innerText.match(/austritt|freistellung/i)?.[0];
-      },
-    className: 'esc-delete-account',
-  });
+  window.onMutation([{
+      selector: 'MAT-ROW.mat-row',
+      filter: e=>{
+          return !!e.innerText.match(/escenic/i)?.[0]
+                 && !!e.innerText.match(/austritt|freistellung/i)?.[0];
+        },
+      className: 'esc-delete-account',
+    },
+    {
+      selector: ':is(.jqx-grid-group-collapse,.jqx-grid-group-expand)+.jqx-grid-group-cell',
+      className: 'grouped-line',
+      callback: function(e){
+          if( e.innerText.indexOf('FT_Support_TZ-Digital') >= 0 ) 
+            e.classList.add('support');
+        },
+    }
+  ]);
   
 
 

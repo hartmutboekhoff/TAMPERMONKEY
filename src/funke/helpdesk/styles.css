@@ -108,3 +108,43 @@ div.activitylog > div.activitylog-row {
   color: black !important;
   
 }
+
+
+#upCheckBoxPUBLISHED span.helpLineCheckBox {
+  background-color: cyan;
+  padding: .4em 1em;
+  border-radius: 5px;
+  border: 2px solid #0aa;
+}
+#upCheckBoxPUBLISHED span.helpLineCheckBox:has(input:checked) {
+  background-color: #afa;
+}
+
+
+span#RadioButtonSendByEmail {
+  background-color: cyan;
+  padding: .5em;
+  border-radius: 5px;
+  border: 2px solid #0aa;
+}
+span#RadioButtonSendByEmail:has(input#RadioButtonSendByEmail_1:checked) {
+  background-color: #afa;
+}
+
+div.dropDownContainer:has(input#ComboBoxINTERNALSTATEtb),
+div.dropDownContainer input#ComboBoxINTERNALSTATEtb {
+  background-color: cyan;
+}
+
+.grouped-line {
+  background-color: #bbd;
+  background-image: linear-gradient(#888, #fff, transparent 20%, transparent 80%, #888);
+  font-weight: bold !important;
+  ---line-height: 150%;
+  height: 30px;
+  color: black;
+}
+.grouped-line.support {
+  background-color: #fc6;
+    font-size: 110%;
+}
