@@ -3,6 +3,13 @@ body {
                     linear-gradient(90deg, rgba(68,68,68,.3), rgba(255,255,255,.5), transparent 5%, transparent 95%, rgba(68,68,68,.3));
 }
 
+
+/* ==============================================
+ *
+ * Publikations-Liste
+ * 
+ * ==============================================
+ */
 .centerPanel form td a.global-button[href^=javascript] {
   padding: .5em 2em;
   margin: .5em;
@@ -10,17 +17,92 @@ body {
   white-space: nowrap;
   width: 200px;
   color: black;
-  
 }
 
+/* Run Indexer Button */
 td:first-child a.global-button[href^=javascript] {
   background-color: #dd0;
 }
+/* Update Resouces Button */
 .centerPanel form:nth-child(1) table:nth-child(3) tr:nth-child(1) > td:nth-child(2) > a.global-button {
-  background-color: #88f;
+  background-color: #4d4;
 }
+/* Delete Button */
 td:nth-child(3) a.global-button[href^=javascript] {
-  
+  display:none;
 }
 
 
+/* ==============================================
+ *
+ * Dateiupload Dialog
+ * 
+ * ==============================================
+ */
+input[name=resourceFile] {
+  border 2px solid #eb2;
+  border-radius: 5px;
+  background-color: #fc4;
+  background-image: var(--button-overlay);
+  padding: .5em;
+  margin-right: 2em;
+  text-align:center;
+}
+::file-selector-button {
+  display:none;
+}
+
+input[type=submit] {
+  background-color: #4d4;
+  background-image: var(--button-overlay);
+  padding: .5em;
+  border-radius: 5px;
+  border: 2px solid #4f4;
+}
+
+/* ==============================================
+ *
+ * Liste der hochgeladenen Dateien
+ * 
+ * ==============================================
+ */
+.centerPanel > table:nth-child(5) tr:first-child {
+  background-color: #8b8;
+  height: 2em;
+}
+
+.centerPanel > table:nth-child(5) tr:nth-child(2n+2) {
+  background-color: #cfc;
+  height: 2em;
+}
+.centerPanel > table:nth-child(5) tr:nth-child(2n+3) {
+  background-color: #ada;
+  height: 2em;
+}
+.centerPanel > table:nth-child(5) td:nth-child(4) {
+  font-weight: bold;
+}
+
+/* ==============================================
+ *
+ * finaler Bestaetigungs-Dialog
+ * 
+ * ==============================================
+ */
+form[name="neo.phoenix.publication.PublicationSelectionForm"] a {
+  padding: .5em 1em;
+  color: black;
+  margin: .5em 1em;
+}
+form[name="neo.phoenix.publication.PublicationSelectionForm"] a[href$="submit();"] {
+  background-color: #4f4;
+  background-image: var(--button-overlay);
+  border-radius: 5px;
+  border: 2px solid #080;
+}
+form[name="neo.phoenix.publication.PublicationSelectionForm"] a[href$="list.jsp"] {
+  background-color: #bbb;
+  background-image: var(--button-overlay);
+  border-radius: 5px;
+  border: 2px solid #444;
+}
