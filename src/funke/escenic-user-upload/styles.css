@@ -1,0 +1,32 @@
+form {
+  line-height: 200%;
+}
+
+#file,
+input[type=submit] {
+  text-align:center;
+  width: 150px;
+  border-radius: 7px;
+  padding: .6em;
+  margin: 1em 0;
+  display: inline;
+}
+
+input[type=submit] {
+  @.ok-button;
+}
+
+#file {
+  @.neutral2-button;
+  padding-left: 1.8em;
+}
+
+#file::file-selector-button {
+  display:none;
+}
+#file + br {
+  display:none;
+}
+label[for=file] {
+  display:none;
+}
