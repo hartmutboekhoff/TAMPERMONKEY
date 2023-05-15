@@ -1,0 +1,278 @@
+<html>
+  <head>
+    <title>testdokument</title>
+    <style>
+      h1 {
+        font-size: 4em;
+      }
+      p:has(em) {
+        font-size: 3em;
+      }
+      
+    </style>
+    <link rel="stylesheet" href="/common/styles.css">    
+    
+    
+    <script src="./dynamicStyle.js"></script>
+    <script src="./readOut.js"></script>
+    <script>
+
+
+
+
+    </script>
+    <script>
+      window.registerForReadOut('article');
+      window.registerForReadOut('p',{
+        exclude:'em',
+        childElements: {
+          'span': {text:123456,pitch:20},
+          'bold.laut': {rate:10},
+          'bold': {volume:10,rate:.1,},
+        },
+      });
+      window.registerForReadOut('em',{pitch:10, rate:.5, volume:10});
+      window.registerForReadOut('input');
+      window.registerForReadOut('img');
+
+      
+
+    </script>
+
+<script>
+
+  
+  
+</script>    
+<style>
+  button {
+    border-radius: 5px;
+    margin: 1em;
+    padding: .5em 1em;
+    background-image: var(--button-overlay);
+  }
+  
+
+  
+</style>
+  </head>
+  <body>
+    <h1>Testseite</h1>
+    <p>Dies ist ein <bold>Text</bold> mit Punkt. Und Komma, auf das wiederum ein Doppelpunkt: folgt! Hoppla! Waren das etwa zwei <em>Ausrufezeichen</em>? Und Tschüß
+      
+    </p>
+    <p>lorem ipsum<span>dies ist ein span</span></p>
+    <p><span>drei chinesen mit dem kontrabaß</span></p>
+    <p>in paragraph <em>hervorgehoben</em> und weiter</p>
+  <p>doch in <bold class="laut">paragraph</bold></p>
+      
+      
+      <img src="https://img.morgenpost.de/img/incoming/crop238138277/8442228172-w940-cv23_11-q85/5FAD1A00B436899E.jpg"  />
+      
+      <a href="www.google.com">Link zu Google</a>
+      <a href="www.morgenpost.de" alt="morgenpost"><img src="https://img.morgenpost.de/img/incoming/crop238138277/8442228172-w940-cv23_11-q85/5FAD1A00B436899E.jpg" title="bildtitle" alt="bildbeschreibung" /></a>
+
+
+<p>
+        const a ="1/24/2023 11:44:01 AM";
+      const b='12/25/2022 03:37 PM';
+
+  
+  
+</p>
+
+
+    <div id="thediv">
+      div L1
+      <div>div L2</div>
+      div L1 - hinten 	1/24/2023 11:44:01 AM und so
+      
+    </div>
+    <form>
+      <input type="text" value="123" name="Zahl"/>
+      <input type="password" value="geheim" name="Passwort"/>
+    </form>
+    
+    <div class="collapsable__content">
+      <ul class="teaser-list teaser-list--image">
+        <li class="teaser-list__item">
+          <article class="teaser teaser--small  teaser--img-pos-none teaser--noimg" data-article-id="238151951">
+            <a href="https://www.morgenpost.de/berlin/polizeibericht/article238151951/berlin-polizeimeldungen-polizei-feuerwehr-1704.html" title="Brand in Berlin: Feuerwehr rettet neun Menschen mit Leiter" class="teaser__content-link" data-tracking="contentteaser - teaser | 26" data-widget="Tracking_Polizeimeldungen [BMO]">
+              <div class="teaser__header">
+                <span class="teaser__kicker">Blaulicht-Blog</span>
+                <span class="teaser__headline ">
+                Brand in Berlin: Feuerwehr rettet neun Menschen mit Leiter</span>
+              </div>
+            </a>
+          </article>
+        </li>
+        <li class="teaser-list__item">
+          <article class="teaser teaser--small  teaser--img-pos-none teaser--noimg" data-article-id="238164273">
+            <a href="https://www.morgenpost.de/berlin/polizeibericht/article238164273/fahndung-foto-polizei-berlin-west-grunewald-einbruch-heiligabend-2022-vier-frauen.html" title="Grunewald: Polizei fahndet nach Bande von Einbrecherinnen" class="teaser__content-link" data-tracking="contentteaser - teaser | 27" data-widget="Tracking_Polizeimeldungen [BMO]">
+              <div class="teaser__header">
+                <span class="teaser__kicker">Fotofahndung</span>
+                <span class="teaser__headline ">
+                Grunewald: Polizei fahndet nach Bande von Einbrecherinnen</span>
+              </div>
+            </a>
+          </article>
+        </li>
+        <li class="teaser-list__item">
+          <article class="teaser teaser--small  teaser--img-pos-none teaser--noimg" data-article-id="238161803">
+            <a href="https://www.morgenpost.de/berlin/polizeibericht/article238161803/luft-reifen-tyre-extinguishers-klimaaktivisten-berlin.html" title="Klimaaktivisten lassen Luft aus Reifen – &#034;Kein Kinderspaß&#034;" class="teaser__content-link" data-tracking="contentteaser - teaser | 28" data-widget="Tracking_Polizeimeldungen [BMO]">
+              <div class="teaser__header">
+                <span class="teaser__kicker">Friedenau</span>
+                <span class="teaser__headline ">
+                Klimaaktivisten lassen Luft aus Reifen – &#034;Kein Kinderspaß&#034;</span>
+              </div>
+            </a>
+          </article>
+        </li>
+        <li class="teaser-list__item">
+          <article class="teaser teaser--small  teaser--img-pos-none teaser--noimg" data-article-id="238148465">
+            <a href="https://www.morgenpost.de/berlin/polizeibericht/article238148465/berlin-polizei-polizeimeldungen-feuerwehr-aktuell-1504.html" title="Berlin: Betrunkener Mann verliert Kontrolle über Auto" class="teaser__content-link" data-tracking="contentteaser - teaser | 29" data-widget="Tracking_Polizeimeldungen [BMO]">
+              <div class="teaser__header">
+                <span class="teaser__kicker">Blaulicht-Blog</span>
+                <span class="teaser__headline ">
+                Berlin: Betrunkener Mann verliert Kontrolle über Auto</span>
+              </div>
+            </a>
+          </article>
+        </li>
+        <li class="teaser-list__item">
+          <article class="teaser teaser--small  teaser--img-pos-none teaser--noimg" data-article-id="238142153">
+            <a href="https://www.morgenpost.de/berlin/polizeibericht/article238142153/Polizei-erbittet-Auskuenfte-wegen-pruegelndem-Paerchen.html" title="Polizei erbittet Auskünfte wegen prügelndem Pärchen" class="teaser__content-link" data-tracking="contentteaser - teaser | 30" data-widget="Tracking_Polizeimeldungen [BMO]">
+              <div class="teaser__header">
+                <span class="teaser__kicker">Fotofahndung</span>
+                <span class="teaser__headline ">
+                Polizei erbittet Auskünfte wegen prügelndem Pärchen</span>
+              </div>
+            </a>
+          </article>
+        </li>
+      </ul>
+    </div>    
+
+
+
+        <div class="content-quad  no-vspace">
+          <div class="content-quad__column">
+            <a href="https://www.morgenpost.de/bezirke/spandau">Spandau</a>
+            <div class="content--teaser--container clearfix   " id="fwid24" data-url="https://www.morgenpost.de/?widgetid=215147637&view=teaser&sec=1304">
+              <div class="collapsable__content">
+                <article class="teaser teaser--small  teaser--img-pos-vertical" data-article-id="238035171">
+                  <a href="https://www.morgenpost.de/bezirke/spandau/article238035171/Spandau-Ruderclub-am-Stoessensee-fuerchtet-um-seine-Existenz.html" title="Spandau: Ruderclub am Stößensee fürchtet um seine Existenz" class="teaser__content-link" data-tracking="contentteaser - teaser | 56" data-widget="Teaser Spandau">
+                    <picture class="teaser__img teaser__img--vertical teaser__img--article ispayedcontent   icon--plus-top-right">
+                      <!--[if IE 9]>
+                      <video style="display: none;">
+                      <![endif]-->
+                      <source srcset="https://img.morgenpost.de/img/spandau/crop238035167/7621566906-w350-cv16_9-q85/706b8de0-cf10-11ed-b71b-7e2f8e43207c.jpg"/>
+                      <!--[if IE 9]>
+                      </video>
+                      <![endif]-->
+                      <img loading="lazy" src="https://www.morgenpost.de/resources/1681723142595/img/placeholder.png" alt="Die Mitglieder des traditionellen Akademischen Ruderclubs zu Berlin (ARC) brauchen ein neues Clubhaus, um ihren Sport am Stößensee weiterbetreiben zu können." title="Die Mitglieder des traditionellen Akademischen Ruderclubs zu Berlin (ARC) brauchen ein neues Clubhaus, um ihren Sport am Stößensee weiterbetreiben zu können." width="350" height="196" class=""/>
+                    </picture>
+                    <div class="teaser__header">
+                      <span class="teaser__kicker">Wassersport</span>
+                      <span class="teaser__headline ">
+                      Spandau: Ruderclub am Stößensee fürchtet um seine Existenz</span>
+                    </div>
+                  </a>
+                </article>
+              </div>
+            </div>
+          </div>
+          <div class="content-quad__column">
+            <a href="https://www.morgenpost.de/bezirke/steglitz-zehlendorf">Steglitz-Zehlendorf</a>
+            <div class="content--teaser--container clearfix   " id="fwid25" data-url="https://www.morgenpost.de/?widgetid=215147643&view=teaser&sec=1304">
+              <div class="collapsable__content">
+                <article class="teaser teaser--small  teaser--img-pos-vertical" data-article-id="238142391">
+                  <a href="https://www.morgenpost.de/bezirke/steglitz-zehlendorf/article238142391/steglitz-kreisel-adler-group-wohnungen-berlin.html" title="Steht der Steglitzer Kreisel erneut vor dem Verkauf? " class="teaser__content-link" data-tracking="contentteaser - teaser | 57" data-widget="Teaser Steglitz-Zehlendorf">
+                    <picture class="teaser__img teaser__img--vertical teaser__img--article ispayedcontent   icon--plus-top-right">
+                      <!--[if IE 9]>
+                      <video style="display: none;">
+                      <![endif]-->
+                      <source srcset="https://img.morgenpost.de/img/steglitz-zehlendorf/crop238142389/4451566327-w350-cv16_9-q85/79f1e474-daad-11ed-9638-6d99f2fefce3.jpg"/>
+                      <!--[if IE 9]>
+                      </video>
+                      <![endif]-->
+                      <img loading="lazy" src="https://www.morgenpost.de/resources/1681723142595/img/placeholder.png" alt="Noch immer ist das ehemalige Bürogebäude ein entkerntes Stahlskelett an der Steglitzer Schloßstraße." title="Noch immer ist das ehemalige Bürogebäude ein entkerntes Stahlskelett an der Steglitzer Schloßstraße." width="350" height="196" class=""/>
+                    </picture>
+                    <div class="teaser__header">
+                      <span class="teaser__kicker">Konzern Adler Group</span>
+                      <span class="teaser__headline ">
+                      Steht der Steglitzer Kreisel erneut vor dem Verkauf?</span>
+                    </div>
+                  </a>
+                </article>
+              </div>
+            </div>
+          </div>
+          <div class="content-quad__column">
+            <a href="https://www.morgenpost.de/bezirke/tempelhof-schoeneberg">Tempelhof-Schöneberg</a>
+            <div class="content--teaser--container clearfix    no-vspace" id="fwid26" data-url="https://www.morgenpost.de/?widgetid=215147567&view=teaser&sec=1304">
+              <div class="collapsable__content">
+                <article class="teaser teaser--small  teaser--img-pos-vertical" data-article-id="238146287">
+                  <a href="https://www.morgenpost.de/bezirke/tempelhof-schoeneberg/article238146287/Flucht-aus-der-DDR-Ein-Erlebnis-das-sich-festsetzt.html" title="Flucht aus der DDR: „Ein Erlebnis, das sich festsetzt“ " class="teaser__content-link" data-tracking="contentteaser - teaser | 58" data-widget="Teaser Tempelhof-Schöneberg">
+                    <picture class="teaser__img teaser__img--vertical teaser__img--article    ">
+                      <!--[if IE 9]>
+                      <video style="display: none;">
+                      <![endif]-->
+                      <source srcset="https://img.morgenpost.de/img/tempelhof-schoeneberg/crop238146281/0351563826-w350-cv16_9-q85/394c0caa-dad6-11ed-b7a8-e192157d7f36.jpg"/>
+                      <!--[if IE 9]>
+                      </video>
+                      <![endif]-->
+                      <img loading="lazy" src="https://www.morgenpost.de/resources/1681723142595/img/placeholder.png" alt="Auch Leanthe Schmidts erster Halt bei ihrer Flucht in den Westen war das Notaufnahmelager Marienfelde – heute ein Museum. " title="Auch Leanthe Schmidts erster Halt bei ihrer Flucht in den Westen war das Notaufnahmelager Marienfelde – heute ein Museum. " width="350" height="196" class=""/>
+                    </picture>
+                    <div class="teaser__header">
+                      <span class="teaser__kicker">70 Jahre Lager…</span>
+                      <span class="teaser__headline ">
+                      Flucht aus der DDR: „Ein Erlebnis, das sich festsetzt“</span>
+                    </div>
+                  </a>
+                </article>
+              </div>
+            </div>
+          </div>
+          <div class="content-quad__column">
+            <a href="https://www.morgenpost.de/bezirke/treptow-koepenick">Treptow-Köpenick</a>
+            <div class="content--teaser--container clearfix   " id="fwid27" data-url="https://www.morgenpost.de/?widgetid=215147635&view=teaser&sec=1304">
+              <div class="collapsable__content">
+                <article class="teaser teaser--small  teaser--img-pos-vertical" data-article-id="238127913">
+                  <a href="https://www.morgenpost.de/bezirke/treptow-koepenick/article238127913/berlin-treptow-container-bezirk-trailerpark-gericht.html" title="Wohncontainer-Dörfer: Eigentümer macht Bezirk Angebot" class="teaser__content-link" data-tracking="contentteaser - teaser | 59" data-widget="Teaser Treptow-Köpenick">
+                    <picture class="teaser__img teaser__img--vertical teaser__img--article ispayedcontent   icon--plus-top-right">
+                      <!--[if IE 9]>
+                      <video style="display: none;">
+                      <![endif]-->
+                      <source srcset="https://img.morgenpost.de/img/treptow-koepenick/crop238127911/1551566212-w350-cv16_9-q85/aac9481c-d931-11ed-81ca-cbd81d07c366.jpg"/>
+                      <!--[if IE 9]>
+                      </video>
+                      <![endif]-->
+                      <img loading="lazy" src="https://www.morgenpost.de/resources/1681723142595/img/placeholder.png" alt="Am Adlergestell in Grünau (Treptow-Köpenick) leben die Menschen vor allem in eng gestellten Wohnwagen. " title="Am Adlergestell in Grünau (Treptow-Köpenick) leben die Menschen vor allem in eng gestellten Wohnwagen. " width="350" height="196" class=""/>
+                    </picture>
+                    <div class="teaser__header">
+                      <span class="teaser__kicker">Illegale Trailerparks</span>
+                      <span class="teaser__headline ">
+                      Wohncontainer-Dörfer: Eigentümer macht Bezirk Angebot</span>
+                    </div>
+                  </a>
+                </article>
+              </div>
+            </div>
+          </div>
+        </div>
+
+<div><em>=" 2.01.2023 13:11 "</em></div>
+
+<button class="ok">knopf</button>
+<button class="cancel">knopf</button>
+<button class="neutral">knopf</button>
+<button class="neutral2">knopf</button>
+<button class="attention">knopf</button>
+<button class="danger">knopf</button>
+<div>
+  
+</div>
+<br/><br/><br/><br/><br/>
+  </body>
+</html>
