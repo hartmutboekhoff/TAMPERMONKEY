@@ -241,4 +241,5 @@ const NDNP = {preventDefault:true,stopPropagation:true};
 const NPND = NDNP;
 const HFF = {excludeFormFields:false};
 
-console.log('keyhendler included');
+// ------------------------------------------------------------------
+console.log(GM_info.script.name, 'Version '+GM_info.script.version, 'common/keyhandler.js', 'Version '+COMMON_VERSION);

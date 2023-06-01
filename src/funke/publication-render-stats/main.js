@@ -34,4 +34,5 @@
 
 // ==/UserScript==
 
-console.log('HBo Tampermonkey', 'MAIN', 'Syntax Ok');
+console.log(GM_info.script.name, 'Version '+GM_info.script.version, 'Initialization complete');
+console.groupEnd();

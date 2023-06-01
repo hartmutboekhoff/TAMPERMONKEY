@@ -71,3 +71,6 @@
     reactions.forEach(r=>MutationHandler.instance.addReaction(r));
   }
 })();
+
+// ------------------------------------------------------------------
+console.log(GM_info.script.name, 'Version '+GM_info.script.version, 'common/mutationHandler.js', 'Version '+COMMON_VERSION);
