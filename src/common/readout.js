@@ -1,4 +1,57 @@
 (function() {
+  format = {
+    date: function(dt) {
+      return dt.getDate()+'.'+(dt.getMonth()+1)+'.'+dt.getFullYear();
+    },
+    time: function(dt) {
+      return dt.getHours()+' Uhr '+dt.getMinutes();
+    },
+    dateAndTime: function(dt) {
+      return format.date(dt)+', '+format.time(dt);
+    },
+    niceDateTime: function(dt) {
+      function dateDiff(dt1,dt2) {
+        const r = {
+          totalSeconds: Math.floor((dt1.valueOf()-dt2.valueOf())/1000),
+          dayDelta: Math.floor(dt1.valueOf()/1000/60/60/24)-Math.floor(dt2.valueOf()/1000/60/60/24),
+        };
+        r.seconds = r.totalSeconds%60;
+        r.totalMinutes = Math.floor(r.totalSeconds/60);
+        r.minutes = r.totalMinutes%60;
+        r.totalHours = Math.floor(r.totalMinutes/60);
+        r.hours = r.totalHours%24;
+        r.days = Math.floor(r.totalHours/24);
+/*
+        r.dateTime1 = dt1;
+        r.dateTime2 = dt2;
+        r.day1 = new Date(Math.floor(dt1.valueOf()/1000/60/60/24)*1000*60*60*24);
+        r.day2 = new Date(Math.floor(dt2.valueOf()/1000/60/60/24)*1000*60*60*24);
+        console.log(r);
+*/
+        return r;
+      }
+      function fewMinutes(d) {
+        if( d.minutes == 0 ) return 'jetzt';
+        return 'vor '+(d.minutes== 1?'einer Minute':d.minutes+' Minuten');
+      }
+      function fewHours(d) {
+        return 'vor '+(d.hours==1?'einer Stunde ':d.hours+' Stunden ')
+               +(d.minutes==0?'':' und '+(d.minutes==1?'einer Minute':d.minutes+' Minuten'));
+      }
+      function fewDays(d,dt) {
+        const dname = ['heute','gestern','vorgestern'][d.dayDelta] 
+                      ?? ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','freitag','Samstag'][dt.getDay()];
+        return  dname+', '+format.time(dt);
+      }
+
+      const delta = dateDiff(new Date(), dt);
+      if( delta.totalSeconds < 0 ) format.dateAndTime(dt);
+      if( delta.totalMinutes < 60 ) return fewMinutes(delta);
+      if( delta.totalHours < 12 ) return fewHours(delta);
+      if( delta.dayDelta < 7 ) return fewDays(delta, dt);
+      return format.dateAndTime(dt);
+    },
+  }
 
   function cleanupWhitespaces(s) {
     return s != undefined? s.replace(/\s+/g,' ').trim() : '';
@@ -135,14 +188,16 @@
     }
     
     convertDates() {
+      function toDate(...args) {
+        return new Date(args[3], args[1]-1, args[2], (args[7]=='PM'?+args[4]+12:args[4]), args[5], args[6]);
+      }
+      
       this.#extractedData.replace(
         /(\d{1,2})\/(\d{1,2})\/(\d{4}),? (\d{1,2}):(\d{2})(?::(\d{2}))? (AM|PM)/g,
-        (...args)=>' '+args[2]+'.'+args[1]+'.'+args[3]+' '+(args[7]=='PM'?+args[4]+12:args[4])+':'+args[5]+' '
+        (...args)=>format.niceDateTime(toDate(...args))
       );
-
-      
     }
-
+    
     #initOptions(options) {
       this.optoins = mergeUtteranceOptions(options, UtteranceCollector.#defaultOptions)
 
@@ -449,3 +504,6 @@
   window.ReadOut = document.ReadOut = new ReadOutUI();
   window.registerForReadOut = function(selector,options){window.ReadOut.registerReadOut(selector,options)};
 })();
+
+// ------------------------------------------------------------------
+console.log(GM_info.script.name, 'Version '+GM_info.script.version, 'common/readout.js', 'Version '+COMMON_VERSION);
