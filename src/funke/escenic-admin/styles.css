@@ -90,16 +90,31 @@ input[type=submit] {
  * ==============================================
  */
 form[name="neo.phoenix.publication.PublicationSelectionForm"] a {
-  padding: .5em 1em;
+  padding: .5em .1em .5em 1em;
   color: black;
   margin: .5em 1em;
 }
 form[name="neo.phoenix.publication.PublicationSelectionForm"] a[href$="submit();"] {
-  background-color: #4f4;
+  background-color: #0d0;
   background-image: var(--button-overlay);
   border-radius: 5px;
   border: 2px solid #080;
+  text-align: left;
 }
+form[name="neo.phoenix.publication.PublicationSelectionForm"] a[href$="submit();"]:before  {
+  content: "⚠";
+  margin-right: 1em;
+  font-weight: 900;
+  font-size: 120%;
+  display:inline-block;
+  background-color: yellow;
+  padding: .1em;
+  border-radius: 5px;
+  color: #d00;
+  border: 2px solid red;
+}
+
+
 form[name="neo.phoenix.publication.PublicationSelectionForm"] a[href$="list.jsp"] {
   background-color: #bbb;
   background-image: var(--button-overlay);

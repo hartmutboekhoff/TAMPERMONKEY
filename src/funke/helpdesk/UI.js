@@ -35,6 +35,9 @@ window.addEventListener('load',()=>{
                             }
                            );
 
+  window.registerForReadOut('#DateTimeControlREGISTRATIONTIMEcalendarTB');
+
+
   // ================================================
   console.log('initializing mutation-reactions');
   window.onMutation([{

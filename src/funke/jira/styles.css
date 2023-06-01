@@ -34,6 +34,7 @@ a#comment-edit-cancel {
 }
 
 input#summary,
+.field-group.comment-input .jira-wikifield,
 textarea#advanced-search {
   border: 4px solid #fa0;
   font-size: 1.5em;
