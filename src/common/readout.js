@@ -62,6 +62,7 @@
       rate: a?.rate ?? b?.rate ?? c?.rate,
       volume: a?.volume ?? b?.volume ?? c?.volume,
       language: a?.language ?? b?.language ?? c?.language,
+      readHidden: a?.readHidden ?? b?.readHidden ?? c?.readHidden,
     };
   } 
 
@@ -163,6 +164,13 @@
       if( (custom.suffix??'') != '' ) this.addSuffix(custom.suffix);
 
     }
+    applyReplacements(replacements) {
+      if( Array.isArray(replacements) )
+        replacements.forEach(r=>this.replace(r.pattern,r.replacement));
+      else if( typeof replacements == 'object' )
+        this.replace(replacements.pattern, replacements.replacement);
+    }
+    
   }
   
   class UtteranceCollector {
@@ -171,15 +179,19 @@
       rate: 1.35,
       volume: .8,
       language: 'de-DE',
+      readHidden: false,
     }
     #collected = new Set();
-    #exclude;
+    #exclude; #replacements;
     #customCollectors = [];
     #extractedData;
     
     constructor(node, options) {
       this.#initOptions(options);
       this.#extractedData = this.#collectNode(node);
+
+      this.#extractedData.applyReplacements(this.#replacements);
+
       if( (this.prefix??'') != '' ) this.#extractedData.addPrefix(this.prefix);
       if( (this.suffix??'') != '' ) this.#extractedData.addSuffix(this.suffix);
     }
@@ -191,7 +203,7 @@
       function toDate(...args) {
         return new Date(args[3], args[1]-1, args[2], (args[7]=='PM'?+args[4]+12:args[4]), args[5], args[6]);
       }
-      
+
       this.#extractedData.replace(
         /(\d{1,2})\/(\d{1,2})\/(\d{4}),? (\d{1,2}):(\d{2})(?::(\d{2}))? (AM|PM)/g,
         (...args)=>format.niceDateTime(toDate(...args))
@@ -199,12 +211,17 @@
     }
     
     #initOptions(options) {
-      this.optoins = mergeUtteranceOptions(options, UtteranceCollector.#defaultOptions)
+      this.options = mergeUtteranceOptions(options, UtteranceCollector.#defaultOptions)
 
       if( options == undefined ) return;
 
       this.prefix = options.prefix;
       this.suffix = options.suffix;
+      
+      if( Array.isArray(options.replace) )
+        this.#replacements = options.replace;
+      else if( typeof options.replace == 'object' )
+        this.#replacements = [options.replace];
 
       if( Array.isArray(options.exclude) )
         this.#exclude = options.exclude.join(',');
@@ -224,17 +241,15 @@
       if( this.#collected.has(node) ) return undefined;
       this.#collected.add(node);
       
-      if( this.#isHidden(node) || this.#isExcluded(node) ) return undefined;
-      
+      if( !this.#isReadable(node) ) return undefined;
+
       const custom = this.#getCustomCollector(node);
       const extract = this.#extractNode(node, custom);
-      
       if( extract == undefined ) return undefined;
 
       const norm = new NormalizedExtract(extract);
       if( custom ) {
-        if( custom.replace )
-          norm.replace(custom.replace.pattern, custom.replace.replacement);
+        norm.applyReplacements(custom.replace);
         norm.applyCustomOptions(custom);
       }
       return norm;
@@ -257,8 +272,20 @@
     #isExcluded(node) {
       return this.#exclude == undefined? false : !!node.matches?.(this.#exclude);
     }
-    #isHidden(node) {
-      return false;//node.offsetParent == undefined;
+    #isReadable(node) {
+      switch( node.nodeType ) {
+        case 3: // #text
+        case 8: // #comment
+        case 4: // CDATA
+          return true;
+          
+        case 1: // Element
+          return ( this.options.readHidden || node.offsetParent != undefined )
+                 && !this.#isExcluded(node);
+          
+        default:
+          return false;
+      }
     }
 
     default(node) {
