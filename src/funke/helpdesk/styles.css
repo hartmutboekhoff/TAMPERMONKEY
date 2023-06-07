@@ -50,10 +50,17 @@
   background: linear-gradient(#ffe0ef, #fde 20%, #fde 70%, #e8a) !important;
   color: black;
 }
+.esc-create-account {
+  background: linear-gradient(#ffc, #ff8 20%, #ff8 70%, #dd7) !important;
+  color: black;
+}
+
+.esc-create-account MAT-CELL,
 .esc-delete-account MAT-CELL {
   color:black !important;
   font-weight: bold !important;
 }
+
 
 /* Tabs */
 
@@ -148,3 +155,4 @@ div.dropDownContainer input#ComboBoxINTERNALSTATEtb {
   background-color: #fc6;
     font-size: 110%;
 }
+

@@ -36,17 +36,27 @@ window.addEventListener('load',()=>{
                            );
 
   window.registerForReadOut('#DateTimeControlREGISTRATIONTIMEcalendarTB');
+  window.registerForReadOut('a.hyperLinkObjectId span.labelObjectId',
+                            { replace: {
+                                pattern: /(\d{4})(\d{2})(\d{2})-(\d{4})/,
+                                //replacement: '$1, $2, $3, Nr. $4',
+                                replacement: 'vom $3.$2.$1, Nr. $4',
+                              }
+                            });
 
 
   // ================================================
   console.log('initializing mutation-reactions');
   window.onMutation([{
       selector: 'MAT-ROW.mat-row',
-      filter: e=>{
-          return !!e.innerText.match(/escenic/i)?.[0]
-                 && !!e.innerText.match(/austritt|freistellung/i)?.[0];
+      callback: e=>{
+          if( !!e.innerText.match(/escenic/i)?.[0] ) {
+            if( !!e.innerText.match(/austritt|freistellung/i)?.[0] )
+              e.classList.add('esc-delete-account');
+            else if( !!e.innerText.match(/zugang|einrichten|anlegen|wiedereintritt/i)?.[0] )
+              e.classList.add('esc-create-account');
+          }
         },
-      className: 'esc-delete-account',
     },
     {
       selector: ':is(.jqx-grid-group-collapse,.jqx-grid-group-expand)+.jqx-grid-group-cell',
@@ -55,7 +65,16 @@ window.addEventListener('load',()=>{
           if( e.innerText.indexOf('FT_Support_TZ-Digital') >= 0 ) 
             e.classList.add('support');
         },
-    }
+    },
+    {
+      selector: ':not(:is(.jqx-grid-group-collapse,.jqx-grid-group-expand))+.jqx-grid-group-cell',
+      callback: function(e){
+          const p = e.parentNode;
+          if( !!p.innerText.match(/escenic/i)?.[0] 
+              && !!p.innerText.match(/zugang|einrichten|anlegen|wiedereintritt/i)?.[0] )
+            e.classList.add('esc-create-account');
+        },
+    },
   ]);
   
 
