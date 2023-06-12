@@ -1,0 +1,14 @@
+/* @printCompiledCss = falsse */
+
+#search-pixel_search_criteria_privatePixelUIDFieldPublisher {
+  outline: 5px solid #ec3;
+}
+
+li.portal__menu-item:nth-child(3) {
+  background-color: #fc6;
+  width: 100px;
+  text-align: center;
+}
+#researchPixel {
+  background-color: #fdb;
+}
