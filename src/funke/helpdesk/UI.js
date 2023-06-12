@@ -36,9 +36,9 @@ window.addEventListener('load',()=>{
                            );
 
   window.registerForReadOut('#DateTimeControlREGISTRATIONTIMEcalendarTB');
-  window.registerForReadOut('a.hyperLinkObjectId span.labelObjectId',
+  window.registerForReadOut('a.hyperLinkObjectId span.labelObjectId, input#tbTextBoxBezugsnummermitTag',
                             { replace: {
-                                pattern: /(\d{4})(\d{2})(\d{2})-(\d{4})/,
+                                pattern: /(?:\[#)?(\d{4})(\d{2})(\d{2})-(\d{4})\]?/,
                                 //replacement: '$1, $2, $3, Nr. $4',
                                 replacement: 'vom $3.$2.$1, Nr. $4',
                               }
