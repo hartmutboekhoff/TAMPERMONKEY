@@ -37,7 +37,8 @@ input#summary,
 .field-group.comment-input .jira-wikifield,
 textarea#advanced-search {
   outline: 4px solid #fa0;
-  outline-offset: 5px;
+  outline-offset: 2px;
+  min-height: 40px;
   font-size: 1.5em;
   line-height: 1.5em;
 }
@@ -94,7 +95,7 @@ header a.aui-button:visited {
 
 #description-val {
   outline: 3px solid #fb0;
-  outline-offset: 3px;
+  outline-offset: 5px;
   padding-top: 1em;
   padding-bottom: 1em;
   border-radius: 5px;
@@ -149,4 +150,11 @@ button.collapsed-actions {
 }
 .ghx-swimlane-header span.ghx-description:after {
   content: " Tickets)";
+}
+
+div.jira-wikifield[field-id="customfield_14307"],
+_textarea#customfield_14307 {
+  outline: 4px dashed #666;
+  outline-offset: 3px;
+  border-radius: 5px;
 }

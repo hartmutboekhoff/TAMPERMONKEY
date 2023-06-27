@@ -9,6 +9,7 @@
 // @grant unsafeWindow
 
 // @include         https://esc-pub-tools.cloud.funkedigital.de/esc-pub-tools/servlets/user-excel-importer/
+// @include         https://esc-pub-tools-uat.cloud.funkedigital.de/esc-pub-tools/servlets/user-excel-importer/
 
 // @downloadURL          http://localhost:3000/funke/escenic-user-upload/main.js
 // @updateURL            http://localhost:3000/funke/escenic-user-upload/main.js

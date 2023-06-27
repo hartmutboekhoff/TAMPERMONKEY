@@ -1,4 +1,4 @@
-/* @printCompiledCss = falsse */
+/* @printCompiledCss = false */
 
 #search-pixel_search_criteria_privatePixelUIDFieldPublisher {
   outline: 5px solid #ec3;
@@ -11,4 +11,20 @@ li.portal__menu-item:nth-child(3) {
 }
 #researchPixel {
   background-color: #fdb;
+}
+
+form[name=login_form] div.page {
+  transform: scale(1.5);
+}
+
+input#login {
+  @.ok-button;
+  padding: 1em 0;
+  border-radius: 5px;
+  
+}
+
+div#entryTextDiv25:has(>div>#searchPayoutStatementsPublisher) {
+  background-color: #fd6;
+  font-size: 1.5em;
 }

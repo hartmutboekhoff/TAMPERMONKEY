@@ -121,3 +121,12 @@ form[name="neo.phoenix.publication.PublicationSelectionForm"] a[href$="list.jsp"
   border-radius: 5px;
   border: 2px solid #444;
 }
+
+form[action="/escenic-admin/do/publication/updateResources"] table:nth-child(2) tr:nth-child(n + 2):nth-last-child(n + 2) > td {
+  font-size: 2em;
+  font-weight: bold;
+  color: blue;
+}
+form[action="/escenic-admin/do/publication/updateResources"] table:nth-child(2) tr:has(input) > td {
+  color: red !important;
+}

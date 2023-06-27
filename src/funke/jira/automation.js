@@ -7,12 +7,13 @@
       // ignore
     }
   }
-  function ifExists(element, fn) {
+  function ifExists(element, thisArg, fn) {
     if( typeof element == 'string' ) element = document.querySelector(element);
-    return element == undefined? undefined : tryCatchIgnore(fn, this, element);
+    if( fn == undefined && typeof thisArg == 'function' ) [fn,thisArg] = [thisArg,fn];
+    return element == undefined? undefined : tryCatchIgnore(fn, thisArg, element);
   }
   
-  window.addEventListener('load',ev=>{
+  function bulkEdit(ev) {
     [...document.querySelectorAll('form#bulkedit input[type=checkbox][name^=bulkedit]')].forEach(cb=>cb.checked=true);
     
     ifExists('form#bulk-delete-notifications input#sendBulkNotificationCB',
@@ -26,6 +27,17 @@
                window.ReadOut.read('Fertig!',{volume:2000});
                setTimeout(()=>btn.click(), 2000);
              });
-      
+         
+  }
+  function newIssue(ev) {
+    ifExists('textarea#customfield_14307',ta=>{
+      console.log(ta);
+      if( ta.value == '' ) ta.value = '-';
+    });
+  }
+  
+  window.addEventListener('load',ev=>{
+    bulkEdit();
+    newIssue();
   }); // load
 })();

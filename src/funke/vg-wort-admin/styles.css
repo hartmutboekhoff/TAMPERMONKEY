@@ -1,0 +1,36 @@
+/* @printCompiledCss = false */
+
+.unitb-app-board tr.v-table-row {
+  background-image: var(--row-overlay) !important;
+}
+
+.unitb-app-board tr.v-table-row-odd {
+  background-image: var(--row-overlay) !important;
+  background-color: #cef !important;
+}
+
+.unitb-app-board .v-table-cell-content {
+  vertical-align: middle;
+}
+
+
+
+
+.unitb-app-board tr.v-table-row     td:nth-child(8) div.v-button.v-widget,
+.unitb-app-board tr.v-table-row-odd td:nth-child(8) div.v-button.v-widget {
+  @.danger-button !important;
+  border-radius: 5px !important;
+}
+.unitb-app-board tr.v-table-row     td:nth-child(7) div.v-button.v-widget,
+.unitb-app-board tr.v-table-row-odd td:nth-child(7) div.v-button.v-widget {
+  @.neutral2-button !important;
+  border-radius: 5px !important;
+}
+
+
+.unitb-app-board tr.v-table-row     div.v-button.v-widget span,
+.unitb-app-board tr.v-table-row-odd div.v-button.v-widget span {
+  background: none;
+  text-shadow: none;
+}
+
