@@ -1,7 +1,7 @@
 (function(){
-  function tryCatchIgnore(f,...args) {
+  function tryCatchIgnore(f,thisArg,args) {
     try {
-      return f.apply(this,args);
+      return f.apply(thisArg,args);
     }
     catch(e) {
       //console.log('TCI',"error",e);
@@ -15,22 +15,22 @@
     
     constructor() {
       this.#observer = new MutationObserver(mutations=>{  
-        this.#reactions.forEach(s=>{
-          let elements = [...document.querySelectorAll(s.selector)];
-          if( typeof s.filter == 'function' )
-            elements = elements.filter((e,ix,arr)=>tryCatchIgnore.apply(s,[s.filter,e,ix,arr]));
+        this.#reactions.forEach(r=>{
+          let elements = [...document.querySelectorAll(r.selector)];
+          if( typeof r.filter == 'function' )
+            elements = elements.filter((e,ix,arr)=>tryCatchIgnore(r.filter,r,[e,ix,arr]));
             
           elements.forEach((e,ix,arr)=>{
-            if( s.className != undefined ) 
-              e.classList.add(...s.className.split(/\s/));
+            if( r.className != undefined ) 
+              e.classList.add(...r.className.split(/\s/));
               
-            if( typeof s.style == 'string' ) 
-              e.style = e.style.cssText + ' ' + s.style;
-            else if( typeof s.style == 'object' )
-              Object.assign(e.style, s.style);
+            if( typeof r.style == 'string' ) 
+              e.style = e.style.cssText + ' ' + r.style;
+            else if( typeof r.style == 'object' )
+              Object.assign(e.style, r.style);
               
-            if( typeof s.callback == 'function' )
-              tryCatchIgnore.apply(s,[s.callback,e,ix,arr]);
+            if( typeof r.callback == 'function' )
+              tryCatchIgnore(r.callback,r,[e,ix,arr]);
           });
         });
       });

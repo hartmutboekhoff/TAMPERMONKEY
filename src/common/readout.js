@@ -43,7 +43,6 @@
                       ?? ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','freitag','Samstag'][dt.getDay()];
         return  dname+', '+format.time(dt);
       }
-
       const delta = dateDiff(new Date(), dt);
       if( delta.totalSeconds < 0 ) format.dateAndTime(dt);
       if( delta.totalMinutes < 60 ) return fewMinutes(delta);
@@ -201,7 +200,7 @@
     
     convertDates() {
       function toDate(...args) {
-        return new Date(args[3], args[1]-1, args[2], (args[7]=='PM'?+args[4]+12:args[4]), args[5], args[6]);
+        return new Date(args[3], args[1]-1, args[2], args[4]==undefined? 0 : (args[7]=='PM'?+args[4]+12:args[4]), args[5]??0, args[6]??0);
       }
 
       this.#extractedData.replace(
