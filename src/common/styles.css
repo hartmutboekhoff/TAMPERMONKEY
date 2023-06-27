@@ -6,6 +6,10 @@ body {
   --button-soft-overlay: linear-gradient(rgba(80,80,80,.2), rgba(255,255,255,.3), transparent 30%, transparent 70%, rgba(80,80,80,.2)), 
                          linear-gradient(90deg, rgba(80,80,80,.2), rgba(255,255,255,.3), transparent 20%, transparent 80%, rgba(80,80,80,.2));
 
+
+  --row-overlay: linear-gradient(rgba(68,68,68,.3), rgba(255,255,255,.5), transparent 20%, transparent 80%, rgba(68,68,68,.3));
+  --row-soft-overlay: linear-gradient(rgba(80,80,80,.2), rgba(255,255,255,.3), transparent 30%, transparent 70%, rgba(80,80,80,.2));
+
   --ok-button: #4e4;
   --ok-border: #4a4;
   --cancel-button: #bbb;
@@ -62,6 +66,14 @@ body {
 }
 
 
+input-highlight {
+  outline: 2px solid #fc0;
+  outline-offset: 2px;
+  box-shadow: 1px 1px 3px 3px #fc0;
+  border-radius: 3px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
 
 hbo-icon {
   font-weight: 900;
