@@ -10,17 +10,31 @@
       }
       
     </style>
-    <link rel="stylesheet" href="/common/styles.css">    
+    <link rel="stylesheet" href="../common/styles.css">    
     
-    
-    <script src="./dynamicStyle.js"></script>
-    <script src="./readOut.js"></script>
     <script>
-
-
-
+        const COMMON_VERSION = 1;
+        const GM_info = {
+          script: {
+            name: 'testscript',
+            version: 1
+          }
+        };
 
     </script>
+    
+    
+    
+    <!-- script src="../src/common/head.js"></script -->
+    <script src="../src/common/keyhandler.js"></script>
+    <script src="../src/common/mutationHandler.js"></script>
+    <script src="../src/common/readout.js"></script>
+    <!-- script src="../src/common/styles.js"></script -->
+
+
+    
+    
+    
     <script>
       window.registerForReadOut('article');
       window.registerForReadOut('p',{
