@@ -349,7 +349,9 @@
   class ReadOutQueue {
     static #instance;
     #queue = [];
-    #current;
+    #current = {queueIx:-1, utteranceIx:0};
+    #played = [];
+    #cleanupTimer;
 
     static get instance() {
       if( ReadOutQueue.#instance == undefined )
@@ -358,21 +360,55 @@
     }
     
     #start() {
-      if( !this.#current )
+      if( this.#queue.length > 0 
+          && !window.speechSynthesis.speaking 
+          && !window.speechSynthesis.pending )
         this.#next();
     }
-    #next() {
-      do {
-        this.#current = this.#queue.shift();
-        if( !this.#current ) return;
-      } while( !this.#current.length )
-
-      this.#current[this.#current.length-1].onend = ()=>this.#next();
-      this.#current.forEach(u=>window.speechSynthesis.speak(u));
+    
+    #setPlayed(queueIx, utteranceIx=0) {
+      const pix = this.#played.findIndex(p=>p.queueIx == queueIx && p.utteranceIndex == utteranceIx);
+      if( pix == -1 ) 
+        this.#played.push({queueIx, utteranceIx});
+      else
+        this.#played = this.#played.slice(0,pix);
     }
-    #pushUtterances(us, k, e) {
-      us.key = k;
-      us.element = e
+    #next() {
+      const speak = (qix,uix)=>window.speechSynthesis.speak(this.#queue[qix][uix]);
+      
+      if( this.#queue.length == 0 )
+        return;
+      if( ++this.#current.utteranceIx < this.#queue[this.#current.queueIx].length )
+        speak(this.#current.queueIx, this.#current.utteranceIx);
+      else if( ++this.#current.queueIx < this.#queue.length )
+        speak(this.#current.queueIx, this.#current.utteranceIx=0);
+      else
+        this.#cleanup();
+    }
+    #cleanup(delay=0) {
+      if( this.#cleanupTimer != undefined ) {
+        if( delay > 0 ||  window.speechSynthesis.speaking || window.speechSynthesis.pending )
+          return;
+      }
+      else {
+        if( delay != -1 && ( window.speechSynthesis.speaking || window.speechSynthesis.pending ) )
+          delay = 500;
+        if( delay > 0 )
+          return void (this.#cleanupTimer = window.setTimeout(()=>this.#cleanup(),delay));
+      }
+
+      this.#cleanupTimer = undefined;
+      this.#queue = [];
+      this.#current = {queueIx:0, utteranceIx:-1};
+      this.#played = [];
+    }
+    #pushUtterances(utterances, k, e) {
+      if( utterances.length == 0 ) return;
+      utterances.key = k;
+      utterances.element = e
+      for( u of utterances )
+        u.onEnd = ev=>this.#next();
+        
       this.#queue.push(us);
       this.#start();
     }
@@ -398,7 +434,8 @@
         this.#pushUtterances(u.utterances, k, e);
     }
     read(v,options) {
-      if( this.#current && this.#current.element == v ) 
+      const c = this.#queue[this.#current.queueIx];
+      if( c != undefined && c.element == v ) 
         return;
 
       this.cancel();
@@ -410,22 +447,30 @@
           : this.#pushText(v, undefined, options);
     }
     cancel() {
-      this.#queue.length = 0;
-      this.#current = undefined;
+      this.#cleanup(-1);
       window.speechSynthesis.cancel();
     }
     skip(to) {
-      if( !!to ) {
-        const ix = this.#queue.findIndex(u=>u.key==to||u.element==to);
-        if( ix > 0 )
-          this.#queue.splice(0,ix);
+      let ix = to==undefined? 1 : parseInt(to);
+      if( isNaN(ix) ) {
+        if( -1 == (ix = this.#queue.findIndex(u=>u.key==to||u.element==to)) )
+          return;
+          
+        this.#current.queueIx = ix;
+        this.#current.utteranceIx = -1;
       }
-      if( !!this.#current )
+      else {
+        this.#current.queueIx += ix;
+        this.#current.utteranceIx = -1;
+      }
+
+      if( window.speechSynthesis.speaking || window.speechSynthesis.pending )
         window.speechSynthesis.cancel();
-      this.#next();
+      else
+        this.#next();
     }
     get isReading() {
-      return this.#current != undefined;
+      return window.speechSynthesis.speaking || window.speechSynthesis.pending;
     }
   }
   
