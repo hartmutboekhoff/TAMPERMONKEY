@@ -172,3 +172,7 @@ div#contenttableHLGrid div.jqx-grid-group-cell:nth-child(10) div.jqx-grid-cell-l
   font-size: 1.2em;
   font-weight: bold;
 }
+
+textarea#vm\.Sys\.Result {
+  @input-highlight;
+}

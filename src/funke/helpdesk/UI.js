@@ -17,8 +17,9 @@ window.addEventListener('load',()=>{
   window.registerForReadOut('.labelSubject');
   window.registerForReadOut('#ComplexTextDescription',{exclude:'textarea,div.helpLineComplexTextLabel>table'});
   window.registerForReadOut('.tabControlHeader span');
-  window.registerForReadOut('div.jqx-grid-cell.jqx-item',
-                            {prefix: 'prefix, bitte dokumnetieren, welches Element hier angesprochen wird!'}
+  // Zeile im Reiter für reservierte Aufgaben.
+  window.registerForReadOut('div.jqx-grid-cell.jqx-item'
+                            //,{ replace: issueKeyToDate }
                            );
   window.registerForReadOut('div#contenttableHLGrid>div');
   // Process-Liste
