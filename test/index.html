@@ -23,8 +23,6 @@
 
     </script>
     
-    
-    
     <!-- script src="../src/common/head.js"></script -->
     <script src="../src/common/keyhandler.js"></script>
     <script src="../src/common/mutationHandler.js"></script>
@@ -52,12 +50,14 @@
       
 
     </script>
+    <script>
+      for( let i = 1 ; i < 20 ; i++ )
+        window.ReadOut.queue(i+'');
+window.ReadOut.queue('ich sehe',{volume: .2, rate:1.2,pitch:.2});
+window.ReadOut.queue('tote Menschen',{volume: .2, rate:.6,pitch:.2});
+    </script>
 
-<script>
-
-  
-  
-</script>    
+    
 <style>
   button {
     border-radius: 5px;

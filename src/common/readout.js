@@ -1,5 +1,8 @@
 (function() {
-  format = {
+  const DOUBLE_KEY_PRESS = 500;
+  const QUEUE_CLEANUP_DELAY = 750;
+
+  const format = {
     date: function(dt) {
       return dt.getDate()+'.'+(dt.getMonth()+1)+'.'+dt.getFullYear();
     },
@@ -50,8 +53,8 @@
       if( delta.dayDelta < 7 ) return fewDays(delta, dt);
       return format.dateAndTime(dt);
     },
-  }
-
+  };
+  
   function cleanupWhitespaces(s) {
     return s != undefined? s.replace(/\s+/g,' ').trim() : '';
   }
@@ -64,6 +67,79 @@
       readHidden: a?.readHidden ?? b?.readHidden ?? c?.readHidden,
     };
   } 
+  function assignUtteranceOptions(utterance, options) {
+    if( options != undefined ) {
+      utterance.lang = options.language ?? options.lang ?? 'de-DE';
+      if( options.pitch != undefined ) utterance.pitch = options.pitch;
+      if( options.volume != undefined ) utterance.volume = options.volume;
+      if( options.rate != undefined ) utterance.rate = options.rate;
+    }
+    else {
+      utterance.lang = 'de-DE';
+    }
+    return utterance;
+  }
+/*  
+  const UTTREANCE_OPTIONS = ['pitch','rate','volume','lang'];
+  const UTTREANCE_COLLECTOR_OPTIONS = ['pitch','rate','volume','lang','readHidden'];
+  function assignProperties(dest,src,properties) {
+    for( let p of properties )
+      if( src[p] != undefined )
+        dest[p] = src[p];
+    return dest;
+  }
+*/
+
+  class BaseKeyHandler {
+    #this; 
+    #previousKey; #previousTime;
+    
+    constructor(thisObject, options) {
+      this.#this = thisObject;
+      this.doublePressTimeout = options?.doublePressTimeout ?? DOUBLE_KEY_PRESS;
+      this.stopPropagation = options?.stopPropagation ?? true;
+      this.preventDefault = options?.preventDefault ?? true;
+
+      window.addEventListener('keydown', ev=>this.callHandler(ev), true);
+    }
+    getHandler(ev) {
+      const k = (ev.ctrlKey? 'Ctrl+':'') +
+                (ev.altKey? 'Alt+':'') +
+                (ev.shiftKey? 'Shift+':'') +
+                ev.key;
+
+      const doublePressed = this.#previousKey == k 
+                            && new Date() - this.#previousTime < this.doublePressTimeout;
+      this.#previousKey = k;
+      this.#previousTime = new Date();
+
+      const handler = this[k];
+      return typeof handler != 'function'
+              ? undefined 
+              : { handler, 
+                  doublePressed, 
+                  stopPropagation: handler.stopPropagation ?? this.stopPropagation, 
+                  preventDefault: handler.preventDefault ?? this.preventDefault
+                };
+    }
+    callHandler(ev) {
+      const h = this.getHandler(ev);
+      if( h == undefined ) return;
+
+      ev.doublePressed = h.doublePressed;
+      switch( h.handler.apply(this.#this, [ev]) ) {
+        case true:
+          ev.stopPropagation();
+          ev.preventDefault();
+        case false:
+          break;
+        
+        default:
+          if( h.stopPropagation ) ev.stopPropagation();
+          if( h.preventDefault ) ev.preventDefault();
+      }
+    }
+  }
 
   class NormalizedExtract {
     #text; #nodes;
@@ -144,10 +220,7 @@
 
       if( this.#text != undefined )  {
         const u = new SpeechSynthesisUtterance(this.#text);
-        u.pitch = options.pitch;
-        u.rate = options.rate;
-        u.volume = options.volume;
-        u.lang = options.language;
+        assignUtteranceOptions(u, options);
         return [u];
       }
       else if( this.#nodes != undefined )
@@ -345,11 +418,29 @@
       UtteranceCollector.#defaultOptions.language = v.language ?? UtteranceCollector.#defaultOptions.language;
     }
   }  
-  
+
+/*
+  class UtteranceList extends Array {
+    #progress = -1;
+    
+    constructor() {
+      super();
+    }
+    speak(start) {
+      
+    }
+    skip(steps) {
+      
+    }
+    cancel() {
+      
+    }
+  }
+*/
   class ReadOutQueue {
     static #instance;
     #queue = [];
-    #current = {queueIx:-1, utteranceIx:0};
+    #currentIx = 0;
     #played = [];
     #cleanupTimer;
 
@@ -359,6 +450,9 @@
       return ReadOutQueue.#instance;
     }
     
+    get #current() {
+      return this.#queue[this.#currentIx];
+    }
     #start() {
       if( this.#queue.length > 0 
           && !window.speechSynthesis.speaking 
@@ -366,22 +460,27 @@
         this.#next();
     }
     
-    #setPlayed(queueIx, utteranceIx=0) {
-      const pix = this.#played.findIndex(p=>p.queueIx == queueIx && p.utteranceIndex == utteranceIx);
+    #setPlayed(currentIx, progress=0) {
+      const pix = this.#played.findIndex(p=>p.currentIx == currentIx && p.progress == progress);
       if( pix == -1 ) 
-        this.#played.push({queueIx, utteranceIx});
+        this.#played.push({currentIx, progress});
       else
-        this.#played = this.#played.slice(0,pix);
+        this.#played.splice(pix+1);
+    }
+
+    #speak(uix) {
+      if( uix != undefined )
+        this.#current.progress = uix;
+      window.speechSynthesis.speak(this.#current[this.#current.progress]);
+      this.#setPlayed(this.#currentIx, uix??0);      
     }
     #next() {
-      const speak = (qix,uix)=>window.speechSynthesis.speak(this.#queue[qix][uix]);
-      
-      if( this.#queue.length == 0 )
+      if( this.#current == undefined )
         return;
-      if( ++this.#current.utteranceIx < this.#queue[this.#current.queueIx].length )
-        speak(this.#current.queueIx, this.#current.utteranceIx);
-      else if( ++this.#current.queueIx < this.#queue.length )
-        speak(this.#current.queueIx, this.#current.utteranceIx=0);
+      else if( ++this.#current.progress < this.#current.length )
+        this.#speak();
+      else if( ++this.#currentIx < this.#queue.length )
+        this.#speak(0);
       else
         this.#cleanup();
     }
@@ -392,50 +491,53 @@
       }
       else {
         if( delay != -1 && ( window.speechSynthesis.speaking || window.speechSynthesis.pending ) )
-          delay = 500;
+          delay = QUEUE_CLEANUP_DELAY;
         if( delay > 0 )
           return void (this.#cleanupTimer = window.setTimeout(()=>this.#cleanup(),delay));
       }
 
       this.#cleanupTimer = undefined;
       this.#queue = [];
-      this.#current = {queueIx:0, utteranceIx:-1};
+      this.#currentIx = 0;
       this.#played = [];
+    }
+    #mark(ix) {
+      this.#setPlayed(this.#currentIx,ix);
     }
     #pushUtterances(utterances, k, e) {
       if( utterances.length == 0 ) return;
+      utterances.progress = -1;
       utterances.key = k;
       utterances.element = e
-      for( u of utterances )
-        u.onEnd = ev=>this.#next();
+      utterances.forEach((u,ix)=>{
+        u.onend = ev=>this.#next();
+        u.onmark = ev=>this.#mark(ix);
+      });
         
-      this.#queue.push(us);
+      this.#queue.push(utterances);
       this.#start();
     }
     #pushText(t, k, options) {
-      const opt = Object.assign({},options);
-      opt.lang = opt.language;
       k ??= t;
-      const u = new SpeechSynthesisUtterance(t, opt);
-      u.lang = 'de-DE';
+      const u = new SpeechSynthesisUtterance(t);
+      assignUtteranceOptions(u, options);
       this.#pushUtterances([u], k);
       return k;
     }
     #pushElement(e, k, options) {
       if( this.#queue.find(u=>u.element==e) != undefined ) 
-        retrun;
+        return;
         
       const u = new UtteranceCollector(e,options);
       u.convertDates();
       k ??= e.id ?? e.className ?? e.nodeName;
       if( u.utterances.length == 0 )
-        this.#pushText('Kein Text.',k, e);
+        this.#pushText('Kein Text.', k, options);
       else
         this.#pushUtterances(u.utterances, k, e);
     }
     read(v,options) {
-      const c = this.#queue[this.#current.queueIx];
-      if( c != undefined && c.element == v ) 
+      if( this.#current?.element == v ) 
         return;
 
       this.cancel();
@@ -456,12 +558,12 @@
         if( -1 == (ix = this.#queue.findIndex(u=>u.key==to||u.element==to)) )
           return;
           
-        this.#current.queueIx = ix;
-        this.#current.utteranceIx = -1;
+        this.#currentIx = ix;
+        if( !!this.#current ) this.#current.progress = -1;
       }
       else {
-        this.#current.queueIx += ix;
-        this.#current.utteranceIx = -1;
+        this.#currentIx += ix;
+        if( !!this.#current ) this.#current.progress = -1;
       }
 
       if( window.speechSynthesis.speaking || window.speechSynthesis.pending )
@@ -469,46 +571,62 @@
       else
         this.#next();
     }
+    rewind(steps=0) {
+      if( steps > 0 ) 
+        this.#played.splice(-steps);
+      if( this.#played.length == 0 ) 
+        return;
+        
+      const np = this.#played.pop();
+      this.#currentIx = np.currentIx;
+      if( !!this.#current ) this.#current.progress = np.progress;
+
+      if( window.speechSynthesis.speaking || window.speechSynthesis.pending )
+        window.speechSynthesis.cancel();
+      this.#speak();
+    }
+    
     get isReading() {
-      return window.speechSynthesis.speaking || window.speechSynthesis.pending;
+      return window.speechSynthesis.speaking 
+             || window.speechSynthesis.pending 
+             || this.#currentIx < this.#queue.length
+             || this.#played.length > 0;
     }
   }
   
   class ReadOutUI {
     #cssPathHelper = [];
     #selectors = [];
-    #keyHandlers = {
-      Escape: function(ev) {
-        if( this.isReading ) {
-          this.cancel();
-          ev.stopPropagation();
-          ev.preventDefault();
-          alert(567);
-        }
-        
-      },
-      Tab: function(ev) {
-        if( this.isReading ) {
-          this.skip();
-          ev.stopPropagation();
-          ev.preventDefault();
-        }
-      },
-    };
+    #keyHandlers = new (class extends BaseKeyHandler {
+      constructor(parent) {
+        super(parent)
+      }
+
+      Escape(ev) {
+        if( !this.isReading ) 
+          return false;
+        this.cancel();
+        return true;
+      }
+      Tab(ev) {
+        if( !this.isReading ) 
+          return false;
+        this.skip();
+        return true;
+      }
+      ['Shift+Tab'](ev) {
+        if( this.isReading )
+          this.rewind(ev.doublePressed? 2 : 1);
+        return true;
+      }
+    })(this);
 
     constructor() {
-      window.addEventListener('keydown',ev=>{
-        const h = this.#keyHandlers[ev.key];
-        if( typeof h == 'function' )
-          h.apply(this,[ev]);
-        else if( this.isReading )
-          this.cancel();
-      });
       window.addEventListener('mousemove',ev=>{
         this.#onMousemove(ev);
       });
     }
-    
+          
     get isReading() {
       return ReadOutQueue.instance.isReading;
     }
@@ -523,6 +641,9 @@
     }
     skip(to) {
       ReadOutQueue.instance.skip(to);
+    }
+    rewind(steps) {
+      ReadOutQueue.instance.rewind(steps);
     }
     registerReadOut(selector,options) {
       this.#selectors.push({selector,options});
@@ -543,7 +664,7 @@
       const target = document.elementFromPoint(ev.clientX,ev.clientY);
       const match = this.#findClosestMatch(target);
       if( match != undefined ) 
-        this.read(match.ancestor,match.options);
+        this.queue(match.ancestor,match.options);
       //else
       //  console.log('no math for ', target);
     }
