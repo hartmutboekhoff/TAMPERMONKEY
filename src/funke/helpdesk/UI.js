@@ -51,8 +51,9 @@ window.addEventListener('load',()=>{
                                   extract: node=>node.querySelector('.SUControlItemValue')?.innerText,
                                 },
                               }
-                            }
-                           );
+                           });
+
+  window.registerForReadOut('#tbSimpleObjectSearchContact,#tbSimpleObjectSearchOpenedBy');
 
   window.registerForReadOut('#DateTimeControlREGISTRATIONTIMEcalendarTB');
   window.registerForReadOut('a.hyperLinkObjectId span.labelObjectId, input#tbTextBoxBezugsnummermitTag',
