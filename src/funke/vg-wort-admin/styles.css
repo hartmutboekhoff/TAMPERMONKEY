@@ -26,11 +26,17 @@
   @.neutral2-button !important;
   border-radius: 5px !important;
 }
+div.v-expand>div.v-slot>div.v-horizontallayout>div.v-slot:nth-child(4)>div.v-horizontallayout.v-layout.v-horizontal.v-widget.v-margin-right.v-margin-left>div.v-slot>div.v-button.v-widget,
+div.v-margin-top:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) {
+  @.neutral-button;
+  border-radius: 5px !important;
+}
 
-
+div.v-margin-top:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) span,
 .unitb-app-board tr.v-table-row     div.v-button.v-widget span,
 .unitb-app-board tr.v-table-row-odd div.v-button.v-widget span {
   background: none;
   text-shadow: none;
 }
+
 

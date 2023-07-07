@@ -8,8 +8,10 @@
 // @grant addStyle
 // @grant unsafeWindow
 
+// @include               https://dffsg026p43.funkemedien.de:20111/*
+// @include               https://dffsg026p43.funkemedien.de:20111/sap/*
 // @include               https://dffsg026p43.funkemedien.de:20111/funke/nwbc/nwbc_cockpit/*
-// @include               https://dffsg026p43.funkemedien.de:20111/funke/nwbc/nwbc_cockpit*
+
 
 
 // @downloadURL           http://localhost:3000/funke/sap/main.js

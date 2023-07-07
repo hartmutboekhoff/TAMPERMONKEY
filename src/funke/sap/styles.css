@@ -4,10 +4,11 @@
   background-color: yellow !important;
 }
 
-#WD19 span {
+
+div.lsPageHeader--item table.urTBar div.lsTbarOvfl > span.lsToolbarButton.lsTbarItmStandalone.lsToolbar--item:first-child > div.lsButton {
   @.ok-button;
-  background-color: yellow !important;
-}
-div.lsButton {
-  background-color: green !important;
+  height: 40px !important;
+  width: 150px;
+  lint-height: 40px;
+  font-size: 1.5em;
 }

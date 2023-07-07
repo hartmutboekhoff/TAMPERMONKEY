@@ -45,6 +45,7 @@ window.addEventListener('load',()=>{
                               //exclude:'#PanelContentSUControlEDITOR2 span:nth-child(-n+1)',
                               childElements: {
                                 '[id^="PanelHeaderSUControlEDITOR"]': {
+                                  //prefix:'aktiviti 4',
                                   extract: node=>node.innerText.replace(/SU (\d+) \(Editor: (.*?)\)/,'Nummer $1 von $2'),
                                 },
                                 '[id^="PanelContentSUControlEDITOR"]': {
@@ -97,7 +98,7 @@ window.addEventListener('load',()=>{
       callback: function(e){
           const p = e.parentNode;
           if( !!p.innerText.match(/escenic/i)?.[0] 
-              && !!p.innerText.match(/zugang|einrichten|anlegen|eintritt|passwort/i)?.[0] )
+              && !!p.innerText.match(/zugang|einrichten|anlegen|eintritt|passwort|login/i)?.[0] )
             e.classList.add('esc-create-account');
         },
     },
