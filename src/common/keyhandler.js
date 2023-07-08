@@ -148,31 +148,37 @@
   	  return r;
   	}
    	#dispatch(ev) {
+   	  function isFormField(target) {
+   	    const types = ['INPUT', 'SELECT', 'TEXTAREA', 'BUTTON', 'OPTION', 'OPTGROUP'];
+   	    return types.includes(target.tagName);
+   	  }
    	  function execute(h) {
-   	    if( !h.options?.excludeFormFields 
-   	        || !['INPUT', 'SELECT', 'TEXTAREA', 'BUTTON', 'OPTION', 'OPTGROUP'].includes(ev.target.tagName) ) {
-     	    try {
-     	      h(ev);
-     	      if( !!h.options?.preventDefault ) ev.preventDefault();
-     	      if( !!h.options?.stopPropagation ) ev.stopPropagation();
-     	      return true;
-     	    }
-     	    catch(e) {
-     	      console.error(e);
-     	    }
-     	  }
+   	    try {
+   	      h(ev);
+   	      if( !!h.options?.preventDefault ) ev.preventDefault();
+   	      if( !!h.options?.stopPropagation ) ev.stopPropagation();
+   	      return true;
+   	    }
+   	    catch(e) {
+   	      console.error(e);
+   	    }
    	    return false;
    	  }
    	  const handle = (hmap, code, modifiers)=>{
   			const h = hmap.get(code)[modifiers];
-  			if( typeof h == 'function' ) {
-  			  execute(h);
-  			  return h.unhandled ?? 'handled';
-  			}
-  			else {
+
+  			if( typeof h != 'function' ) {
   				this.#l2map = h;
   				this.#l2timeout = window.setTimeout(clearTimer, 1500);
   				return 'waitFor2ndKey';
+  			}
+        else if( !!h.options?.excludeFormFields && isFormField(ev.target) ) {
+          console.debug(modifiers+code+' was not handled inside form-field');
+          return 'unhandled';
+  			}
+  			else {
+  			  execute(h);
+  			  return h.unhandled ?? 'handled';
   			}
    	  }
    	  const clearTimer = ()=>{
