@@ -24,7 +24,7 @@
     }
     
     run() {
-      const elements = this.filter([...document.querySelectorAll(this.#selector)];
+      const elements = this.filter([...document.querySelectorAll(this.#selector)]);
       this.applyClassNames(elements);
       this.applyStyles(elements);
       this.invokeCallback(elements);
@@ -55,7 +55,7 @@
     }
     invokeCallback(elements) {
       if( typeof this.#reaction.callback == 'function' )
-        eleemnts.forEach((e,ix,arr)=>this.#reaction.callback(e,ix,arr));
+        elements.forEach((e,ix,arr)=>this.#reaction.callback(e,ix,arr));
     }
   }
   
@@ -106,7 +106,7 @@
    *      ['selector-2']: reaction,
    *   });
    */
-  window.onMutation(selector,reaction) {
+  window.onMutation = function(selector,reaction) {
     if( typeof selector == 'string' && typeof reaction == 'object' )
       MutationHandler.instance.addReaction(selector, reaction);
     else if( typeof selector == 'object' )
