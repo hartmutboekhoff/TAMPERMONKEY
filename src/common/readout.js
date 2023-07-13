@@ -319,7 +319,7 @@
       if( !this.#isReadable(node) ) return undefined;
 
       const custom = this.#getCustomCollector(node);
-      const extract = this.#extractNode(node, custom);
+      const extract = this.#extractNodeText(node, custom);
       if( extract == undefined ) return undefined;
 
       const norm = new NormalizedExtract(extract);
@@ -329,17 +329,46 @@
       }
       return norm;
     }
-    #extractNode(node,custom) {
-      if( typeof custom?.extract == 'function' )
-        return custom.extract.apply(this,[node]);
-      
-      if( custom?.text != undefined )
-        return custom.text.toString();
+    #extractNodeText(node,customOptions) {
+      if( typeof customOptions?.extract == 'function' ) {
+        const customExtract = this.#applyCustomExtractor(node,customOptions.extract);
+        if( customExtract.node != undefined )
+          node = customExtract.node;
+        else if( customExtract.childNodes != undefined )
+          return this.#collectChildNodes(customExtract);
+        else
+          return customExtract.extract;
+      }
+      else if( customOptions?.text != undefined )
+        return customOptions.text.toString();
       
       const f = this[node.nodeName];
       return typeof f == 'function'
                 ? f.apply(this,[node]) 
                 : this.default(node);
+    }
+    #applyCustomExtractor(node,customExtractor) {
+      let extracted;
+      try {
+        extracted = customExtractor.apply(this,[node]);
+      }
+      catch(e) {
+        console.warn(e);
+      }
+      
+      if( extracted instanceof Node ) 
+        return {node: extracted};
+      if( extracted == undefined 
+          || typeof extracted == 'string'
+          || typeof extracted[Symbol.iterator] != 'function' )
+        return {extracted};
+
+      extracted = [...extracted];
+      return extracted.length == 0
+              ? {extracted: undefined}
+              : extracted[0] instanceof Node
+              ? {childNodes: extracted} 
+              : {extracted};
     }
     #collectChildNodes(node) {
       return [...node.childNodes].map(cn=>this.#collectNode(cn)).filter(cn=>!cn?.isEmpty);

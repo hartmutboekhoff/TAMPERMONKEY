@@ -15,7 +15,14 @@
     };
     
     window.registerForReadOut('.labelSubject');
-    window.registerForReadOut('#ComplexTextDescription',{exclude:'textarea,div.helpLineComplexTextLabel>table'});
+    window.registerForReadOut('#ComplexTextDescription',
+                              { exclude:'textarea,div.helpLineComplexTextLabel>table',
+                                childElements: {
+                                  ['table[summary^="Email signature"]']: {
+                                    extract: node=>node.querySelector('div>div>p'),
+                                  },
+                                }
+                              });
     window.registerForReadOut('.tabControlHeader span');
     // Zeile im Reiter für reservierte Aufgaben.
     window.registerForReadOut('div.jqx-grid-cell.jqx-item'
