@@ -176,3 +176,8 @@ div#contenttableHLGrid div.jqx-grid-group-cell:nth-child(10) div.jqx-grid-cell-l
 textarea#vm\.Sys\.Result {
   @input-highlight;
 }
+
+#appbar-search-button > button:first-child {
+  background-color: yellow;
+  color: black;
+}
