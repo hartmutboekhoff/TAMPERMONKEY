@@ -21,7 +21,7 @@
 // @require         http://localhost:3000/common/KeyHandler.js
 // @require         http://localhost:3000/common/readout.js
 
-// @require         http://localhost:3000/...vorlage...vorlage.../UI.js
+// @require         http://localhost:3000/...vorlage.../UI.js
 
 // ==/UserScript==
 

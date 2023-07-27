@@ -268,7 +268,9 @@
       if( (this.suffix??'') != '' ) this.#extractedData.addSuffix(this.suffix);
     }
     get utterances() {
-      return this.#extractedData.getUtterances(mergeUtteranceOptions(this.options,UtteranceCollector.#defaultOptions)).filter(u=>!!u);
+      const u = this.#extractedData.getUtterances(mergeUtteranceOptions(this.options,UtteranceCollector.#defaultOptions)).filter(u=>!!u);
+      //console.log(u.map(t=>t.text));
+      return u;
     }
     get format() {
       return Format;
@@ -337,7 +339,7 @@
         else if( customExtract.childNodes != undefined )
           return this.#collectChildNodes(customExtract);
         else
-          return customExtract.extract;
+          return customExtract.extracted;
       }
       else if( customOptions?.text != undefined )
         return customOptions.text.toString();
@@ -355,7 +357,7 @@
       catch(e) {
         console.warn(e);
       }
-      
+
       if( extracted instanceof Node ) 
         return {node: extracted};
       if( extracted == undefined 
