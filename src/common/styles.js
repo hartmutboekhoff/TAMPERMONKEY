@@ -24,7 +24,7 @@ function compileStylesheets(...css) {
     const rxDirective = /^\s*@([\w_][\w\d_-]*)(?:\s*=\s*(.+?))?\s*$/gm;
     return [...css.matchAll(rxComment)]
              .map(m=>[...m[1].matchAll(rxDirective)])
-             .flat()
+             .flat(Infinity)
              .filter(d=>!!d && d.length>0)
              .map(d=>({name:d[1],value:d[2]}))
              .reduce((acc,d)=>(acc[d.name]=d.value,acc),{});
@@ -42,7 +42,7 @@ function compileStylesheets(...css) {
   const parsed = [...bareCss.matchAll(rx)]
     .map(m=>({name:cleanupWS(m[1]), style:cleanupWS(m[2])}))
     .map(m=>m.name.split(',').map(n=>({name:cleanupWS(n),style:m.style})))
-    .flat()
+    .flat(Infinity)
     .reduce((acc,s)=>((acc[s.name] ??= {style:''}).style += s.style,acc),{});
 
   for( let k in parsed ) {
