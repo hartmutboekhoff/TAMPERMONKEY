@@ -224,7 +224,7 @@
         return [u];
       }
       else if( this.#nodes != undefined )
-        return this.#nodes.map(n=>n.getUtterances(options)).flat();
+        return this.#nodes.map(n=>n.getUtterances(options)).flat(Infinity);
     }
     applyCustomOptions(custom) {
       if( custom.pitch != undefined ) this.pitch = custom.pitch;
@@ -667,9 +667,11 @@
     }
     read(e,options) {
       ReadOutQueue.instance.read(e,options);
+      return this;
     }
     queue(e, options) {
       ReadOutQueue.instance.push(e,options);
+      return this;
     }
     cancel() {
       ReadOutQueue.instance.cancel();

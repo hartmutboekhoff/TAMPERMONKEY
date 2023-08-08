@@ -95,30 +95,27 @@ console.log('HBo Tampermonkey', 'stats.js', 'Version '+GM_info.script.version);
     }
   }
   
-/*  
-  function parseDebugInfo(info) {
-    function parseItem(item) {
-      const parts = item.split(':');
-      if( parts.length <= 1 ) return item;
-      
-      const k = parts[0];
-      let v = parts.slice(1).join(':');
-      const m = v.match(/^[\(\[](.*)[\)\]]$/);
-      if( m && m[1] ) v = m[1].split(',');
-      return {[k]:v};
-    }
-    const parsed = info.split(',').map(parseItem);
-    return parsed.reduce((acc,i)=>typeof i == 'object'? Object.assign(acc,i):acc,parsed);
+  function displayStatsData() {
+    if( document.getElementById('stats-overlay') ) return;
+    
+    const debugData = new StatsCollector();
+    window.DebugData = debugData;
+    console.log('HBo',debugData);
+    
+    const view = buildDataView(debugData.statistics, ['id','type', 'resolving','pre-render','rendering','post-render','summe'], debugData.site+'<br/>'+debugData.page);
+    document.body.innerHTML = '';
+    document.body.appendChild(view);
+
+    console.groupEnd();
   }
-*/
-  function displayData(data, columns, title) {
+  function buildDataView(data, columns, title) {
     const statsDiv = document.createElement('div');
     statsDiv.id = 'stats-overlay';
     statsDiv.innerHTML = 
       '<input type="checkbox" id="show-hidden"/><label id="show-hidden-label" for="show-hidden">unsichtbare Widgets anzeigen</label>'
       + table(data,columns, title);
-    document.body.appendChild(statsDiv);
     statsDiv.addEventListener('click',rowClick);
+    return statsDiv;
   }
 
 
@@ -136,35 +133,8 @@ console.log('HBo Tampermonkey', 'stats.js', 'Version '+GM_info.script.version);
 
     })
   }
-  let localCounter = 1;
-  window.__HBo_InitializationCounter ??= 1;
-  window.__HBo_LoadEventCounter ??= 1;
-  if( localCounter > 1 || window.__HBo_LoadEventCounter > 1 || window.__HBo_InitializationCounter > 1 ) {
-    console.trace('HBo wtf!', {init:window.__HBo_InitializationCounter, load:window.__HBo_LoadEventCounter, local: localCounter});
-  }
-  else {
-    window.addEventListener('load',()=>{
-      console.group('HBo load-event '+ window.__HBo_InitializationCounter + '/' + window.__HBo_LoadEventCounter + '/' + localCounter);
-      if( document.getElementById('stats-overlay') ) 
-        return console.trace('HBo dup!');
-      else if( localCounter++ > 1 || window.__HBo_LoadEventCounter++ > 1 ) 
-        return console.trace('HBo nope!');
-      else
-        console.trace('HBo ok');
-      
-      const debugData = new StatsCollector();
-      window.DebugData = debugData;
-      console.log('HBo',debugData);
-      
-      document.body.innerHTML = '';
-      
-      displayData(debugData.statistics, ['id','type', 'resolving','pre-render','rendering','post-render','summe'], debugData.site+'<br/>'+debugData.page);
 
-      console.groupEnd();
-    }); // onLoad()    
-  }
-  ++window.__HBo_InitializationCounter;
-
+  window.addKeyHandler('Ctrl+Minus',displayStatsData)
 })();
 
 console.log('HBo Tampermonkey', 'stats.js', 'Syntax Ok');

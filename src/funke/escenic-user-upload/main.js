@@ -19,6 +19,7 @@
 // @require         http://localhost:3000/common/head.js
 // @require         http://localhost:3000/common/styles.js
 // @require         http://localhost:3000/common/keyhandler.js
+// @require         http://localhost:3000/common/readout.js
 
 // @require         http://localhost:3000/funke/escenic-user-upload/UI.js
 
