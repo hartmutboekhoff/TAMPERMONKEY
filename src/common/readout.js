@@ -667,9 +667,11 @@
     }
     read(e,options) {
       ReadOutQueue.instance.read(e,options);
+      return this;
     }
     queue(e, options) {
       ReadOutQueue.instance.push(e,options);
+      return this;
     }
     cancel() {
       ReadOutQueue.instance.cancel();
