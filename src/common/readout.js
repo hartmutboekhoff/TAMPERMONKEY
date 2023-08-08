@@ -721,7 +721,7 @@
       }
 
       if( !element ) return undefined;
-      return this.#selectors.map(s=>({ancestor:element.closest(s.selector),options:s.options}))
+      return this.#selectors.map(s=>({ancestor:element.closest(s.selector),options:s.options,selector:s.selector}))
                             .filter(ai=>!!ai.ancestor)
                             .map(ai=>(ai.distance=getDistance(element,ai.ancestor),ai))
                             .sort((a,b)=>a.distance-b.distance)[0];
