@@ -16,7 +16,7 @@
 			}
 		});
 		window.registerForReadOut('div.js-detailview.ghx-issue', {
-      //prefix: 'version 7',
+      exclude: 'div.ghx-flags',
       childElements: {
         'div.ghx-key': {
           extract: node=>node.innerText.replaceAll('-',' '),
