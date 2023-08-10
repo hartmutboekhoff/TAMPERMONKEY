@@ -18,6 +18,9 @@
     
     if(location.hostname == 'esc-pub-tools-uat.cloud.funkedigital.de' )
       document.body.classList.add('uat');
+
+    [...document.getElementsByTagName('code')].forEach(el=>window.ReadOut.read(el.innerText.match(/fail|error/i) == undefined? 'Upload erfolgreich' : 'Fehler beim Upload'));
+    
     
     // ================================================
     console.log('initializing shortcut-keys');
@@ -33,7 +36,10 @@
 
     window.addKeyHandler('Digit4', ()=>toggle('allowUpdatingGroups'),{excludeFormFields:false});
     window.addKeyHandler('Numpad4',()=>toggle('allowUpdatingGroups'),{excludeFormFields:false});
-
+    
+    window.addKeyHandler('Ctrl+Enter', ()=>document.querySelector('input[value="Upload"]').click(),{excludeFormFields:false,stopPropagation:true,preventDefault:true});
+    window.addKeyHandler('Ctrl+NumpadEnter', ()=>document.querySelector('input[value="Upload"]').click(),{excludeFormFields:false,stopPropagation:true,preventDefault:true});
+    
     // ================================================
 
     document.getElementById('file').focus();

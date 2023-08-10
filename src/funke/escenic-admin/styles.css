@@ -1,6 +1,14 @@
 body {
   --button-overlay: linear-gradient(rgba(68,68,68,.3), rgba(255,255,255,.5), transparent 20%, transparent 80%, rgba(68,68,68,.3)), 
                     linear-gradient(90deg, rgba(68,68,68,.3), rgba(255,255,255,.5), transparent 5%, transparent 95%, rgba(68,68,68,.3));
+
+  --pub-color-hao: #afa;
+  --pub-color-bmo: #afa;
+  --pub-color-nrw: #faa;
+  --pub-color-bzv: #ffa;
+  --pub-color-mgt: #aaf;
+  --pub-color-bdf: #f88;
+  --pub-color-goka: #aaa;
 }
 
 
@@ -47,6 +55,9 @@ input[name=resourceFile] {
   padding: .5em;
   margin-right: 2em;
   text-align:center;
+  vertical-align: middle;
+  line-height: 100px;
+  height: 150px;
 }
 ::file-selector-button {
   display:none;
@@ -130,3 +141,54 @@ form[action="/escenic-admin/do/publication/updateResources"] table:nth-child(2) 
 form[action="/escenic-admin/do/publication/updateResources"] table:nth-child(2) tr:has(input) > td {
   color: red !important;
 }
+
+
+/* ==============================================
+ *
+ * Sidebar-Menü
+ * 
+ * ==============================================
+ */
+
+#navigation a[href$="/new.jsp"] {
+  background-color: #2f2;
+  display:inline-block;
+  padding: .3em 0;
+  margin: .3em 0;
+}
+
+#navigation a[href$="/list.jsp"] {
+  background-color: #2af;
+  display:inline-block;
+  padding: .3em 0;
+  margin: .3em 0;
+}
+
+
+/* ==============================================
+ *
+ * Publikationen
+ * 
+ * ==============================================
+ */
+form tr:has(input[name="selected(6)"]) { background-color: var(--pub-color-hao);   font-weight: bold; }
+form tr:has(input[name="selected(8)"]) { background-color: var(--pub-color-bmo);   font-weight: bold; }
+form tr:has(input[name="selected(17)"]) { background-color: var(--pub-color-bdf);  font-weight: bold; }
+form tr:has(input[name="selected(19)"]) { background-color: var(--pub-color-goka); font-weight: bold; }
+form tr:has(input[name="selected(21)"]) { background-color: var(--pub-color-bzv);  font-weight: bold; }
+form tr:has(input[name="selected(23)"]) { background-color: var(--pub-color-bzv);  font-weight: bold; }
+form tr:has(input[name="selected(27)"]) { background-color: var(--pub-color-bzv);  font-weight: bold; }
+form tr:has(input[name="selected(29)"]) { background-color: var(--pub-color-bzv);  font-weight: bold; }
+form tr:has(input[name="selected(31)"]) { background-color: var(--pub-color-bzv);  font-weight: bold; }
+form tr:has(input[name="selected(33)"]) { background-color: var(--pub-color-bzv);  font-weight: bold; }
+form tr:has(input[name="selected(35)"]) { background-color: var(--pub-color-bzv);  font-weight: bold; }
+form tr:has(input[name="selected(39)"]) { background-color: var(--pub-color-bzv);  font-weight: bold; }
+form tr:has(input[name="selected(49)"]) { background-color: var(--pub-color-nrw);  font-weight: bold; }
+form tr:has(input[name="selected(51)"]) { background-color: var(--pub-color-nrw);  font-weight: bold; }
+form tr:has(input[name="selected(53)"]) { background-color: var(--pub-color-nrw);  font-weight: bold; }
+form tr:has(input[name="selected(55)"]) { background-color: var(--pub-color-nrw);  font-weight: bold; }
+form tr:has(input[name="selected(57)"]) { background-color: var(--pub-color-nrw);  font-weight: bold; }
+form tr:has(input[name="selected(65)"]) { background-color: var(--pub-color-mgt);  font-weight: bold; }
+form tr:has(input[name="selected(69)"]) { background-color: var(--pub-color-mgt);  font-weight: bold; }
+form tr:has(input[name="selected(71)"]) { background-color: var(--pub-color-mgt);  font-weight: bold; }
+
