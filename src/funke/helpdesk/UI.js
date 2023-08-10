@@ -1,4 +1,27 @@
 (function(){
+	function assignToUser(teamname, username,retry=0) {
+		function recursion(until) {
+			if( retry < until ) 
+				setTimeout(()=>assignToUser(teamname, username,++retry), 500);
+		}
+		
+		console.log('assigning to '+username, 'Team: '+teamname, 'Attempt: '+retry);
+		if( document.getElementById('ComboBoxTeamtb')?.value != teamname ) {
+			const team = [...document.getElementById('ComboBoxTeamlb').childNodes].find(e=>e.innerText==teamname);
+			if( team != undefined ) {
+				team.click();
+				recursion(5);
+			}
+		}
+		else if( document.getElementById('ComboBoxTeamMembertb')?.value != username ) {
+			const user = [...document.getElementById('ComboBoxTeamMemberlb').childNodes].find(e=>e.innerText==username);
+			if( user != undefined )
+				user.click();
+			else 
+				recursion(10);
+		}
+	}
+	
   window.addEventListener('load',()=>{
     console.group('greasemonkey')
     
@@ -105,6 +128,22 @@
                 && !!p.innerText.match(/zugang|einrichten|anlegen|eintritt|passwort|login/i)?.[0] )
               e.classList.add('esc-create-account');
           },
+      },
+      ['div#GroupBoxAssignment']: {
+      	runOnLoad: true,
+      	callback: function(e){
+      		if( document.getElementById('assignToCurrentUser') != undefined ) return;
+      		const outerDiv = document.createElement('div');
+      		outerDiv.id='assignToCurrentUser';
+      		const innerDiv = document.createElement('div');
+      		const button = document.createElement('button');
+					button.innerText = "mir zuweisen";
+					button.onclick = ev=>assignToUser('FUNKE Digital', 'Boekhoff, Hartmut');
+
+      		innerDiv.appendChild(button);
+      		outerDiv.appendChild(innerDiv);
+      		e.appendChild(outerDiv);
+      	}
       },
     });
 

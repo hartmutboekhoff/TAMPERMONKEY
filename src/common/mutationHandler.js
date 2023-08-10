@@ -12,22 +12,46 @@
   
   class ReactionWrapper {
     #selector; #reaction; #classList;
+    #recursions=0; #maxRecursions=0;
     
     constructor(selector, reaction) {
       this.#selector = selector;
       this.#reaction = reaction;
+      this.#maxRecursions = reaction.maxRecursions ?? this.#maxRecursions ?? 0;
+      if( this.#maxRecursions < 0 ) this.#maxRecursions = 0;
       
       if( typeof reaction.className == 'string' )
         this.#classList = reaction.className.split(/\s/).filter(c=>c!='');
       else if( Array.isArray(reaction.className) )
         this.#classList = reaction.className;
+      
+      if( reaction.runOnLoad == true )
+      	this.#runOnLoad();
     }
     
+   	#runOnLoad() {
+   		if( document.readyState == true )
+   			this.run();
+   		else
+   			window.addEventListener('load',()=>this.run());
+   	}
     run() {
-      const elements = this.filter([...document.querySelectorAll(this.#selector)]);
-      this.applyClassNames(elements);
-      this.applyStyles(elements);
-      this.invokeCallback(elements);
+    	if( this.#recursions > this.#maxRecursions ) return;
+    	
+    	++this.#recursions;
+    	try {
+	      const elements = this.filter([...document.querySelectorAll(this.#selector)]);
+	      console.debug('Mutation handler found '+elements.length+' elements for selector:', this.#selector);
+	      this.applyClassNames(elements);
+	      this.applyStyles(elements);
+	      this.invokeCallback(elements);
+	    }
+	    catch(e) {
+	    	console.error(e);
+	    }
+	    finally {
+	    	--this.#recursions;
+	    }
     }
     filter(elements) {
       return typeof this.#reaction.filter == 'function'
@@ -55,7 +79,14 @@
     }
     invokeCallback(elements) {
       if( typeof this.#reaction.callback == 'function' )
-        elements.forEach((e,ix,arr)=>this.#reaction.callback(e,ix,arr));
+        elements.forEach((e,ix,arr)=>{
+        	try {
+        		this.#reaction.callback(e,ix,arr);
+        	}
+        	catch(e) {
+        		console.error(e);
+        	}
+        });
     }
   }
   
@@ -67,7 +98,12 @@
     
     constructor() {
       this.#observer = new MutationObserver(mutations=>{  
-        this.#reactions.forEach(r=>r.run());
+      	try {
+        	this.#reactions.forEach(r=>r.run());
+      	}
+      	catch(e) {
+      		console.error(e);
+      	}
       });
     }
     
