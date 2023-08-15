@@ -20,6 +20,8 @@
 	border-bottom: none;
 }
 
+
+.tabControlHeaderContainer #TabPageAttachmentItem_Header,
 .tabControlHeaderContainer #TabPageGeneralItem_Header,
 .tabControlHeaderContainer #TabPageSolutionItem_Header, 
 .tabControlHeaderContainer #TabPageActivitiesItem_Header {
@@ -55,6 +57,10 @@
 }
 .esc-create-account {
   background: linear-gradient(#ffc, #ff8 20%, #ff8 70%, #dd7) !important;
+  color: black;
+}
+.assigned-to-me {
+  background: linear-gradient(#fcf, #f8f 20%, #f8f 70%, #d7d) !important;
   color: black;
 }
 
@@ -182,14 +188,20 @@ textarea#vm\.Sys\.Result {
   color: black;
 }
 
-div#assignToCurrentUser div {
+div#assign-to-current-user div {
 	position:absolute;
-	top: 160px;
+	top: 200px;
 	width:100%;
 }
-div#assignToCurrentUser div button {
+div#assign-to-current-user div button {
 	paddding: 1em;
 	height: 3em;
 	width: 100%;
 	
+}
+
+
+
+#contenttableHLGrid > div:hover {
+  background-color: yellow;
 }

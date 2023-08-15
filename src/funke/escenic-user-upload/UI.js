@@ -5,10 +5,10 @@
     cb.dispatchEvent(new Event('change',{bubbles:true,cancelable:true}));
   }
   function readCheckboxStatus(cb) {
-    const onoff = cb.checked? '' : 'don\'t ';
+    const onoff = cb.checked? '' : 'is disabled';
     const label = document.querySelector('label[for="'+cb.id+'"]').innerText.match(/Really run \"(.*)\" commands/)?.[1];
     if( label != undefined )
-      window.ReadOut.queue(onoff+label, {language:'en-US',rate:4});
+      window.ReadOut.queue(label, {language:'en-US',rate:4}).queue(onoff,{language:'en-US', rate:3});
   }
 
   window.addEventListener('load',()=>{

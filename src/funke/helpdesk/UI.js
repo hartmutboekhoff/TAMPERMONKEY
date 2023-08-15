@@ -127,18 +127,20 @@
             if( !!p.innerText.match(/escenic/i)?.[0] 
                 && !!p.innerText.match(/zugang|einrichten|anlegen|eintritt|passwort|login/i)?.[0] )
               e.classList.add('esc-create-account');
+            if( !!e.innerText.match(/Boekhoff, Hartmut/i)?.[0] )
+              e.classList.add('assigned-to-me');
           },
       },
       ['div#GroupBoxAssignment']: {
       	runOnLoad: true,
       	callback: function(e){
-      		if( document.getElementById('assignToCurrentUser') != undefined ) return;
+      		if( document.getElementById('assign-to-current-user') != undefined ) return;
       		const outerDiv = document.createElement('div');
-      		outerDiv.id='assignToCurrentUser';
+      		outerDiv.id='assign-to-current-user';
       		const innerDiv = document.createElement('div');
       		const button = document.createElement('button');
 					button.innerText = "mir zuweisen";
-					button.onclick = ev=>assignToUser('FUNKE Digital', 'Boekhoff, Hartmut');
+					button.onclick = ev=>assignToUser('FT_Support_TZ-Digital', 'Boekhoff, Hartmut');
 
       		innerDiv.appendChild(button);
       		outerDiv.appendChild(innerDiv);
@@ -147,6 +149,18 @@
       },
     });
 
+    // ================================================
+    // horizontal scrolling for tab-headers
+    [...document.querySelectorAll('.tabControlHeaderContainer')].forEach(c=>
+      c.addEventListener('wheel',ev=>{
+        c.scrollLeft += ev.deltaY;
+        ev.stopPropagation();
+        ev.preventDefault();
+      })
+    );
+
+
+    // ================================================
     // ================================================
     console.log('onLoad() finished successfully');
     console.groupEnd();
