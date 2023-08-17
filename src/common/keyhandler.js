@@ -1,18 +1,23 @@
 (function(){
   const KeyModifiers = ['','Ctrl', 'Alt', 'Shift', 'Ctrl+Alt', 'Ctrl+Shift', 'Alt+Shift', 'Ctrl+Alt+Shift'];
+  
+  function getModifierString(o) {
+  	  return (o.ctrlKey? 'Ctrl+' : '') +
+             (o.altKey? 'Alt+' : '') +
+             (o.shiftKey? 'Shift+' : '');
+  }
 
   class Key {
+  	#keys = {};
+  	
     constructor(k) {
       const keys = k.split('+');
-      this._key = keys.slice(-1)[0];
-      keys.slice(0,-1).forEach(m=>this['_'+m.toLowerCase()]=true);
+      this.code = keys.slice(-1)[0];
+      keys.slice(0,-1).forEach(m=>this[m.toLowerCase()+'Key']=true);
     }
-    get ctrl()  {return this._ctrl?  'Ctrl+' :'';}
-    get alt()   {return this._alt?   'Alt+'  :'';}
-    get shift() {return this._shift? 'Shift+':'';}
-    get key()   {return this._key;}
-    get modifiers() {return (this.ctrl+this.alt+this.shift).slice(0,-1);}
-    get fullCode() {return this.ctrl+this.alt+this.shift+this.key;}
+    get key()   {return this.code;}
+    get modifiers() {return getModifierString(this).slice(0,-1);}
+    get fullCode() {return getModifierString(this)+this.code;}
   }
 
   class KeyHandler {
@@ -20,8 +25,8 @@
     constructor(prefixkey) {
       this.#prefixkey = (prefixkey||'') == ''? '' : prefixkey + ', ';
 
-      const u = e=>{
-        console.debug(this.#prefixkey + e.code + ' is unhandled');
+      const u = ev=>{
+        console.debug(this.#prefixkey + getModifierString(ev) + ev.code + ' is unhandled');
       }
       u.unhandled = 'unhandled';
     	KeyModifiers.forEach(m=>this[m]=u);
@@ -55,6 +60,7 @@
     constructor() {
     }
 
+/*
   	#getKeyCode(code) {
   		let keys = code.split('+');
   		if( keys.length == 1 )
@@ -73,21 +79,22 @@
   						 fullCode: code,
   					 };
   	}
+*/
 		#addL1Handler(map, k, handler, options) {
-			let code = new Key(k);
-			map.get(code.key)[code.modifiers] = handler;
+			let key = new Key(k);
+			map.get(key.code)[key.modifiers] = handler;
 			handler.options = Object.assign({}, this.#defaultOptions, options);
 		}    
 		#addL2Handler(map, k1, k2, handler, options) {
-			let L1code = new Key(k1);
-			let L2code = new Key(k2);
-			let L1handler = map.get(L1code.key);
-			let L2map = L1handler[L1code.modifiers];
+			let L1key = new Key(k1);
+			let L2key = new Key(k2);
+			let L1handler = map.get(L1key.code);
+			let L2map = L1handler[L1key.modifiers];
 			if( typeof L2map == 'function' ) {
-				L1handler[L1code.modifiers] = L2map = 
-						new KeyHandlerMap('Sequence '+L1code.fullCode+', ');
+				L1handler[L1key.modifiers] = L2map = 
+						new KeyHandlerMap('Sequence '+L1key.fullCode+', ');
 			}
-			L2map.get(L2code.key)[L2code.modifiers] = handler;
+			L2map.get(L2key.code)[L2key.modifiers] = handler;
 			handler.options = Object.assign({}, this.#defaultOptions, options);
 		}
     
@@ -188,10 +195,7 @@
    	    
    	  }
    	  
-  	  const modifiers =  ((ev.ctrlKey? 'Ctrl+' : '') +
-              		        (ev.altKey? 'Alt+' : '') +
-              		        (ev.shiftKey? 'Shift+' : ''))
-              		       .slice(0,-1);
+  	  const modifiers =  getModifierString(ev).slice(0,-1);
 
   		if( this.#l2map != undefined ) {
   			const h = this.#l2map.get(ev.code)[modifiers];

@@ -27,7 +27,7 @@
     
     // ================================================
     console.log('initializing shortcut-keys');
-    
+
     
     // ================================================
     console.log('initializing read-out elements');
@@ -75,8 +75,8 @@
                                 //exclude:'#PanelContentSUControlEDITOR2 span:nth-child(-n+1)',
                                 childElements: {
                                   '[id^="PanelHeaderSUControlEDITOR"]': {
-                                    //prefix:'aktiviti 4',
-                                    extract: node=>node.innerText.replace(/SU (\d+) \(Editor: (.*?)\)/,'Nummer $1 von $2'),
+                                    //suffix:'aktiviti 4',
+                                  	extract: node=>node.innerText.replace(/SU\s+(\d+) \((?:Editor|Bearbeiter): (.*?)\)/,'Nummer $1 von $2'),
                                   },
                                   '[id^="PanelContentSUControlEDITOR"]': {
                                     extract: node=>node.querySelector('.SUControlItemValue')?.innerText,

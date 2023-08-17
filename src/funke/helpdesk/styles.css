@@ -59,7 +59,8 @@
   background: linear-gradient(#ffc, #ff8 20%, #ff8 70%, #dd7) !important;
   color: black;
 }
-.assigned-to-me {
+
+div > div.assigned-to-me {
   background: linear-gradient(#fcf, #f8f 20%, #f8f 70%, #d7d) !important;
   color: black;
 }

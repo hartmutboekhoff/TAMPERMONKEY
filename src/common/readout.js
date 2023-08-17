@@ -15,15 +15,24 @@
     niceDateTime: function(dt) {
       function dateDiff(dt1,dt2) {
         const r = {
-          totalSeconds: Math.floor((dt1.valueOf()-dt2.valueOf())/1000),
-          dayDelta: Math.floor(dt1.valueOf()/1000/60/60/24)-Math.floor(dt2.valueOf()/1000/60/60/24),
+          totalSeconds: Math.trunc((dt1.valueOf()-dt2.valueOf())/1000),
+          totalDays: Math.trunc((dt1.valueOf()/1000/60-dt1.getTimezoneOffset())/60/24)-Math.trunc((dt2.valueOf()/1000/60-dt2.getTimezoneOffset())/60/24),
+          past: false,
+          future: false,
+          now: false,
         };
-        r.seconds = r.totalSeconds%60;
-        r.totalMinutes = Math.floor(r.totalSeconds/60);
-        r.minutes = r.totalMinutes%60;
-        r.totalHours = Math.floor(r.totalMinutes/60);
-        r.hours = r.totalHours%24;
-        r.days = Math.floor(r.totalHours/24);
+        const f = r.totalSeconds < 0? -1 : 1;
+        if( r.totalSeconds == 0 )
+        	r.now = true;
+        else
+        	r.future = !(r.past = r.totalSeconds < 0);
+        	
+        r.seconds = f * (r.totalSeconds%60);
+        r.totalMinutes = Math.trunc(r.totalSeconds/60);
+        r.minutes = f * (r.totalMinutes%60);
+        r.totalHours = Math.trunc(r.totalMinutes/60);
+        r.hours = f * (r.totalHours%24);
+        r.days = f * Math.trunc(r.totalHours/24);
 /*
         r.dateTime1 = dt1;
         r.dateTime2 = dt2;
@@ -35,23 +44,32 @@
       }
       function fewMinutes(d) {
         if( d.minutes == 0 ) return 'jetzt';
-        return 'vor '+(d.minutes== 1?'einer Minute':d.minutes+' Minuten');
+        return (d.past? 'vor ' : 'in ')
+        			 +(d.minutes== 1?'einer Minute':d.minutes+' Minuten');
       }
       function fewHours(d) {
-        return 'vor '+(d.hours==1?'einer Stunde ':d.hours+' Stunden ')
+        return (d.past? 'vor ' : 'in ')
+        			 +(d.hours==1?'einer Stunde ':d.hours+' Stunden ')
                +(d.minutes==0?'':' und '+(d.minutes==1?'einer Minute':d.minutes+' Minuten'));
       }
       function fewDays(d,dt) {
-        const dname = ['heute','gestern','vorgestern'][d.dayDelta] 
-                      ?? ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','freitag','Samstag'][dt.getDay()];
+        const dname = ['vorgestern', 'gestern', 'heute','morgen','\xfcbermorgen'][d.totalDays+2] 
+                      ?? (d.past? 'am vergangenen ' : 'am kommenden ')+['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','freitag','Samstag'][dt.getDay()];
         return  dname+', '+Format.time(dt);
       }
-      const delta = dateDiff(new Date(), dt);
-      if( delta.totalSeconds < 0 ) Format.dateAndTime(dt);
-      if( delta.totalMinutes < 60 ) return fewMinutes(delta);
-      if( delta.totalHours < 12 ) return fewHours(delta);
-      if( delta.dayDelta < 7 ) return fewDays(delta, dt);
-      return Format.dateAndTime(dt);
+      const delta = dateDiff(dt, new Date());
+
+      if( delta.totalDays < -7 ) return Format.date(dt);
+      if( delta.totalHours < -12 ) return fewDays(delta, dt);
+      if( delta.totalMinutes < -60 ) return fewHours(delta);
+      if( delta.totalSeconds < -60) return fewMinutes(delta);
+      if( delta.totalSeconds < 0 ) return 'gerade eben';
+      if( delta.totalSeconds == 0 ) return 'jetzt';
+      if( delta.totalSeconds < 60 ) return 'gleich';
+      if( delta.totalMinutes < 60 ) return fewMinutes(delta)
+      if( delta.totalHours <= 12 ) return fewHours(delta)
+      if( delta.totalDays <= 7 ) return fewDays(delta, dt);
+      return Format.date(dt);
     },
     reduceWhitespace: function(s) {
       return s == undefined? '' : s.replace(/\s+/g,' ').trim();
@@ -100,13 +118,13 @@
       this.stopPropagation = options?.stopPropagation ?? true;
       this.preventDefault = options?.preventDefault ?? true;
 
-      window.addEventListener('keydown', ev=>this.callHandler(ev), true);
+      document.addEventListener('keydown', ev=>this.callHandler(ev), true);
     }
     getHandler(ev) {
       const k = (ev.ctrlKey? 'Ctrl+':'') +
                 (ev.altKey? 'Alt+':'') +
                 (ev.shiftKey? 'Shift+':'') +
-                ev.key;
+                ev.code;
 
       const doublePressed = this.#previousKey == k 
                             && new Date() - this.#previousTime < this.doublePressTimeout;
@@ -208,9 +226,12 @@
     }
     replace(pattern,replacement) {
       if( pattern == undefined ) return;
-      
+
+
       if( this.#text != undefined )
-        this.#text = this.#text.replace(pattern,replacement??'');
+      	this.#text = pattern.global
+      		? this.#text.replaceAll(pattern,replacement??'')
+      		: this.#text.replace(pattern,replacement??'');
       else if( this.#nodes != undefined )
         this.#nodes.forEach(n=>n.replace(pattern,replacement??''));
     }
@@ -277,14 +298,15 @@
     }
     
     convertDates() {
-      function toDate(...args) {
-        return new Date(args[3], args[1]-1, args[2], args[4]==undefined? 0 : (args[7]=='PM'?+args[4]+12:args[4]), args[5]??0, args[6]??0);
+      function toDate({year,month,day,hour,minutes,seconds,ampm}) {
+        return new Date(year, month-1, day, hour==undefined? 0 : ampm=='PM'? +hour+12 : hour, minutes??0, seconds??0);
       }
+			const dateRXs = [
+				/*en*/ /(?<month>\d{1,2})\/(?<day>\d{1,2})\/(?<year>\d{4}),? (?<hour>\d{1,2}):(?<minutes>\d{2})(?::(?<seconds>\d{2}))? (?<ampm>AM|PM)/g,
+				/*de*/ /(?<day>\d{1,2})\.(?<month>\d{1,2})\.(?<year>\d{4}),? (?<hour>\d{1,2}):(?<minutes>\d{2})(?::(?<seconds>\d{2}))?/g,
+			];
 
-      this.#extractedData.replace(
-        /(\d{1,2})\/(\d{1,2})\/(\d{4}),? (\d{1,2}):(\d{2})(?::(\d{2}))? (AM|PM)/g,
-        (...args)=>Format.niceDateTime(toDate(...args))
-      );
+			dateRXs.forEach(rx=>this.#extractedData.replace(rx,(...args)=>Format.niceDateTime(toDate(args.pop()))));
     }
     
     #initOptions(options) {
@@ -654,6 +676,12 @@
           this.rewind(ev.doublePressed? 2 : 1);
         return true;
       }
+      ['Ctrl+Shift+ControlLeft'](ev) {
+      	this.readSelection();
+      }
+      ['Ctrl+Shift+ShiftLeft'](ev) {
+      	this.readSelection();
+      }
     })(this);
 
     constructor() {
@@ -684,6 +712,11 @@
     }
     registerReadOut(selector,options) {
       this.#selectors.push({selector,options});
+    }
+    readSelection() {
+    	const sel = window.getSelection();
+    	if( !sel.isCollapsed ) 
+    		this.read(sel.toString());
     }
     #printCssPath(ev) {
       function getCssPath(e) {
