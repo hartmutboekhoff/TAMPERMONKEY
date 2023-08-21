@@ -57,6 +57,13 @@ window.ReadOut.queue('ich sehe',{volume: .2, rate:1.2,pitch:.2});
 window.ReadOut.queue('tote Menschen',{volume: .2, rate:.6,pitch:.2});
     </script>
 
+
+    <script>
+      window.setInterval(()=>{
+        [...document.querySelectorAll('#editable *')]
+          .forEach(e=>console.log('disabled',e.disabled,e));
+      },2000);
+    </script>
     
 <style>
   button {
@@ -287,6 +294,14 @@ window.ReadOut.queue('tote Menschen',{volume: .2, rate:.6,pitch:.2});
 <div>
   
 </div>
+
+<form id="editable" inert>
+  
+  <input type="text" />
+  <input type="button" />
+  <textarea></textarea>
+  <button>hallo</button>
+</form>
 <br/><br/><br/><br/><br/>
   </body>
 </html>

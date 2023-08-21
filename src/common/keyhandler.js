@@ -155,7 +155,7 @@
   	  return r;
   	}
    	#dispatch(ev) {
-   	  function isFormField(target) {
+   	  function isExcludedFormField(target) {
    	    const types = ['INPUT', 'SELECT', 'TEXTAREA', 'BUTTON', 'OPTION', 'OPTGROUP'];
    	    return types.includes(target.tagName);
    	  }
@@ -179,7 +179,7 @@
   				this.#l2timeout = window.setTimeout(clearTimer, 1500);
   				return 'waitFor2ndKey';
   			}
-        else if( !!h.options?.excludeFormFields && isFormField(ev.target) ) {
+        else if( !!h.options?.excludeFormFields && isExcludedFormField(ev.target) ) {
           console.debug(modifiers+code+' was not handled inside form-field');
           return 'unhandled';
   			}

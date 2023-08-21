@@ -75,7 +75,14 @@
       return s == undefined? '' : s.replace(/\s+/g,' ').trim();
     },
   };
-  
+
+  const DEFAULT_OPTIONS = {
+    pitch: .8,
+    rate: 1.35,
+    volume: .8,
+    language: 'de-DE',
+    readHidden: false,
+  }  
   function mergeUtteranceOptions(a, b, c) {
     return {
       pitch: a?.pitch ?? b?.pitch ?? c?.pitch,
@@ -267,13 +274,6 @@
   }
   
   class UtteranceCollector {
-    static #defaultOptions = {
-      pitch: .8,
-      rate: 1.35,
-      volume: .8,
-      language: 'de-DE',
-      readHidden: false,
-    }
     #collected = new Set();
     #exclude; #replacements;
     #customCollectors = [];
@@ -289,7 +289,7 @@
       if( (this.suffix??'') != '' ) this.#extractedData.addSuffix(this.suffix);
     }
     get utterances() {
-      const u = this.#extractedData.getUtterances(mergeUtteranceOptions(this.options,UtteranceCollector.#defaultOptions)).filter(u=>!!u);
+      const u = this.#extractedData.getUtterances(mergeUtteranceOptions(this.options,DEFAULT_OPTIONS)).filter(u=>!!u);
       //console.log(u.map(t=>t.text));
       return u;
     }
@@ -310,7 +310,7 @@
     }
     
     #initOptions(options) {
-      this.options = mergeUtteranceOptions(options, UtteranceCollector.#defaultOptions)
+      this.options = mergeUtteranceOptions(options, DEFAULT_OPTIONS);
 
       if( options == undefined ) return;
 
@@ -463,17 +463,6 @@
         text = node.src.match(/([^\\\/]*)\.[^\\\/\.]*$/)?.[1] ?? '';
       return 'Bild: '+text;
     }
-
-    
-    static get options() {
-      return UtteranceCollector.#defaultOptions;
-    }
-    static set options(v) {
-      UtteranceCollector.#defaultOptions.pitch = v.pitch ?? UtteranceCollector.#defaultOptions.pitch;
-      UtteranceCollector.#defaultOptions.rate = v.rate ?? UtteranceCollector.#defaultOptions.rate;
-      UtteranceCollector.#defaultOptions.volume = v.volume ?? UtteranceCollector.#defaultOptions.volume;
-      UtteranceCollector.#defaultOptions.language = v.language ?? UtteranceCollector.#defaultOptions.language;
-    }
   }  
 
 /*
@@ -577,7 +566,7 @@
     #pushText(t, k, options) {
       k ??= t;
       const u = new SpeechSynthesisUtterance(t);
-      assignUtteranceOptions(u, options);
+      assignUtteranceOptions(u, mergeUtteranceOptions(options,DEFAULT_OPTIONS));
       this.#pushUtterances([u], k);
       return k;
     }
@@ -601,6 +590,7 @@
       this.push(v, options);
     }
     push(v,options) {
+console.log(typeof v, options);
       return v instanceof HTMLElement
           ? this.#pushElement(v, undefined, options)
           : this.#pushText(v, undefined, options);
@@ -642,7 +632,30 @@
         window.speechSynthesis.cancel();
       this.#speak();
     }
-    
+    pause() {
+      if( window.speechSynthesis.speaking ) {
+        window.speechSynthesis.pause();
+        return true;
+      }
+    }
+    resume() {
+      if( window.speechSynthesis.paused ) {
+        window.speechSynthesis.resume();
+        return true;
+      }
+      return false;
+    }
+    togglePause() {
+      if( window.speechSynthesis.paused ) {
+        window.speechSynthesis.resume();
+        return true;
+      }
+      else if( window.speechSynthesis.speaking ) {
+        window.speechSynthesis.pause();
+        return true;
+      }
+      return false;
+    }    
     get isReading() {
       return window.speechSynthesis.speaking 
              || window.speechSynthesis.pending 
@@ -671,6 +684,9 @@
         this.skip();
         return true;
       }
+      Space(ev) {
+        return !this.togglePause();
+      }
       ['Shift+Tab'](ev) {
         if( this.isReading )
           this.rewind(ev.doublePressed? 2 : 1);
@@ -697,8 +713,21 @@
       ReadOutQueue.instance.read(e,options);
       return this;
     }
+    readSelector(selector, options) {
+      const eleemnts = document.querySelectorAll(selector);
+      if( elements.length > 0 ) {
+        this.read(elements[0], options);
+        for( let i = 1 ; i < elements.length ; this.queue(elements[i++], options) );
+      }
+      return this;
+    }
     queue(e, options) {
       ReadOutQueue.instance.push(e,options);
+      return this;
+    }
+    queueSelector(selector,options) {
+      [...document.querySelectorAll(selector)]
+        .forEach(e=>this.queue(e,options));
       return this;
     }
     cancel() {
@@ -709,6 +738,15 @@
     }
     rewind(steps) {
       ReadOutQueue.instance.rewind(steps);
+    }
+    pause() {
+      return ReadOutQueue.instance.pause();
+    }
+    resume() {
+      return ReadOutQueue.instance.resume();
+    }
+    togglePause() {
+      return ReadOutQueue.instance.togglePause();
     }
     registerReadOut(selector,options) {
       this.#selectors.push({selector,options});

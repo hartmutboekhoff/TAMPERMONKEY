@@ -44,6 +44,7 @@
 	      console.debug('Mutation handler found '+elements.length+' elements for selector:', this.#selector);
 	      this.applyClassNames(elements);
 	      this.applyStyles(elements);
+	      this.applyListeners(elements);
 	      this.invokeCallback(elements);
 	    }
 	    catch(e) {
@@ -76,6 +77,22 @@
         else if( typeof this.#reaction.style == 'object' )
           Object.assign(e.style, this.#reaction.style);
       });
+    }
+    applyListeners(elements) {
+      if( this.#reaction.listeners != undefined )
+        elements.forEach(e=>{
+          e.__GM_Listeners ??= {};
+          for( const k in this.#reaction.listeners ) {
+            if( e.__GM_Listeners[k] != true ) {
+              e.__GM_Listeners[k] = true;
+              const l = this.#reaction.listeners[k];
+              if( typeof l == 'function' )
+                e.addEventListener(k,ev=>void l(ev));
+              else if( typeof l == 'string' )
+                e.addEventListener(k,()=>void eval(l))
+            }
+          }
+        });
     }
     invokeCallback(elements) {
       if( typeof this.#reaction.callback == 'function' )

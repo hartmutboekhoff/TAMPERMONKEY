@@ -1,4 +1,10 @@
 (function(){
+
+  const issueKeyToDate = {
+    pattern: /(?:\[#)?(\d{4})(\d{2})(\d{2})-(\d{4})\]?/,
+    replacement: 'vom $3.$2.$1, Nr. $4',
+  };
+
 	function assignToUser(teamname, username,retry=0) {
 		function recursion(until) {
 			if( retry < until ) 
@@ -21,21 +27,22 @@
 				recursion(10);
 		}
 	}
+	function readTicketInfo() {
+    window.ReadOut.queueSelector('a.hyperLinkObjectId span.labelObjectId', {replace: issueKeyToDate})
+                  .queueSelector('.labelSubject')
+                  .queueSelector('#tbSimpleObjectSearchContact',{replace:{pattern:/^(.*),(.*),(.*)$/, replacement:'von $2 $1, $3'}});
+	}
 	
   window.addEventListener('load',()=>{
     console.group('greasemonkey')
     
     // ================================================
     console.log('initializing shortcut-keys');
+    window.addKeyHandler('F2',readTicketInfo,{excludeFormFields:false});
 
     
     // ================================================
     console.log('initializing read-out elements');
-    
-    const issueKeyToDate = {
-      pattern: /(?:\[#)?(\d{4})(\d{2})(\d{2})-(\d{4})\]?/,
-      replacement: 'vom $3.$2.$1, Nr. $4',
-    };
     
     window.registerForReadOut('.labelSubject');
     window.registerForReadOut('#ComplexTextDescription',
@@ -147,17 +154,24 @@
       		e.appendChild(outerDiv);
       	}
       },
+      '#ButtonGeloest': {
+        listeners: {
+          click: ()=>setTimeout(()=>document.getElementById('TabPageSolutionItem_Header')?.click(),500),
+        }
+      },
     });
 
     // ================================================
     // horizontal scrolling for tab-headers
-    [...document.querySelectorAll('.tabControlHeaderContainer')].forEach(c=>
-      c.addEventListener('wheel',ev=>{
-        c.scrollLeft += ev.deltaY;
-        ev.stopPropagation();
-        ev.preventDefault();
-      })
-    );
+    [...document.querySelectorAll('.tabControlHeaderContainer')]
+      .forEach(c=>
+        c.addEventListener('wheel',ev=>{
+          c.scrollLeft += ev.deltaY;
+          ev.stopPropagation();
+          ev.preventDefault();
+        })
+      );
+
 
 
     // ================================================
