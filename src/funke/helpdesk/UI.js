@@ -156,7 +156,7 @@
       },
       '#ButtonGeloest': {
         listeners: {
-          click: ()=>setTimeout(()=>document.getElementById('TabPageSolutionItem_Header')?.click(),500),
+          click: ()=>setTimeout(()=>document.getElementById('TabPageSolutionItem_Header')?.click(),1000),
         }
       },
     });

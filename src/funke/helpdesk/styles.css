@@ -152,6 +152,10 @@ div.dropDownContainer:has(input#ComboBoxINTERNALSTATEtb),
 div.dropDownContainer input#ComboBoxINTERNALSTATEtb {
   background-color: cyan;
 }
+div.dropDownContainer:has(input#ComboBoxINTERNALSTATEtb[value="Solved"]),
+div.dropDownContainer input#ComboBoxINTERNALSTATEtb[value="Solved"] {
+  background-color: #8f8;
+}
 
 .grouped-line {
   background-color: #bbd;
