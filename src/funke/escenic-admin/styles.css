@@ -192,3 +192,10 @@ form tr:has(input[name="selected(65)"]) { background-color: var(--pub-color-mgt)
 form tr:has(input[name="selected(69)"]) { background-color: var(--pub-color-mgt);  font-weight: bold; }
 form tr:has(input[name="selected(71)"]) { background-color: var(--pub-color-mgt);  font-weight: bold; }
 
+
+
+form[name="neo.phoenix.publication.ResourceFileForm"] label[for="plugin-menu"] {
+	background-color: yellow;
+	padding: .5em 2em .5em .5em;
+	margin: .5em 0;
+}
