@@ -22,9 +22,10 @@ function compileStylesheets(...css) {
   function getDirectives(css) {
     const rxComment = /\/\*(.*?)\*\//gs;
     const rxDirective = /^\s*@([\w_][\w\d_-]*)(?:\s*=\s*(.+?))?\s*$/gm;
+    
     return [...css.matchAll(rxComment)]
              .map(m=>[...m[1].matchAll(rxDirective)])
-             .flat(Infinity)
+             .flat()
              .filter(d=>!!d && d.length>0)
              .map(d=>({name:d[1],value:d[2]}))
              .reduce((acc,d)=>(acc[d.name]=d.value,acc),{});

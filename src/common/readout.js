@@ -122,8 +122,8 @@
     constructor(thisObject, options) {
       this.#this = thisObject;
       this.doublePressTimeout = options?.doublePressTimeout ?? DOUBLE_KEY_PRESS;
-      this.stopPropagation = options?.stopPropagation ?? true;
-      this.preventDefault = options?.preventDefault ?? true;
+      this.stopPropagation = options?.stopPropagation ?? false;
+      this.preventDefault = options?.preventDefault ?? false;
 
       document.addEventListener('keydown', ev=>this.callHandler(ev), true);
     }
@@ -685,7 +685,7 @@ console.log(typeof v, options);
         return true;
       }
       Space(ev) {
-        return !this.togglePause();
+        return this.togglePause();
       }
       ['Shift+Tab'](ev) {
         if( this.isReading )

@@ -33,6 +33,37 @@
                   .queueSelector('#tbSimpleObjectSearchContact',{replace:{pattern:/^(.*),(.*),(.*)$/, replacement:'von $2 $1, $3'}});
 	}
 	
+	function addSendMailButton() {
+	  function getContactInfo(fieldId) {
+	    const rx = /^([^,]+), *([^,]+), *([\w\.-_+]+@[\w\.-_+]+)$/;
+	    return document.getElementById(fieldId)?.value?.match(rx)?.slice(1) ?? [];
+	  }
+	  function getRecipients() {
+	    const customer = getContactInfo('tbSimpleObjectSearchContact');
+	    return 'helpline@funkemedien.de' + (customer[2] != undefined? ';'+customer[2] : '');
+	  }
+	  function getSubject() {
+	    return document.getElementById('tbTextBoxBezugsnummermitTag')?.value
+	           + document.getElementById('tbTextBoxSubject')?.value;
+	  }
+	  function getBody() {
+	    const customer = getContactInfo('tbSimpleObjectSearchContact');
+	    return customer.length > 1? `Hallo ${customer[1]} ${customer[0]},\n\n` : 'Hallo,\n\n';
+	  }
+
+	  const copyButton = document.getElementById('menuCopyLinkToClipboard');
+	  if( copyButton == undefined ) return;
+	  let sendMailButton = document.getElementById('HBo_sendMailButton');
+	  if( sendMailButton != undefined ) return;
+	  sendMailButton = document.createElement('a');
+	  sendMailButton.id = 'HBo_sendMailButton';
+	  sendMailButton.innerText = 'E-Mail';
+	  sendMailButton.href = 'mailto:'+encodeURIComponent(getRecipients())
+	                        +'?subject='+encodeURIComponent(getSubject())
+	                        +'&body='+encodeURIComponent(getBody());
+	  copyButton.before(sendMailButton);
+	}
+
   window.addEventListener('load',()=>{
     console.group('greasemonkey')
     
@@ -156,10 +187,14 @@
       },
       '#ButtonGeloest': {
         listeners: {
-          click: ()=>setTimeout(()=>document.getElementById('TabPageSolutionItem_Header')?.click(),1000),
+          click: ()=>(setTimeout(()=>document.getElementById('TabPageSolutionItem_Header')?.click(),1000),
+                      setTimeout(()=>document.getElementById('ComplexTextSolutionTextHtmlEditor_ExtenderContentEditable')?.focus(),2000)),
         }
       },
     });
+    
+    //=================================
+    addSendMailButton();
 
     // ================================================
     // horizontal scrolling for tab-headers
