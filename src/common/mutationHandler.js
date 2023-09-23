@@ -24,18 +24,19 @@
         this.#classList = reaction.className.split(/\s/).filter(c=>c!='');
       else if( Array.isArray(reaction.className) )
         this.#classList = reaction.className;
-      
+
       if( reaction.runOnLoad == true )
       	this.#runOnLoad();
     }
     
    	#runOnLoad() {
-   		if( document.readyState == true )
+   		if( document.readyState == 'complete' )
    			this.run();
    		else
    			window.addEventListener('load',()=>this.run());
    	}
     run() {
+console.log('handling mutations');
     	if( this.#recursions > this.#maxRecursions ) return;
     	
     	++this.#recursions;

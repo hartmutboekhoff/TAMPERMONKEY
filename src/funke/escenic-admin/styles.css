@@ -199,3 +199,9 @@ form[name="neo.phoenix.publication.ResourceFileForm"] label[for="plugin-menu"] {
 	padding: .5em 2em .5em .5em;
 	margin: .5em 0;
 }
+
+label[for="menuRadio"] {
+  background-color: cyan;
+  line-height: 2em;
+  font-size: 1.4em;
+}
