@@ -35,8 +35,7 @@
    		else
    			window.addEventListener('load',()=>this.run());
    	}
-    run() {
-console.log('handling mutations');
+    run(mutations) {
     	if( this.#recursions > this.#maxRecursions ) return;
     	
     	++this.#recursions;
@@ -117,7 +116,7 @@ console.log('handling mutations');
     constructor() {
       this.#observer = new MutationObserver(mutations=>{  
       	try {
-        	this.#reactions.forEach(r=>r.run());
+        	this.#reactions.forEach(r=>r.run(mutations));
       	}
       	catch(e) {
       		console.error(e);
@@ -160,7 +159,7 @@ console.log('handling mutations');
    *      ['selector-2']: reaction,
    *   });
    */
-  window.onMutation = function(selector,reaction) {
+  window.onMutation ??= function(selector,reaction) {
     if( typeof selector == 'string' && typeof reaction == 'object' )
       MutationHandler.instance.addReaction(selector, reaction);
     else if( typeof selector == 'object' )

@@ -58,7 +58,6 @@
         return  dname+', '+Format.time(dt);
       }
       const delta = dateDiff(dt, new Date());
-
       if( delta.totalDays < -7 ) return Format.date(dt);
       if( delta.totalHours < -12 ) return fewDays(delta, dt);
       if( delta.totalMinutes < -60 ) return fewHours(delta);
@@ -74,6 +73,10 @@
     reduceWhitespace: function(s) {
       return s == undefined? '' : s.replace(/\s+/g,' ').trim();
     },
+    niceName: function(name) {
+      const [lastname,firstname] = name.split(',');
+      return firstname+' '+lastname;
+    }
   };
 
   const DEFAULT_OPTIONS = {
@@ -152,16 +155,23 @@
       if( h == undefined ) return;
 
       ev.doublePressed = h.doublePressed;
-      switch( h.handler.apply(this.#this, [ev]) ) {
-        case true:
-          ev.stopPropagation();
-          ev.preventDefault();
-        case false:
-          break;
-        
-        default:
-          if( h.stopPropagation ) ev.stopPropagation();
-          if( h.preventDefault ) ev.preventDefault();
+      try {
+        switch( h.handler.apply(this.#this, [ev]) ) {
+          case true:
+            ev.stopPropagation();
+            ev.preventDefault();
+          case false:
+            break;
+          
+          default:
+            if( !ev.target.matches('INPUT,TEXTAREA') ) {
+              if( h.stopPropagation ) ev.stopPropagation();
+              if( h.preventDefault ) ev.preventDefault();
+            }
+        }
+      }
+      catch(e) {
+        console.error(e);
       }
     }
   }
@@ -314,6 +324,8 @@
 
       if( options == undefined ) return;
 
+      this.rootExtractor = options.extract;
+
       this.prefix = options.prefix;
       this.suffix = options.suffix;
       
@@ -342,7 +354,10 @@
       
       if( !this.#isReadable(node) ) return undefined;
 
-      const custom = this.#getCustomCollector(node);
+      const custom = this.#collected.size == 1
+                      ? {extract: this.rootExtractor} // root-element
+                      : this.#getCustomCollector(node); // child-elements
+
       const extract = this.#extractNodeText(node, custom);
       if( extract == undefined ) return undefined;
 
@@ -590,7 +605,6 @@
       this.push(v, options);
     }
     push(v,options) {
-console.log(typeof v, options);
       return v instanceof HTMLElement
           ? this.#pushElement(v, undefined, options)
           : this.#pushText(v, undefined, options);
@@ -664,8 +678,87 @@ console.log(typeof v, options);
     }
   }
   
+  class CssPathHelper extends Array {
+    static MAX_AGE = 10000; // ms
+    #timestamps = [];
+    
+    constructor() {
+      super(...arguments);
+      if( this.length > 0 ) this.#timestamps.fill(new Date(), 0, this.length-1);
+    }
+    
+    cleanup(maxage) {
+      const cut = (new Date().valueOf()) - (maxage || CssPathHelper.MAX_AGE);
+      let ix = 0;
+      while( ix < this.length && this.#timestamps[ix++].valueOf() < cut);
+      if( ix > 1 )  {
+        super.splice(0,ix-1);
+        this.#timestamps.splice(0,ix-1);
+      }
+    }
+    add(selector) {
+      this.cleanup();
+      const ix = this.indexOf(selector);
+      if( ix >= 0 ) {
+        super.splice(ix,1);
+        this.#timestamps.splice(ix,1);
+      }
+      this.push(selector);
+    }
+    push(selector) {
+      super.push(selector);
+      this.#timestamps.push(new Date());
+    }
+    pop(selector) {
+      super.pop(selector);
+      this.#timestamps.pop(new Date());
+    }
+    shift(selector) {
+      super.shift(selector);
+      this.#timestamps.shift(new Date());
+    }
+    unshift(selector) {
+      super.unshift(selector);
+      this.#timestamps.unshift(new Date());
+    }
+    getCompact() {
+      function findCommonStart(strings) {
+        function commonStart(a,b) {
+          for( let len = a.length < b.length? a.length : b.length ; len > 0 ; len-- ) {
+            const common = b.slice(0,len);
+            if( a.startsWith(common) )
+              return common;
+          }
+          return '';
+        }
+
+        let common = strings[0];
+        for( let i = 1 ; i < strings.length ; i++ ) {
+          common = commonStart(strings[i], common);
+          if( common == '' ) break;
+        }
+        return common;
+      }
+
+      const common = findCommonStart(this);
+      if( common == '' ) 
+        return this;
+      const cutaway = common.length;
+      return {
+        url: location.href,
+        base: common,
+        length: this.length,
+        items: [...this].map(i=>i.slice(cutaway)),
+      };
+    }
+    
+    toJSON() {
+      return {url:location.href, items:[...this]};
+    }
+  }
+  
   class ReadOutUI {
-    #cssPathHelper = [];
+    #cssPathHelper = new CssPathHelper();
     #selectors = [];
     #keyHandlers = new (class extends BaseKeyHandler {
       constructor(parent) {
@@ -758,15 +851,16 @@ console.log(typeof v, options);
     }
     #printCssPath(ev) {
       function getCssPath(e) {
-        let p = '';
+        let selector = '';
         do {
-          p = e.nodeName + (e.id?'#'+e.id.replace(/\./g,'\\.'):'') + (e.className?'.'+e.className.replace(/\s+/g,'.'):'') + ' ' + p;
+          selector = e.nodeName + (e.id?'#'+e.id.replace(/\./g,'\\.'):'') + (e.className?'.'+e.className.replace(/\s+/g,'.'):'') + ' ' + selector;
           e = e.parentNode;
         } while( e != undefined && e.nodeName != 'BODY' );
-        return p;
+        return selector;
       }
-      this.#cssPathHelper.push(getCssPath(ev.target))
-      console.log(this.#cssPathHelper);
+
+      this.#cssPathHelper.add(getCssPath(ev.target))
+      console.log(this.#cssPathHelper.getCompact());
     }
     #readOutElement(ev) {
       const target = document.elementFromPoint(ev.clientX,ev.clientY);
@@ -802,7 +896,20 @@ console.log(typeof v, options);
   }
 
   window.ReadOut = document.ReadOut = new ReadOutUI();
-  window.registerForReadOut = function(selector,options){window.ReadOut.registerReadOut(selector,options)};
+  window.registerForReadOut = function(...args){
+    if( args[0].constructor.name == 'RegExp' ) {
+      if( args[0].test(location.href) )
+        window.ReadOut.registerReadOut(args[1], args[2]);
+    }
+    else if( args.length >= 3 ) {
+      if( wildcardToRegExp(args[0]).test(location.href) )
+        window.ReadOut.registerReadOut(args[1], args[2]);
+    }
+    else {
+      window.ReadOut.registerReadOut(args[0], args[1]);
+    }
+    
+  };
 })();
 
 // ------------------------------------------------------------------

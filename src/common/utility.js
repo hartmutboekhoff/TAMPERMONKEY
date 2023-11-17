@@ -11,5 +11,9 @@ function getComments(rootNode) {
   return commentsRecursive(rootNode).flat(Infinity).filter(n=>!!n);
 }
 
+function wildcardToRegExp(pattern) {
+  return new RegExp('^'+pattern.replaceAll(/[.*?()\[\]{}^$|\\]/g,m=>({'*':'.*','?':'.'}[m]??'\\'+m))+'$');
+}
+
 // ------------------------------------------------------------------
 console.log(GM_info.script.name, 'Version '+GM_info.script.version, 'common/utility.js', 'Version '+COMMON_VERSION);
