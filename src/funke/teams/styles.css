@@ -1,0 +1,19 @@
+/* @printCompiledCss = false */
+
+.fui-ChatMessage__body {
+  outline: 3px solid #fc0;
+}
+.fui-ChatMessage__author {
+  _outline: 3px solid blue;
+}
+.fui-ChatMessage__avatar {
+  _outline: 3px solid red;
+}
+.fui-ChatMessage__timestamp {
+  _outline: 3px solid green;
+}
+
+div[role="dialog"] .ui-popup__content__content {
+  outline: 5px solid #fc0;
+  box-shadow: 5px 5px 10px blue;
+}

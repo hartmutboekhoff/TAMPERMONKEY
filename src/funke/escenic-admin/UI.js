@@ -33,6 +33,7 @@
           document.getElementById('otherradio').before(radio,label,document.createElement('br'));
         }
         
+        if( document.getElementById('menuRadio') != undefined ) return;
         addOption('menuRadio', '/escenic/plugin/menu', 'Menu definition (optional)');
         addOption('shortcutRadio', '/unitb/shortcut-links', 'Shortcut-Url definition (optional)');
       }
