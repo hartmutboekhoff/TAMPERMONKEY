@@ -17,3 +17,41 @@ div[role="dialog"] .ui-popup__content__content {
   outline: 5px solid #fc0;
   box-shadow: 5px 5px 10px blue;
 }
+
+
+div.recipient-group-list-item .ts-unread-channel {
+  background-image: var(--row-overlay);
+  _background-color: var(--ok-button);
+  background-color: #fc7;
+}
+
+.ui-toolbar {
+  @input-highlight;
+}
+
+div.recipient-group-list-item.left-rail-selected {
+  background-image: var(--row-overlay);
+  _background-color: var(--ok-button);
+  background-color: #baf;
+}
+
+
+
+button[id="Scheduling assistant"] {
+  background: var(--row-soft-overlay);
+  background-color: #fdb;
+}
+button[id="Scheduling assistant"]:hover {
+  background: var(--row-soft-overlay);
+  background-color: #fc9;
+}
+
+
+div[class*="attendee-availability_statusTentative"] {
+  background-color: cyan;
+  outline: 4px dotted blue;
+}
+div[class*="attendee-availability_statusBusy"] {
+  background-color: darkcyan;
+  outline: 4px solid blue;
+}

@@ -8,7 +8,7 @@
 // @grant        addStyle
 // @grant        unsafeWindow
 
-// @include      https://www.vorlage.de/*
+ @include      https://www.quantamagazine.org/*
 
 // @downloadURL          http://localhost:3000/hartmut/quanta-magazine/main.js
 // @updateURL            http://localhost:3000/hartmut/quanta-magazine/main.js

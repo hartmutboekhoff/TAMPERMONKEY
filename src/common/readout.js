@@ -578,11 +578,11 @@
       this.#queue.push(utterances);
       this.#start();
     }
-    #pushText(t, k, options) {
+    #pushText(t, k, options,e) {
       k ??= t;
       const u = new SpeechSynthesisUtterance(t);
       assignUtteranceOptions(u, mergeUtteranceOptions(options,DEFAULT_OPTIONS));
-      this.#pushUtterances([u], k);
+      this.#pushUtterances([u], k, e);
       return k;
     }
     #pushElement(e, k, options) {
@@ -593,7 +593,7 @@
       u.convertDates();
       k ??= e.id ?? e.className ?? e.nodeName;
       if( u.utterances.length == 0 )
-        this.#pushText('Kein Text.', k, options);
+        this.#pushText('Kein Text.', k, options, e);
       else
         this.#pushUtterances(u.utterances, k, e);
     }
@@ -865,10 +865,12 @@
     #readOutElement(ev) {
       const target = document.elementFromPoint(ev.clientX,ev.clientY);
       const match = this.#findClosestMatch(target);
-      if( match != undefined ) 
-        this.queue(match.ancestor,match.options);
-      //else
-      //  console.log('no math for ', target);
+      if( match != undefined ) {
+        if( match.options.immediate == true )
+          this.read(match.ancestor,match.options);
+        else
+          this.queue(match.ancestor,match.options);
+      }
     }
     #onMousemove(ev) {
       if( ev.shiftKey && ev.ctrlKey )

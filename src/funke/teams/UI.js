@@ -136,6 +136,11 @@
     //window.registerForReadOut('selector');
     window.registerForReadOut('.fui-ChatMessage,.fui-ChatMyMessage', chatReadoutOptions);
     window.registerForReadOut('.ui-popup__content__content span.ui-text');
+    window.registerForReadOut('div.recipient-group-list-item', {
+      immediate:true,
+      rate: 5,
+      extract:node=>node.querySelector('.cle-title'),
+    });
     
 
     // ================================================
@@ -147,8 +152,7 @@
         readOutAppointmentDetails(el.querySelectorAll('span.ui-text'));
       },
     });
-  
-  
+
     // ================================================
 
 
