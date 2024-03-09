@@ -193,18 +193,23 @@ textarea#vm\.Sys\.Result {
   color: black;
 }
 
-div#assign-to-current-user div {
+div#custom-assign-buttons div {
 	position:absolute;
 	top: 200px;
 	width:100%;
+	display: flex;
 }
-div#assign-to-current-user div button {
+div#custom-assign-buttons div button {
 	paddding: 1em;
+	margin: 2px;
 	height: 3em;
 	width: 100%;
-	
 }
-
+div#custom-assign-buttons div button:before {
+  content: "➜";
+  margin-right: .5em;
+  
+}
 
 
 #contenttableHLGrid > div:hover {
@@ -217,4 +222,8 @@ div#assign-to-current-user div button {
   border-radius: 3px;
   padding: .2em 1em;
   margin: .5em .1em 0 1em;
+}
+
+.no-local-login-identity-provider-container>div.ok-button button {
+  @.ok-button;
 }

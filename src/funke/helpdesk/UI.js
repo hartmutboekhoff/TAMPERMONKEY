@@ -63,6 +63,26 @@
 	                        +'&body='+encodeURIComponent(getBody());
 	  copyButton.before(sendMailButton);
 	}
+	function addAssignToButton(buttonId, buttonText, groupName, userName) {
+		if( document.getElementById(buttonId) != undefined ) 
+		  return undefined;
+		
+		let innerDiv = document.querySelector('div#custom-assign-buttons div');
+		if( innerDiv == undefined ) {
+		  const outerDiv = document.createElement('div');
+		  outerDiv.id = 'custom-assign-buttons';
+		  innerDiv = document.createElement('div');
+		  outerDiv.appendChild(innerDiv);
+  		document.getElementById('GroupBoxAssignment')?.appendChild(outerDiv);
+		}
+
+		const button = document.createElement('button');
+		button.id = buttonId;
+		button.innerText = buttonText;
+		button.onclick = ev=>assignToUser(groupName, userName);
+
+		innerDiv.appendChild(button);
+	}
 
   window.addEventListener('load',()=>{
     console.group('greasemonkey')
@@ -172,6 +192,9 @@
       ['div#GroupBoxAssignment']: {
       	runOnLoad: true,
       	callback: function(e){
+      	  addAssignToButton('assign-to-current-user', 'mir zuweisen', 'FT_Support_TZ-Digital', 'Boekhoff, Hartmut');
+      	  addAssignToButton('assign-to-digital_frontend', 'Digital Frontend', 'Digital_Frontend');
+/*
       		if( document.getElementById('assign-to-current-user') != undefined ) return;
       		const outerDiv = document.createElement('div');
       		outerDiv.id='assign-to-current-user';
@@ -183,6 +206,7 @@
       		innerDiv.appendChild(button);
       		outerDiv.appendChild(innerDiv);
       		e.appendChild(outerDiv);
+*/
       	}
       },
       '#ButtonGeloest': {
@@ -190,6 +214,15 @@
           click: ()=>(setTimeout(()=>document.getElementById('TabPageSolutionItem_Header')?.click(),1000),
                       setTimeout(()=>document.getElementById('ComplexTextSolutionTextHtmlEditor_ExtenderContentEditable')?.focus(),2000)),
         }
+      },
+      ['.no-local-login-identity-provider-container']: {
+        runOnLoad: true,
+        callback: e=>{
+          [...e.children].forEach(d=>{
+            if( /funke/i.test(d.innerText) ) 
+              d.classList.add('ok-button')
+          });
+        },
       },
     });
     

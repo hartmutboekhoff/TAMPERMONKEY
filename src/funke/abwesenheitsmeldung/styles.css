@@ -1,1 +1,8 @@
 /* @printCompiledCss = false */
+
+
+:active,
+:focus {
+  outline: 5px solid #48f !important;
+  outline-offset: 4px !important;
+}

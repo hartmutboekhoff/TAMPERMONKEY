@@ -36,6 +36,7 @@
         }
       },
     });
+		window.registerForReadOut('#issuetable .issuerow .summary');
     
     // ================================================
 

@@ -63,12 +63,19 @@ header a.aui-button:visited {
 
 #footer-comment-button {
   @.neutral-button;
-  color: black;
+  color: white;
+  font-weight: bold;
   padding: .5em 1em;
   line-height: 2em;
   height: 3em;
 }
-
+#footer-comment-button span,
+#addcomment.sticky #footer-comment-button span {
+  color: white;
+  font-size: 1.2em;
+  _text-shadow: -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white, 1px 1px 0 white;
+  text-shadow: 0px 0px 3px darkblue;
+}
 #description-form div.show-button-bar button.aui-button-primary[type=submit],
 #issue-create-submit {
   @.ok-button;

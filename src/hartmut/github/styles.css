@@ -1,0 +1,7 @@
+/* @printCompiledCss = false */
+
+
+
+button.Button--secondary {
+  @.neutral2-button;
+}

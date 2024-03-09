@@ -1,5 +1,16 @@
 /* @printCompiledCss = false */
 
+:root {
+  --menu-border-color: #00c;
+  --menu-background-color: hsl(45 100% 80%);
+  --parent-menu-background-color: hsl(45 100% 90%);
+  --parent-menu-border-color: #44c;
+  --parent-menu-color: #aaa;
+}
+
+div.app-header-bar {
+  background-color: #903391;
+}
 .fui-ChatMessage__body {
   outline: 3px solid #fc0;
 }
@@ -54,4 +65,31 @@ div[class*="attendee-availability_statusTentative"] {
 div[class*="attendee-availability_statusBusy"] {
   background-color: darkcyan;
   outline: 4px solid blue;
+}
+
+
+div[data-tid="app-layout-area--main"] {
+  zoom: 2;
+}
+
+
+
+
+
+div.fui-FluentProvider div.fui-MenuPopover {
+  box-shadow: 0 0 10px 5px var(--menu-border-color);
+  background-color: var(--menu-background-color);
+}
+div.fui-FluentProvider div.fui-MenuPopover .fui-MenuItem {
+  background-color: var(--menu-background-color);
+}
+
+div.fui-FluentProvider:has(~ div.fui-FluentProvider div.fui-MenuPopover) div.fui-MenuPopover {
+  box-shadow: 0 0 6px 3px var(--parent-menu-border-color);
+  background-color: var(--parent-menu-background-color);
+}
+div.fui-FluentProvider:has(~ div.fui-FluentProvider div.fui-MenuPopover) div.fui-MenuPopover .fui-MenuItem {
+  background-color: var(--parent-menu-background-color);
+  color: var(--parent-menu-color)
+  
 }

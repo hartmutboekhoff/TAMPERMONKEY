@@ -13,6 +13,7 @@
 // @include         https://helpline.funkemedien.de/ServicewareProcesses/tasks
 // @include         https://helpline.funkemedien.de/WebDesk/Task/TaskDialog
 // @include         https://helpline.funkemedien.de/WebDesk/Task/TaskDialog?*
+// @include         https://helpline.funkemedien.de/auth/*
 
 // @downloadURL            http://localhost:3000/funke/helpdesk/main.js
 // @updateURL              http://localhost:3000/funke/helpdesk/main.js

@@ -74,9 +74,15 @@
       return s == undefined? '' : s.replace(/\s+/g,' ').trim();
     },
     niceName: function(name) {
-      const [lastname,firstname] = name.split(',');
-      return firstname+' '+lastname;
-    }
+      const extMarkerRx = /\((extern|external|gast|guest)\)/i;
+      const namePartsRx = /(?:([^,]+),)?(.+)/
+
+      const res = name.replace(extMarkerRx, '')
+                      .match(namePartsRx)
+                      ?.slice(1)
+                      .map(s=>s?.trim()??'');
+      return (res[1]??'') + ' ' + (res[0]??'');
+    },
   };
 
   const DEFAULT_OPTIONS = {
@@ -359,6 +365,7 @@
                       : this.#getCustomCollector(node); // child-elements
 
       const extract = this.#extractNodeText(node, custom);
+console.log(extract, node);
       if( extract == undefined ) return undefined;
 
       const norm = new NormalizedExtract(extract);
@@ -842,7 +849,7 @@
       return ReadOutQueue.instance.togglePause();
     }
     registerReadOut(selector,options) {
-      this.#selectors.push({selector,options});
+      this.#selectors.push({selector,options:options ?? {}});
     }
     readSelection() {
     	const sel = window.getSelection();
