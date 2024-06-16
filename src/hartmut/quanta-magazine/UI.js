@@ -16,6 +16,7 @@
     });
     window.registerForReadOut('.hero-title,.hero__card,.card', {
       language: 'en-US',
+      exclude: ['img']
     });
     
 

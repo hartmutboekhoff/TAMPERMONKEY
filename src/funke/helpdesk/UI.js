@@ -164,12 +164,18 @@
     window.onMutation({
       ['MAT-ROW.mat-row']: {
         callback: e=>{
+            // Escenic Accounts
             if( !!e.innerText.match(/escenic/i)?.[0] ) {
               if( !!e.innerText.match(/l\xf6sch|austritt|freistellung/i)?.[0] )
                 e.classList.add('esc-delete-account');
               else if( !!e.innerText.match(/zugang|einrichten|anlegen|eintritt/i)?.[0] )
                 e.classList.add('esc-create-account');
             }
+            // VG-Wort
+            if( !!e.innerText.match(/vg[- _\.]?wort/i)?.[0] ) {
+              e.classList.add('vg-wort');
+            }
+            
           },
       },
       [':is(.jqx-grid-group-collapse,.jqx-grid-group-expand)+.jqx-grid-group-cell']: {
@@ -182,9 +188,16 @@
       [':not(:is(.jqx-grid-group-collapse,.jqx-grid-group-expand))+.jqx-grid-group-cell']: {
         callback: function(e){
             const p = e.parentNode;
+            // escenic Hervorhebung
             if( !!p.innerText.match(/escenic/i)?.[0] 
                 && !!p.innerText.match(/zugang|einrichten|anlegen|eintritt|passwort|login/i)?.[0] )
               e.classList.add('esc-create-account');
+
+            // vg-wort Hervorhebung
+            if( !!p.innerText.match(/vg[-_ \.]?wort/i)?.[0] )
+              e.classList.add('vg-wort');
+
+            // Zuweisung an Hartmut Boekhoff Hervorhebung
             if( !!e.innerText.match(/Boekhoff, Hartmut/i)?.[0] )
               e.classList.add('assigned-to-me');
           },
