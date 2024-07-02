@@ -1,4 +1,4 @@
-/* @printCompiledCss = false */
+/* @printCompiledCss = true */
 
 :root {
   --menu-border-color: #00c;
@@ -8,20 +8,20 @@
   --parent-menu-color: #aaa;
 }
 
-div.app-header-bar {
+div.app-header-bar,
+div[data-tid="app-layout-area--title-bar"] div[data-tid="title-bar"] {
   background-color: #903391;
 }
+
+div.ui-box.ir.no {
+  @input-highlight;
+}
+.ui-toolbar {
+  border-top: 3px solid #fc0;
+}
+
 .fui-ChatMessage__body {
-  outline: 3px solid #fc0;
-}
-.fui-ChatMessage__author {
-  _outline: 3px solid blue;
-}
-.fui-ChatMessage__avatar {
-  _outline: 3px solid red;
-}
-.fui-ChatMessage__timestamp {
-  _outline: 3px solid green;
+  border-top: 3px solid #fc0;
 }
 
 div[role="dialog"] .ui-popup__content__content {
@@ -34,10 +34,6 @@ div.recipient-group-list-item .ts-unread-channel {
   background-image: var(--row-overlay);
   _background-color: var(--ok-button);
   background-color: #fc7;
-}
-
-.ui-toolbar {
-  @input-highlight;
 }
 
 div.recipient-group-list-item.left-rail-selected {
@@ -90,6 +86,18 @@ div.fui-FluentProvider:has(~ div.fui-FluentProvider div.fui-MenuPopover) div.fui
 }
 div.fui-FluentProvider:has(~ div.fui-FluentProvider div.fui-MenuPopover) div.fui-MenuPopover .fui-MenuItem {
   background-color: var(--parent-menu-background-color);
-  color: var(--parent-menu-color)
+  color: var(--parent-menu-color);
   
+}
+
+.fui-Divider {
+  background-image: linear-gradient(transparent, #44d 30%, #44d 70%, transparent);
+  color: white !important;
+  font-weight: 1000;
+  padding: .2em 0;
+}
+
+.ui-alert {
+  background-color: #ef9 !important;
+  @row;
 }

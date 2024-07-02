@@ -1,0 +1,21 @@
+/* @printCompiledCss = false */
+
+
+div > baf-a-card {
+  border: solid 3px blue;
+  border-radius: 20px;
+}
+div > baf-a-card .einreichung-info-block > p > span {
+  background-color: yellow;
+  font-size: 1.5em;
+}
+
+a[href="/meine-einreichungen"] {
+  @.ok-button;
+  padding: .5em;
+  
+}
+
+a.link-cursor.ng-star-inserted {
+  @.ok-button;
+}

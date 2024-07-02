@@ -2,7 +2,7 @@
   window.addEventListener('load',()=>{
 
     const chatReadoutOptions = {
-      exclude: '.fui-ChatMessage__reactions,.fui-ChatMyMessage__reactions,.fui-ChatMessage__avatar',
+      exclude: '.fui-ChatMessage__reactions,.fui-ChatMyMessage__reactions,.fui-ChatMessage__avatar,[data-track-module-name="intelligentTranslation"]',
       childElements: {
         '.fui-ChatMessage__body [data-track-module-name="messageQuotedReply"]': {
           prefix: 'zitierte Nachricht',

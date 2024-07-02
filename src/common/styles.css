@@ -27,37 +27,37 @@ body {
   --disabled-border: #888;
 }
 
-.ok-button {
+.ok-button, ok-button {
   background-image: var(--button-overlay);
   background-color: var(--ok-button);
   border: 2px solid var(--ok-border);
 }
-.cancel-button {
+.cancel-button, cancel-button {
   background-image: var(--button-overlay);
   background-color: var(--cancel-button);
   border: 2px solid var(--cancel-border);
 }
-.neutral-button {
+.neutral-button, neutral-button {
   background-image: var(--button-overlay);
   background-color: var(--neutral-button);
   border: 2px solid var(--neutral-border);
 }
-.neutral2-button {
+.neutral2-button, neutral2-button {
   background-image: var(--button-overlay);
   background-color: var(--neutral2-button);
   border: 2px solid var(--neutral2-border);
 }
-.attention-button {
+.attention-button, attention-button {
   background-image: var(--button-overlay);
   background-color: var(--attention-button);
   border: 2px solid var(--attention-border);
 }
-.danger-button {
+.danger-button, danger-button {
   background-image: var(--button-overlay);
   background-color: var(--danger-button);
   border: 2px solid var(--danger-border);
 }
-.disabled-button {
+.disabled-button, disabled-button {
   background-image: var(--button-soft-overlay);
   background-color: var(--disabled-button);
   border: 2px solid var(--disabled-border);
@@ -96,6 +96,15 @@ hbo-icon-info {
   color: white;
   border-color: white;
 }
+
+
+row {
+  background-image: var(--row-overlay);
+}
+soft-row {
+  background-image: var(--row-soft-overlay);
+}
+
 
 /* 💥🛑⛔❌⭕🚫❗❕‼❔❓⁉⚠♻✔🗨💬 */
 
