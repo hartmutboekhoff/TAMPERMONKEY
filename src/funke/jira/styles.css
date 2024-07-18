@@ -193,3 +193,8 @@ tr.issuerow td.assignee:has(a#assignee_hboekhoff) {
 tr.issuerow td.assignee:has(em) {
   background-image: radial-gradient(ellipse at left top, transparent 70%, #a00);
 }
+
+
+div.ghx-limits, div.ghx-qty {
+  display: none !important;
+}

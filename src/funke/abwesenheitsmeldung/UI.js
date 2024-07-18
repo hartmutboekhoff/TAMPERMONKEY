@@ -54,11 +54,11 @@
     },
     Art_der_Abwesenheit: {
       selector: 'input[type="radio"][name="red82c1c52c0d4b3aa66a41952b840ef2"][value="Krankheit ohne Arztbesuch"]',
-      action: e=>{if(!e.checked)e.click();}
+      action: clickRadio,
     },
     Bearbeiter_Thomas_Habicht: {
       selector: 'input[type="radio"][name="rbe75d27b7e594fdc955d633f3ef48f00"][value="Habicht, Thomas (thomas.habicht@funkemedien.de)"]',
-      action: e=>{if(!e.checked)e.click();}
+      action: clickRadio,
     },
     //Empfangsbestaetigung_Nein: {
     //  selector: 'input[type="radio"][name="r83431c1085c64aa6a6394089d9ab8cc1"][value="Nein"]',
@@ -66,7 +66,7 @@
     //},
     Empfangsbestaetigung_Ja: {
       selector: 'input[type="radio"][name="r83431c1085c64aa6a6394089d9ab8cc1"][value="Ja"]',
-      action: e=>{if(!e.checked)e.click();}
+      action: clickRadio
     },
     Empfangsbestaetigung_EMail: {
       selector: '#QuestionId_r0b198d4ae4074c07b1236dcbeacb2695 + div>div>span>input',
@@ -76,7 +76,15 @@
     }
   }; 
   
-  function fillForm() {
+  function clickRadio(e) {
+    if( !e.checked && !e.hbo_init ) {
+      e.hbo_init=(e.hbo_init??-1)+1;
+      e.click();
+    }
+  }
+
+  function fillForm(...args) {
+console.log(args);
     console.log('filling form fields');
     for( const k in FormFields ) {
       const f = FormFields[k];
@@ -112,7 +120,7 @@
     // ================================================
     console.log('initializing mutation-reactions');
     //window.onMutation('selector', reaction);
-    window.onMutation('body', {
+    window.onMutation('body,input[type="radio"]', {
       callback: fillForm,
       runOnLoad: true,
     });
