@@ -185,7 +185,7 @@ tr.issuerow:has(td>span[data-tooltip*=">In Approval<"]) { --highlight-color: #8f
 tr.issuerow:has(td>span[data-tooltip*=">Code Review<"]) { --highlight-color: #8f8; }
 tr.issuerow:has(td>span[data-tooltip*=">New<"])         { --highlight-color: #fd2; }
 tr.issuerow:has(td>span[data-tooltip*=">Ready for Development<"])  { --highlight-color: #0ff; }
-tr.issuerow:has(td>span[data-tooltip*=">Fertig<"])      { --highlight-color2: #bbb; --highlight-color: #ddd; }
+tr.issuerow:has(td>span[data-tooltip*=">Fertig<"])      { --highlight-color2: #ddd; --highlight-color: #bbb; }
 
 tr.issuerow td.assignee:has(a#assignee_hboekhoff) {
   background-image: radial-gradient(ellipse at left top, transparent 70%, #f0f);

@@ -1,1 +1,42 @@
 /* @printCompiledCss = false */
+
+
+cue-metadata-panel-loader > * {
+  outline: 4px solid #008;
+  outline-ofset 2px;
+}
+
+cue-metadata-panel-loader > * div.header-container {
+  background-color: #aac;
+}
+cue-metadata-panel-loader * div.header-container .header-text {
+  color: #004 !important;
+  padding-left: 1em;
+}
+cue-metadata-panel-loader .general-info * div.header-container .header-text,
+cue-metadata-panel-loader cue-sections-metadata-panel * div.header-container .header-text {
+  color: #fff !important;
+}
+
+cue-metadata-panel-loader .general-info * div.header-container {
+  background-color: #800;
+}
+
+cue-metadata-panel-loader .activation * div.header-container {
+  background-color: #daa;
+}
+cue-metadata-panel-loader cue-tags-metadata-panel * div.header-container {
+  background-color: #ce8;
+}
+cue-metadata-panel-loader cue-author-panel * div.header-container {
+  background-color: #4e6;
+}
+cue-metadata-panel-loader cue-sections-metadata-panel * div.header-container {
+  background-color: #000;
+}
+
+cue-metadata-panel-loader .general-info * div.row[title^="ID: "] .right {
+  font-size: 1.6em;
+  font-weight: bold;
+  padding: 2px 0;
+}
