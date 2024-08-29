@@ -1,6 +1,6 @@
 // ==UserScript==
-// @name         CUE
-// @description  UI Verbesserungen für CUE  
+// @name         Cleverreach
+// @description  UI Verbesserungen für Cleverreach
 // @version      1
 // @grant        GM_getResourceURL
 // @grant        GM_getResourceText
@@ -8,22 +8,22 @@
 // @grant        addStyle
 // @grant        unsafeWindow
 
-// @include      https://cue.funke.cue.cloud/cue-web/*
+// @include      https://newsletter.funkemedien.de
+// @include      https://newsletter.funkemedien.de/*
 
-// @downloadURL          http://localhost:3000/funke/cue/main.js
-// @updateURL            http://localhost:3000/funke/cue/main.js
+// @downloadURL          http://localhost:3000/funke/cleverreach/main.js
+// @updateURL            http://localhost:3000/funke/cleverreach/main.js
 
 // @resource  css-common http://localhost:3000/common/styles.css
-// @resource  css        http://localhost:3000/funke/cue/styles.css
+// @resource  css        http://localhost:3000/funke/cleverreach/styles.css
 
 // @require         http://localhost:3000/common/head.js
 // @require         http://localhost:3000/common/utility.js
 // @require         http://localhost:3000/common/styles.js
 // @require         http://localhost:3000/common/KeyHandler.js
 // @require         http://localhost:3000/common/readout.js
-// @require         http://localhost:3000/common/mutationHandler.js
 
-// @require         http://localhost:3000/funke/cue/UI.js
+// @require         http://localhost:3000/funke/cleverreach/UI.js
 
 // ==/UserScript==
 

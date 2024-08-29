@@ -198,3 +198,12 @@ tr.issuerow td.assignee:has(em) {
 div.ghx-limits, div.ghx-qty {
   display: none !important;
 }
+
+h1 #ghx-board-name {
+  font-size: 1.3em;
+  font-weight: bold;
+  letter-spacing: .15em;
+}
+h1 #subnav-title {
+  font-size: .5em;
+}
