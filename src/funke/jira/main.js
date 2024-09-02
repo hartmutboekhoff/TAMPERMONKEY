@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name     JIRA
-// @version  1
+// @version  2
 // @description     JIRA UI improvements
 // @grant GM_getResourceURL
 // @grant GM_getResourceText

@@ -1,0 +1,27 @@
+/* @printCompiledCss = false */
+
+
+li a[href="/admin/login.php?logout=true"] {
+  @.neutral-button;  
+}
+
+span.account-button {
+  margin: 2em .2em;
+  padding: .5em 1em;
+  border-radius: 4px;
+  line-height: 3em;
+  cursor: pointer;
+  @.neutral2-button;
+}
+span.account-button.selected {
+  color: black; 
+  font-weight: bold; 
+  background-color: rgb(255, 108, 63);
+}
+/*
+input#client_id[value="9481"]   ~ span.account-button#client-9481   { color: black; font-weight: bold; background-color: rgb(255, 108, 63); }
+input#client_id[value="161911"] ~ span.account-button#client-161911 { color: black; font-weight: bold; background-color: rgb(255, 108, 63); }
+input#client_id[value="222593"] ~ span.account-button#client-222593 { color: black; font-weight: bold; background-color: rgb(255, 108, 63); }
+input#client_id[value="226854"] ~ span.account-button#client-226854 { color: black; font-weight: bold; background-color: rgb(255, 108, 63); }
+input#client_id[value="238033"] ~ span.account-button#client-238033 { color: black; font-weight: bold; background-color: rgb(255, 108, 63); }
+*/

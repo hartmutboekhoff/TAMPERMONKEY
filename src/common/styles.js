@@ -95,17 +95,7 @@ function compileStylesheets(...css) {
   return result;
 }
 
-function tryCatchTest(f) {
-  try{
-    f(...args);
-  }
-  catch(e) {
-    return false;
-  }
-  return true;
-}
-
-function addStyle(css) {
+function addStyleToDOM(css) {
   if( css != undefined && css != '' ) {
     const tc = new TryCatchSequence('add CSS');
     const s = document.createElement('style');
@@ -113,16 +103,37 @@ function addStyle(css) {
     tc.trycatch(()=>document.head.appendChild(s));
     tc.trycatch(()=>s.id = 'HBo greasemonkey style');
     tc.trycatch(()=>s.type = 'text/css');
-console.log(s);    
     tc.trycatch(()=>s.appendChild(document.createTextNode(css)));
   }
 }
-const cssResources = ['css-common','css'];
-const css = cssResources.map(rn=>GM_getResourceText(rn))
 
-css.forEach((d,ix)=>!!d?'':console.log('HBo CSS', 'Resource "'+cssResources[ix]+'" wurde nicht geladen.'));
+function collectCssResources() {
+  const rxPattern = /^css-\/(.*)\/$/;
+  const rlist = [{name:'css-common'}, {name:'css'}];
+  for( const r of GM_info.script.resources ) {
+    if( r.name == 'css-common' ) {
+      rlist[0] = r;
+    } else if( r.name == 'css' ) {
+      rlist[1] = r;      
+    } else if( rxPattern.test(r.name) ) {
+      const rxUrl = new RegExp(r.name.match(rxPattern)[1],  'i');
+      if( rxUrl.test((location.pathname??'')+(location.search??'')+(location.hash??'')) )
+        rlist.push(r);
+      else
+        console.log('CSS resource', r.name, '(ignored)');
+    } else if( r.name.startsWith('css-') ) {
+      rlist.push(r);
+    }
+  }
+  rlist.forEach(r=>console.log('CSS resource', r.name, !!r.content? '(loaded)' : '(not loaded)'))
+  return rlist.map(r=>r?.content).filter(c=>!!c);
+}
 
-window.addEventListener('load',()=>addStyle(compileStylesheets(...css.filter(c=>!!c))));
+window.addEventListener('load',()=>{
+  console.group('greasemonkey');
+  addStyleToDOM(compileStylesheets(...collectCssResources()))
+  console.groupEnd();
+});
 
 // ------------------------------------------------------------------
 console.log(GM_info.script.name, 'Version '+GM_info.script.version, 'common/styles.js', 'Version '+COMMON_VERSION);

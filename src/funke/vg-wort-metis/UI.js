@@ -1,33 +1,23 @@
 (function(){
-  window.addKeyHandler('Ctrl+Space',ev=>focusKeyInput());
-
   window.addEventListener('load',()=>{
-
-    const KeyInputField = 'search-pixel_search_criteria_privatePixelUIDFieldPublisher';
-
-    function setFunkeKeyPrefix(inputField) {
+    function setFunkeKeyPrefix() {
+      console.log('trying to set key-prefix');
+      const inputField = document.getElementById('search-pixel_search_criteria_privatePixelUIDFieldPublisher');
       if( inputField?.value == ''  ) {
         inputField.value = 'vgzm.1020093-';
         inputField.focus();
       }
     }
-    function focusKeyinput() {
-      document.getElementById(KeyInputField)?.focus();
-    }
 
-    setFunkeKeyPrefix(document.getElementById(KeyInputField));
-    // ================================================
-    console.log('initializing shortcut-keys');
-    window.addKeyHandler('Ctrl+Space',ev=>focusKeyInput());
-  
     // ================================================
     console.log('initializing mutation-reactions');
-    window.onMutation(KeyInputField, {
-      callback:e=>setFunkeKeyPrefix(e),
+    window.onMutation('search-pixel_search_criteria_privatePixelUIDFieldPublisher', {
+      callback:setFunkeKeyPrefix,
     });
     
     // ================================================
-    
-    
+
+    setFunkeKeyPrefix();
   });
-});
+})();
+

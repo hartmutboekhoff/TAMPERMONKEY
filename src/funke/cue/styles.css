@@ -40,3 +40,23 @@ cue-metadata-panel-loader .general-info * div.row[title^="ID: "] .right {
   font-weight: bold;
   padding: 2px 0;
 }
+
+cue-form-select#organizational-units {
+  outline: 5px solid #fc8;
+  outline-offset: 3px;
+  border-radius: 5px;
+}
+
+cue-form-select#organizational-units ul.options li.indent {
+  padding-left: 3em;
+}
+cue-form-select#organizational-units ul.options li.bm { background-color: #3c3 }
+cue-form-select#organizational-units ul.options li.ha { background-color: #3c3; }
+cue-form-select#organizational-units ul.options li.ni { background-color: #dd4; }
+cue-form-select#organizational-units ul.options li.ni.indent { background-color: #ff8; }
+cue-form-select#organizational-units ul.options li.nrw { background-color: #e84; }
+cue-form-select#organizational-units ul.options li.nrw.indent { background-color: #fa7; }
+cue-form-select#organizational-units ul.options li.th { background-color: #3c3; }
+cue-form-select#organizational-units ul.options li.th.indent { background-color: #6e6; }
+cue-form-select#organizational-units ul.options li.zr { background-color: #faa; }
+cue-form-select#organizational-units ul.options li.sys { background-color: #ccc; }
