@@ -207,3 +207,8 @@ h1 #ghx-board-name {
 h1 #subnav-title {
   font-size: .5em;
 }
+
+dl#js-work-quickfilters dd:has(a[data-filter-id="10896"]) {
+  outline: 4px solid red;
+  outline-offset: -2px;
+}

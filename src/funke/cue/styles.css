@@ -47,6 +47,10 @@ cue-form-select#organizational-units {
   border-radius: 5px;
 }
 
+cue-form-select#organizational-units ul.options {
+  max-height: 300px;
+}
+
 cue-form-select#organizational-units ul.options li.indent {
   padding-left: 3em;
 }
@@ -60,3 +64,28 @@ cue-form-select#organizational-units ul.options li.th { background-color: #3c3; 
 cue-form-select#organizational-units ul.options li.th.indent { background-color: #6e6; }
 cue-form-select#organizational-units ul.options li.zr { background-color: #faa; }
 cue-form-select#organizational-units ul.options li.sys { background-color: #ccc; }
+
+
+
+.editor-workspace-tabs div.subtabs ul[role="tablist"] {
+  border-bottom: 1px solid black;
+  background-color: #ecc;
+  padding-top: .3em;
+  padding-left: 2em;
+  vertical-align: bottom;
+}
+.editor-workspace-tabs div.subtabs ul[role="tablist"] li {
+  border: 2px solid #600;
+  border-bottom: none;
+  height: 100%;
+  line-height: 200%;
+  margin: 0 .2em !important;
+  padding: 0 1em;
+  color: black;
+}
+
+.editor-workspace-tabs div.subtabs ul[role="tablist"] li.active {
+  background-color: #f66;
+  _border-bottom: 2px solid #f66;
+  font-weight: bold;
+}

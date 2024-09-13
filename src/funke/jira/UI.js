@@ -26,9 +26,9 @@
           extract: node=>node.innerText.replaceAll('-',' '),
         },
         'span.ghx-extra-field': {
-          extract: node=>(node.title.match(/^[^&<:]*/)?.[0]??node.title)+': '+node.innerText,
+          extract: node=>node.innerText=='Kein'? '' : (node.title.match(/^[^&<:]*/)?.[0]??node.title)+': '+node.innerText,
         },
-        'div.ghx-avatar img': {
+        'div.ghx-avatar img,span.ghx-avatar-img': {
           extract: node=>node.title,
         },
         'div.ghx-type': {
@@ -39,6 +39,22 @@
 		window.registerForReadOut('#issuetable .issuerow .summary');
     
     // ================================================
+    console.log('initializing mutation-reactions');
+    //window.onMutation('selector', reaction);
+    window.onMutation('#ghx-column-headers', {
+      listeners: {
+        wheel: ev=>{
+          document.getElementById('ghx-pool-column').scrollLeft += ev.deltaY;
+          console.log(ev)
+          ev.stopPropagation();
+          ev.preventDefault();
+        }
+      }
+    });
+  
+  
+    // ================================================
+
 
 
   });
