@@ -9,3 +9,13 @@ button.Button--secondary {
 #pull-requests-tab {
   @.neutral-button;
 }
+#actions-tab {
+  @.neutral2-button;
+}
+
+div:has(>a.author):has(span.commit-ref~span.commit-ref) {
+  font-size: 2em;
+  background-image: var(--row-overlay);
+  background-color: #bf7;
+  padding: 5px .5em;
+}

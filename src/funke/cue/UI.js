@@ -55,6 +55,16 @@
     console.log(lis);
   }
   
+  function highlightActiveDates(el) {
+    const [d,t] = [...el.querySelectorAll('input')].map(i=>i.value);
+    if( d.length && t.length ) {
+      const date = parseDate(`${d} ${t}`);
+      const now = new Date();
+      const className = date > now? 'future' : date < now? 'past' : 'current';
+      el.classList.remove('future','past','current');
+      el.classList.add(className);
+    }
+  }
   
   
   window.addEventListener('load',()=>{
@@ -69,6 +79,10 @@
     // ================================================
     console.log('initializing read-out elements');
     //window.registerForReadOut('selector');
+    window.registerForReadOut('cue-list-item-versions', {
+      extract: node=>([...node.querySelectorAll('[data-testid="author"]'),...node.querySelectorAll('[data-testid="date"],[data-testid="time"]')].map(n=>n.innerText).join(' '))
+    });
+  
     
 
     // ================================================
@@ -76,6 +90,9 @@
     //window.onMutation('selector', reaction);
     window.onMutation('cue-form-select#organizational-units', {
       callback: prettyfyOrganizationalUnits
+    });
+    window.onMutation('cue-form-datetime#publish-date,cue-form-datetime#unpublish-date', {
+      callback: highlightActiveDates,
     });
   
   

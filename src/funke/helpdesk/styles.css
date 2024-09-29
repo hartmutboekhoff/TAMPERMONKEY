@@ -232,3 +232,10 @@ div#custom-assign-buttons div button:before {
 .no-local-login-identity-provider-container>div.ok-button button {
   @.ok-button;
 }
+
+
+div#groupsheaderHLGrid div {
+  border: 2px solid green !important;
+  border-radius: 5px;
+  background-color: #afa;
+}

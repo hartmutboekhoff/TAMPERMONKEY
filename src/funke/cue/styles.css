@@ -21,12 +21,32 @@ cue-metadata-panel-loader cue-sections-metadata-panel * div.header-container .he
 cue-metadata-panel-loader .general-info * div.header-container {
   background-color: #800;
 }
+div[data-testid="modified"] > div, 
+div[data-testid="created"] > div { 
+  color: black !important; 
+  font-weight: bold; 
+}
+div[data-testid="modified"] div[data-test-value="modified-value"] {
+  color: #00a !important;
+}
+div[data-testid="created"] div[data-test-value="created-value"] {
+  color: #0a0 !important;
+}
 
 cue-metadata-panel-loader .activation * div.header-container {
-  background-color: #daa;
+  background-color: #4f4;
 }
+cue-form-datetime#publish-date.future input,
+cue-form-datetime#unpublish-date.past input {
+  border-bottom: 4px solid red !important;
+}
+cue-form-datetime#unpublish-date.future input,
+cue-form-datetime#publish-date.past input {
+  border-bottom: 4px solid #0f0 !important;
+}
+
 cue-metadata-panel-loader cue-tags-metadata-panel * div.header-container {
-  background-color: #ce8;
+  background-color: #ec6;
 }
 cue-metadata-panel-loader cue-author-panel * div.header-container {
   background-color: #4e6;
@@ -35,6 +55,15 @@ cue-metadata-panel-loader cue-sections-metadata-panel * div.header-container {
   background-color: #000;
 }
 
+cue-metadata-panel-loader .general-info * div.row[title^="ID: "],
+cue-metadata-panel-loader .general-info * div.row[data-testid="type"] {
+  height: 2em;
+  line-height: 2em;
+}
+cue-metadata-panel-loader .general-info * div.row[data-testid="type"] .right {
+  font-size: 1.6em;
+  color: blue !important;
+}
 cue-metadata-panel-loader .general-info * div.row[title^="ID: "] .right {
   font-size: 1.6em;
   font-weight: bold;
@@ -88,4 +117,27 @@ cue-form-select#organizational-units ul.options li.sys { background-color: #ccc;
   background-color: #f66;
   _border-bottom: 2px solid #f66;
   font-weight: bold;
+}
+
+cue-list-item-versions div.version-item span {
+  color: black;
+}
+cue-list-item-versions div.version-item:has(span[data-testid="author"][title="Hartmut Boekhoff"]) {
+  background-color: #f8f;
+  font-weight: bold;
+  color: black !important;
+}
+cue-list-item-versions div.version-item.selected:has(span[data-testid="author"][title="Hartmut Boekhoff"]) {
+  background-color: #d5d;
+}
+cue-list-item-versions:first-child div.version-item:has(cue-state div.draft-published),
+cue-list-item-versions:first-child div.version-item.selected:has(cue-state div.draft-published) {
+  background-color: red;
+  animation: blinker 1.5s step-end infinite;
+}
+
+@keyframes blinker {
+  50% {
+    background-color: yellow;
+  }
 }

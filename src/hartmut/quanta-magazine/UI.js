@@ -12,7 +12,7 @@
     //window.registerForReadOut('selector');
     window.registerForReadOut('#postBody', {
       language: 'en-US',
-      exclude: 'figure,aside,.post__title__actions,h2.screen-reader-text',
+      exclude: 'figure,aside,.post__title__actions,.screen-reader-text',
     });
     window.registerForReadOut('.hero-title,.hero__card,.card', {
       language: 'en-US',

@@ -365,7 +365,6 @@
                       : this.#getCustomCollector(node); // child-elements
 
       const extract = this.#extractNodeText(node, custom);
-console.log(extract, node);
       if( extract == undefined ) return undefined;
 
       const norm = new NormalizedExtract(extract);

@@ -1,6 +1,12 @@
 (function(){
   window.addEventListener('load',()=>{
     
+    function scrollHorizontal(ev) {
+      document.getElementById('ghx-pool-column').scrollLeft += ev.deltaY;
+      ev.stopPropagation();
+      ev.preventDefault();
+    }
+    
     // ================================================
     console.log('initializing read-out elements');
 
@@ -21,6 +27,7 @@
 		});
 		window.registerForReadOut('div.js-detailview.ghx-issue', {
       exclude: 'div.ghx-flags',
+      extract: node=>([node.querySelector('span[title="Gekennzeichnet"]'),...node.childNodes].filter(n=>!!n)),
       childElements: {
         'div.ghx-key': {
           extract: node=>node.innerText.replaceAll('-',' '),
@@ -33,10 +40,17 @@
         },
         'div.ghx-type': {
           text:'',
+        },
+        'div.ghx-flags,span[title="Gekennzeichnet"]': {
+          text: 'blockiert',
         }
       },
     });
 		window.registerForReadOut('#issuetable .issuerow .summary');
+		window.registerForReadOut('table#ghx-issues-in-epic-table td.ghx-summary', {
+		  extract: node=>([node.parentElement.dataset.issuekey, node.innerText])
+		});
+		
     
     // ================================================
     console.log('initializing mutation-reactions');
@@ -44,10 +58,16 @@
     window.onMutation('#ghx-column-headers', {
       listeners: {
         wheel: ev=>{
-          document.getElementById('ghx-pool-column').scrollLeft += ev.deltaY;
-          console.log(ev)
-          ev.stopPropagation();
-          ev.preventDefault();
+          if( !ev.ctrlKey ) 
+            scrollHorizontal(ev);
+        }
+      }
+    });
+    window.onMutation('body', {
+      listeners: {
+        wheel: ev=>{
+          if( ev.shiftKey && !ev.ctrlKey && !ev.altKey )
+            scrollHorizontal(ev);
         }
       }
     });

@@ -36,6 +36,7 @@
 // @grant        GM_info
 // @grant        addStyle
 // @grant        unsafeWindow
+// @sandbox      raw
 
 // @resource  css-common   http://localhost:3000/common/styles.css
 // @resource  css          http://localhost:3000/funke/tz-portale/styles.css
