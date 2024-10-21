@@ -9,6 +9,7 @@
 // @grant        unsafeWindow
 
 // @include      https://cue.funke.cue.cloud/cue-web/*
+// @include      https://cue.test.funke.cue.cloud/cue-web/*
 
 // @downloadURL          http://localhost:3000/funke/cue/main.js
 // @updateURL            http://localhost:3000/funke/cue/main.js
