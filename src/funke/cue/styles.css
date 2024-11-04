@@ -70,6 +70,7 @@ cue-metadata-panel-loader .general-info * div.row[title^="ID: "] .right {
   padding: 2px 0;
 }
 
+input#new-content-search-field_input,
 cue-form-select#organizational-units {
   outline: 5px solid #fc8;
   outline-offset: 3px;
@@ -130,10 +131,19 @@ cue-list-item-versions div.version-item:has(span[data-testid="author"][title="Ha
 cue-list-item-versions div.version-item.selected:has(span[data-testid="author"][title="Hartmut Boekhoff"]) {
   background-color: #d5d;
 }
+
+cue-list-item-versions:first-child div.version-item:has(cue-state div.submitted-published),
+cue-list-item-versions:first-child div.version-item.selected:has(cue-state div.submitted-published),
 cue-list-item-versions:first-child div.version-item:has(cue-state div.draft-published),
 cue-list-item-versions:first-child div.version-item.selected:has(cue-state div.draft-published) {
   background-color: red;
   animation: blinker 1.5s step-end infinite;
+}
+
+
+cue-relation-story-element-editor {
+  outline: 3px solid blue;
+  box-shadow: 4px 4px 4px blue;
 }
 
 @keyframes blinker {

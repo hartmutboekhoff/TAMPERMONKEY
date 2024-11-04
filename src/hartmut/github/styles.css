@@ -19,3 +19,15 @@ div:has(>a.author):has(span.commit-ref~span.commit-ref) {
   background-color: #bf7;
   padding: 5px .5em;
 }
+
+div.file-header {
+  background-color: #66d;
+}
+div.file-header * {
+  color: white !important; 
+}
+div.file-header .Link--primary {
+  color: white !important; 
+  font-size: 150%;
+  font-weight: bold;
+}

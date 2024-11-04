@@ -1,0 +1,123 @@
+/* @printCompiledCss = false */
+
+:root {
+  --border-color: #226;
+  --editor-border-color: #fd0;
+  --legend-background-color: #aac;
+  --legend-light-background-color: #dde;
+  --legend-dark-background-color: #779;
+  --field-highlight-color: #226;
+
+  --tile-background-color: #cce;
+  --tile-dark-background-color: #aac;
+  --parent-tile-background-frame: linear-gradient(to right, var(--tile-background-color) 0 10px, transparent 10px), linear-gradient(to bottom, var(--tile-background-color) 0 10px, transparent 10px);
+  --parent-tile-dark-background-frame: linear-gradient(to right, var(--tile-dark-background-color) 0 10px, transparent 10px), linear-gradient(to bottom, var(--tile-dark-background-color) 0 10px, transparent 10px);
+}
+
+/* Beschreibung */
+div[data-editor-container-id="issue-description-editor"] {
+  outline: 4px solid var(--border-color);
+  outline-offset: 3px;
+  border-radius: 5px;
+}
+
+/*zusatzfeld */   div:has(>div>div>div[data-component-selector="jira.issue-view.common.inline-edit.compact-wrapper-control"]),
+/*Anhänge*/       div:has(>div[data-testid="issue.views.issue-base.content.attachment.panel"]),
+/*Verknüpfungen*/ div:has(>div>div>span[data-testid="issue.views.issue-base.content.issue-links.add.add-button.right-side-container"]),
+/*Subtickets */   div:has(>div[data-testid="issue.issue-view.views.common.child-issues-panel.issues-container"]),
+/* kommentaew */  div[data-testid="issue.activity.comments-list"] > div {
+  outline: 4px solid var(--border-color);
+  outline-offset: 3px;
+  border-radius: 5px;
+  margin: 2em 0;
+}
+
+/* Überschriften */
+/*neuer Kommentae*/ div:has(>div>div>div[data-component-selector="jira.issue-view.common.inline-edit.compact-wrapper-control"]) div:has(h2),
+/*Anhänge*/         div:has(>div[data-testid="issue.views.issue-base.content.attachment.panel"]) div div:has(h2),
+/*Subtickets */     div:has(>div[data-testid="issue.issue-view.views.common.child-issues-panel.issues-container"]) > div:has(h2),
+/*Verknüpfungen*/   div:has(>div>div>span[data-testid="issue.views.issue-base.content.issue-links.add.add-button.right-side-container"]) div:has(h2) {
+  background-color: var(--legend-background-color);
+}
+
+div[data-testid="issue.activity.comments-list"] > div h3 {
+  background-color: var(--legend-light-background-color);
+}
+
+
+/*Kommentareingabe*/ span:has(> div > div > div[data-testid="issue.activity.comment"]) {
+	outline: 4px solid var(--editor-border-color);
+	outline-offset: 3px;
+	border-radius: 5px;
+	margin: 2em 0 5em 0;
+	display: block;
+	padding-left: .5em;
+}
+
+div[data-testid="issue-view-layout-templates-default.ui.foundation-content.foundation-content-wrapper"]:has(h1) {
+  padding: 1em 1em 1.8em;
+  background-color: var(--field-highlight-color);
+}
+
+div[data-testid="issue-view-layout-templates-default.ui.foundation-content.foundation-content-wrapper"] h1 {
+  font-size: 3em;
+  white-space: nowrap;
+  color: white;
+}
+
+div[data-component-selector="jira-issue-view-layout-templates-pinned-fields-banner-with-grouping-pinned-field-highlight-wrapper"] summary {
+  background-color: var(--legend-background-color);
+}
+div[data-component-selector="jira-issue-view-layout-templates-pinned-fields-banner-with-grouping-pinned-field-highlight-wrapper"] summary:hover {
+  background-color: var(--legend-dark-background-color);
+}
+div[data-component-selector="jira-issue-view-layout-templates-pinned-fields-banner-with-grouping-pinned-field-highlight-wrapper"] summary:hover * {
+  color: white;
+  font-weight: bold;
+}
+
+div:has(>li>a[data-testid="issue.views.issue-base.foundation.breadcrumbs.current-issue.item"])+div {
+  height: 3em;
+  background-color: var(--legend-dark-background-color);
+  padding: 0 1em .5em 1em;
+}
+div:has(>li>a[data-testid="issue.views.issue-base.foundation.breadcrumbs.current-issue.item"]) {
+  height: 3em;
+  background-color: var(--legend-background-color);
+  padding: .2em 2em;
+}
+div:has(>li>a[data-testid="issue.views.issue-base.foundation.breadcrumbs.current-issue.item"]) a span {
+  font-size: 140%;
+  line-height: 140%;
+  font-weight: bold;
+  letter-spacing: 3px;
+}
+
+
+div[data-test-id="software-board.board-area"] section li:has(li) > div > div > div,
+div[data-test-id="software-board.board-area"] section li:has(+li li) > div > div > div > div {
+  background-color: var(--tile-background-color);
+}
+div[data-test-id="software-board.board-area"] section li:has(li) > div {
+  background-image: var(--parent-tile-background-frame);
+}
+
+
+div[data-test-id="software-board.board-area"] section li:empty {
+  display: none;
+}
+
+button[data-testid="issue.activity.common.component.load-more-button.loading-button"] {
+  background-color: var(--field-highlight-color); 
+}
+button[data-testid="issue.activity.common.component.load-more-button.loading-button"] span {
+  color: white;
+  font-weight: bold;
+}
+
+div[data-testid="jql-builder"] {
+  background-color: #fc0;
+  padding: 1em 1em 0;
+  border: 5px solid #860;
+  border-radius: 5px;
+}

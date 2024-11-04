@@ -1,6 +1,6 @@
 // ==UserScript==
-// @name         CUE
-// @description  UI Verbesserungen für CUE  
+// @name         JIRA Cloud
+// @description  UI Verbesserungen für JIRA Cloud
 // @version      1
 // @grant        GM_getResourceURL
 // @grant        GM_getResourceText
@@ -8,23 +8,21 @@
 // @grant        addStyle
 // @grant        unsafeWindow
 
-// @include      https://cue.funke.cue.cloud/cue-web/*
-// @include      https://cue.test.funke.cue.cloud/cue-web/*
+// @include      https://funkemedien.atlassian.net/*
 
-// @downloadURL          http://localhost:3000/funke/cue/main.js
-// @updateURL            http://localhost:3000/funke/cue/main.js
+// @downloadURL          http://localhost:3000/funke/jira-cloud/main.js
+// @updateURL            http://localhost:3000/funke/jira-cloud/main.js
 
 // @resource  css-common http://localhost:3000/common/styles.css
-// @resource  css        http://localhost:3000/funke/cue/styles.css
+// @resource  css        http://localhost:3000/funke/jira-cloud/styles.css
 
 // @require         http://localhost:3000/common/head.js
 // @require         http://localhost:3000/common/utility.js
 // @require         http://localhost:3000/common/styles.js
 // @require         http://localhost:3000/common/KeyHandler.js
 // @require         http://localhost:3000/common/readout.js
-// @require         http://localhost:3000/common/mutationHandler.js
 
-// @require         http://localhost:3000/funke/cue/UI.js
+// @require         http://localhost:3000/funke/jira-cloud/UI.js
 
 // ==/UserScript==
 
