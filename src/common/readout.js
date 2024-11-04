@@ -183,9 +183,9 @@
   }
 
   class NormalizedExtract {
-    #text; #nodes;
+    #text; #nodes; #element;
     
-    constructor(extract) {
+    constructor(extract, element) {
       if( extract == undefined ) return;
       
       if( typeof extract == 'string' )
@@ -203,6 +203,7 @@
       this.rate = extract.rate;
       this.volume = extract.volume;
       this.language = extract.language;
+      this.#element = element;
     }
     get isEmpty() {
       return (this.#text == undefined || this.#text == '') 
@@ -265,6 +266,7 @@
       if( this.#text != undefined )  {
         const u = new SpeechSynthesisUtterance(this.#text);
         assignUtteranceOptions(u, options);
+        u.htmlElement = this.#element;
         return [u];
       }
       else if( this.#nodes != undefined )
@@ -367,7 +369,7 @@
       const extract = this.#extractNodeText(node, custom);
       if( extract == undefined ) return undefined;
 
-      const norm = new NormalizedExtract(extract);
+      const norm = new NormalizedExtract(extract, node);
       if( custom ) {
         norm.applyReplacements(custom.replace);
         norm.applyCustomOptions(custom);
@@ -536,10 +538,30 @@
     }
 
     #speak(uix) {
+      function applyHighlighting(u) {
+        let element = u.htmlElement;
+        if( element?.nodeName == '#text' ) 
+          element = element.parentElement;
+
+        if( !element ) 
+          return;
+
+        element.originalStyle ??= element.getAttribute('style');
+        element.style.outline = '4px solid blue';
+        
+        u.addEventListener('end', ()=>element.setAttribute('style', element.originalStyle));
+        u.addEventListener('error', ()=>element.setAttribute('style', element.originalStyle));
+      }
+      
       if( uix != undefined )
         this.#current.progress = uix;
-      window.speechSynthesis.speak(this.#current[this.#current.progress]);
-      this.#setPlayed(this.#currentIx, uix??0);      
+
+      const u = this.#current[this.#current.progress];        
+      applyHighlighting(u);
+      console.debug('Speaking:', u.text, u.htmlElement?.nodeName=='#text'? u.htmlElement.parentElement??u.htmlElement : u.htmlElement);
+
+      window.speechSynthesis.speak(u);
+      this.#setPlayed(this.#currentIx, uix??0);
     }
     #next() {
       if( this.#current == undefined )

@@ -106,6 +106,12 @@ soft-row {
 }
 
 
+.super-zoom {
+  transform: scale(500%);
+  outline: 5px solid red;
+  outline-offset: 5px;
+}
+
 /* 💥🛑⛔❌⭕🚫❗❕‼❔❓⁉⚠♻✔🗨💬 */
 
 
