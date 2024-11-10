@@ -2,7 +2,8 @@
 
 :root {
   --border-color: #226;
-  --editor-border-color: #fd0;
+  --editor-border-color: #dc0;
+  --editor-background-color: #ffd888;
   --legend-background-color: #aac;
   --legend-light-background-color: #dde;
   --legend-dark-background-color: #779;
@@ -25,7 +26,7 @@ div[data-editor-container-id="issue-description-editor"] {
 /*Anhänge*/       div:has(>div[data-testid="issue.views.issue-base.content.attachment.panel"]),
 /*Verknüpfungen*/ div:has(>div>div>span[data-testid="issue.views.issue-base.content.issue-links.add.add-button.right-side-container"]),
 /*Subtickets */   div:has(>div[data-testid="issue.issue-view.views.common.child-issues-panel.issues-container"]),
-/* kommentaew */  div[data-testid="issue.activity.comments-list"] > div {
+/* kommentare */  div[data-testid="issue.activity.comments-list"] > div {
   outline: 4px solid var(--border-color);
   outline-offset: 3px;
   border-radius: 5px;
@@ -33,7 +34,9 @@ div[data-editor-container-id="issue-description-editor"] {
 }
 
 /* Überschriften */
-/*neuer Kommentae*/ div:has(>div>div>div[data-component-selector="jira.issue-view.common.inline-edit.compact-wrapper-control"]) div:has(h2),
+/*Zusatzfelder    div:has(>div>div>div[data-component-selector="jira.issue-view.common.inline-edit.compact-wrapper-control"])>div:first-child:has(h2),*/
+div:has(>div>div>div[data-component-selector="jira.issue-view.common.inline-edit.compact-wrapper-control"]) > div:has(>h2),
+div:has(>div>div>div[data-component-selector="jira.issue-view.common.inline-edit.compact-wrapper-control"]) > div:has(>div>h2),
 /*Anhänge*/         div:has(>div[data-testid="issue.views.issue-base.content.attachment.panel"]) div div:has(h2),
 /*Subtickets */     div:has(>div[data-testid="issue.issue-view.views.common.child-issues-panel.issues-container"]) > div:has(h2),
 /*Verknüpfungen*/   div:has(>div>div>span[data-testid="issue.views.issue-base.content.issue-links.add.add-button.right-side-container"]) div:has(h2) {
@@ -52,6 +55,19 @@ div[data-testid="issue.activity.comments-list"] > div h3 {
 	margin: 2em 0 5em 0;
 	display: block;
 	padding-left: .5em;
+}
+/* ausblenen
+span:has(> div > div > div[data-testid="issue.activity.comment"]) >div >div * {
+  display:none;
+}
+span:has(> div > div > div[data-testid="issue.activity.comment"]):hover >div >div * {
+  display:block;
+}
+*/
+
+span:has(> div > div > div[data-testid="issue.activity.comment"]) > div,
+span:has(> div > div > div[data-testid="issue.activity.comment"]) > div > div {
+	background-color: var(--editor-background-color);
 }
 
 div[data-testid="issue-view-layout-templates-default.ui.foundation-content.foundation-content-wrapper"]:has(h1) {
@@ -121,3 +137,13 @@ div[data-testid="jql-builder"] {
   border: 5px solid #860;
   border-radius: 5px;
 }
+
+div[data-testid="issue.views.issue-base.context.labels"]:has(div[data-testid="issue-field-heading-styled-field-heading.labels"]) {
+  outline: 4px solid var(--border-color);
+  outline-ofset: 3px;
+  border-radius: 3px;
+  padding: .2em;
+} 
+div[data-testid="issue.views.issue-base.context.labels"] div[data-testid="issue-field-heading-styled-field-heading.labels"]:has(>h2) {
+  background-color: var(--legend-background-color);
+} 

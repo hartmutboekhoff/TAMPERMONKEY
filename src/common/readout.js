@@ -83,6 +83,28 @@
                       .map(s=>s?.trim()??'');
       return (res[1]??'') + ' ' + (res[0]??'');
     },
+    easyUrls: function(text) {
+      const urlRx = /(?:(?:https?:\/\/www\.)|(?:https?:\/\/)|(?:www\.))([\S]+)/gi;
+      // $0: mit Protokoll
+      // $1: ohne Protokoll
+      // $2: ohne www
+      const CharReplaceMap = {
+        '.': ' Punkt ',
+        '#': ' hash ',
+        '?': ' Fragezeichen ',
+        '&': ' und ',
+        '=': ' gleich ',
+        'www.': ' www ',
+        '.de': ' Punkt D E ',
+        '.com': ' PUnkt com ',
+        '.net': ' PUnkt net ',
+        '.html': ' Punkt html',
+      };
+      return text.replace(urlRx,(m,m1)=>{
+        const charRx = /\.de|\.com|\.html|[\W-_]/g;
+        return m1.replace(charRx,c=>CharReplaceMap[c]??' ');
+      });
+    },
   };
 
   const DEFAULT_OPTIONS = {
@@ -325,6 +347,9 @@
 			];
 
 			dateRXs.forEach(rx=>this.#extractedData.replace(rx,(...args)=>Format.niceDateTime(toDate(args.pop()))));
+    }
+    convertUrls() {
+      this.#extractedData.replace(/.*/m, Format.easyUrls);
     }
     
     #initOptions(options) {
@@ -619,6 +644,7 @@
         
       const u = new UtteranceCollector(e,options);
       u.convertDates();
+      u.convertUrls();
       k ??= e.id ?? e.className ?? e.nodeName;
       if( u.utterances.length == 0 )
         this.#pushText('Kein Text.', k, options, e);

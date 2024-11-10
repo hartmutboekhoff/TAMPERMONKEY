@@ -13,6 +13,7 @@
     console.log('initializing mutation-reactions');
     window.onMutation('search-pixel_search_criteria_privatePixelUIDFieldPublisher', {
       callback:setFunkeKeyPrefix,
+      runOnLoad: true,
     });
     
     // ================================================
